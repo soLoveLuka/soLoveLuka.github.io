@@ -14,7 +14,7 @@ body {
     color: #fff;
     overflow-x: hidden;
     position: relative;
-    perspective: 500px; /* Increased perspective for more depth */
+    perspective: 1000px; /* Reduced perspective for less extreme 3D effect */
 }
 
 body::before {
@@ -90,8 +90,8 @@ body::before {
     background-position: 0 0, 0 0, 20px 20px, 20px 20px, 10px 10px, 10px 10px; /* Shift for depth */
     z-index: -1;
     pointer-events: none;
-    transform: rotateX(30deg) rotateY(30deg); /* Increased 3D rotation */
-    animation: float 8s infinite ease-in-out, rotate 20s infinite linear; /* Add rotation */
+    transform: rotateX(15deg) rotateY(15deg); /* Reduced rotation for stability */
+    animation: cubeMove 12s infinite ease-in-out; /* Combined animation */
 }
 
 body::after {
@@ -147,22 +147,22 @@ body::after {
     background-position: 0 0;
     z-index: -1;
     pointer-events: none;
-    transform: rotateX(30deg) rotateY(30deg); /* Match the 3D rotation */
+    transform: rotateX(15deg) rotateY(15deg); /* Match the 3D rotation */
     filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.5)) drop-shadow(0 0 10px rgba(255, 0, 255, 0.3)) drop-shadow(0 0 15px rgba(0, 247, 255, 0.2)); /* Layered glows */
-    animation: float 8s infinite ease-in-out reverse, rotate 20s infinite linear reverse; /* Reverse animations */
+    animation: cubeMove 12s infinite ease-in-out reverse; /* Combined animation in reverse */
 }
 
-/* Floating animation */
-@keyframes float {
-    0% { transform: translate(0, 0) rotateX(30deg) rotateY(30deg); }
-    50% { transform: translate(15px, 15px) rotateX(30deg) rotateY(30deg); }
-    100% { transform: translate(0, 0) rotateX(30deg) rotateY(30deg); }
-}
-
-/* Rotation animation for complexity */
-@keyframes rotate {
-    0% { transform: rotateX(30deg) rotateY(30deg) rotateZ(0deg); }
-    100% { transform: rotateX(30deg) rotateY(30deg) rotateZ(360deg); }
+/* Combined floating and rotation animation */
+@keyframes cubeMove {
+    0% {
+        transform: rotateX(15deg) rotateY(15deg) rotateZ(0deg) translate(0, 0);
+    }
+    50% {
+        transform: rotateX(15deg) rotateY(15deg) rotateZ(180deg) translate(5px, 5px);
+    }
+    100% {
+        transform: rotateX(15deg) rotateY(15deg) rotateZ(360deg) translate(0, 0);
+    }
 }
 
 /* Floating animation */
