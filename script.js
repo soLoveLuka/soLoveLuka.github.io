@@ -133,8 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // Prevent negative scroll
     });
 
-    // Initial setup: Set the first section as in-view
-    updateSections('down');
+    // Initial setup: Ensure the first section is visible
+    sections[0].classList.add('in-view'); // Explicitly set the first section (hero) to in-view
 });
 
 // Sound wave interaction with mouse movement
@@ -142,29 +142,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroSection = document.querySelector('.hero');
     const soundBars = document.querySelectorAll('.sound-bar');
 
-    heroSection.addEventListener('mousemove', (e) => {
-        const rect = heroSection.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
+    if (heroSection && soundBars.length > 0) {
+        heroSection.addEventListener('mousemove', (e) => {
+            const rect = heroSection.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
 
-        soundBars.forEach((bar, index) => {
-            const barX = (index * 30) + 15;
-            const distanceX = Math.abs(mouseX - barX);
-            const distanceY = Math.abs(mouseY - centerY);
-            const maxHeight = 80;
-            const minHeight = 10;
-            const influenceX = Math.max(0, 150 - distanceX);
-            const influenceY = Math.max(0, 150 - distanceY);
-            const height = minHeight + (influenceX + influenceY) * 0.3;
-            bar.style.height = `${Math.min(maxHeight, height)}px`;
+            soundBars.forEach((bar, index) => {
+                const barX = (index * 30) + 15;
+                const distanceX = Math.abs(mouseX - barX);
+                const distanceY = Math.abs(mouseY - centerY);
+                const maxHeight = 80;
+                const minHeight = 10;
+                const influenceX = Math.max(0, 150 - distanceX);
+                const influenceY = Math.max(0, 150 - distanceY);
+                const height = minHeight + (influenceX + influenceY) * 0.3;
+                bar.style.height = `${Math.min(maxHeight, height)}px`;
+            });
         });
-    });
 
-    heroSection.addEventListener('mouseleave', () => {
-        soundBars.forEach((bar) => {
-            bar.style.height = '10px';
+        heroSection.addEventListener('mouseleave', () => {
+            soundBars.forEach((bar) => {
+                bar.style.height = '10px';
+            });
         });
-    });
+    }
 });
