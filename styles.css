@@ -155,7 +155,8 @@ section {
     width: 100%;
     position: relative;
     transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out; /* Smooth transition for sliding and zooming */
-    opacity: 1;
+    opacity: 1; /* Default to visible */
+    transform: translateY(0); /* Default to in-view position */
 }
 
 /* Class for sections that are out of view (above) */
