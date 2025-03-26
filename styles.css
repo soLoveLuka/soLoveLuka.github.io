@@ -112,11 +112,18 @@ body::after {
     animation: float 10s infinite ease-in-out reverse; /* Reverse float for depth */
 }
 
-/* Subtle floating animation */
+
+/* Floating animation */
 @keyframes float {
-    0% { transform: rotateX(20deg) rotateY(20deg) translate(0, 0); }
-    50% { transform: rotateX(20deg) rotateY(20deg) translate(5px, 5px); }
-    100% { transform: rotateX(20deg) rotateY(20deg) translate(0, 0); }
+    0% { transform: translate(0, 0) rotateX(30deg) rotateY(30deg); }
+    50% { transform: translate(15px, 15px) rotateX(30deg) rotateY(30deg); }
+    100% { transform: translate(0, 0) rotateX(30deg) rotateY(30deg); }
+}
+
+/* Rotation animation for complexity */
+@keyframes rotate {
+    0% { transform: rotateX(30deg) rotateY(30deg) rotateZ(0deg); }
+    100% { transform: rotateX(30deg) rotateY(30deg) rotateZ(360deg); }
 }
 
 /* Retro Nav Bar */
