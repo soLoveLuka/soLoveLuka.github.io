@@ -8,8 +8,12 @@
 
 /* Body with modern, simplistic, spacey background */
 body {
-    background: linear-gradient(rgba(0, 0, 20, 0.8), rgba(0, 0, 20, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+    background-image: linear-gradient(rgba(0, 0, 20, 0.8), rgba(0, 0, 20, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
     background-size: cover;
+    background-color: #000015; /* Fallback color: very dark blue */
     color: #fff;
     overflow-x: hidden;
     position: relative;
