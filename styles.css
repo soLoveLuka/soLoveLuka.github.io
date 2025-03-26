@@ -14,7 +14,7 @@ body {
     color: #fff;
     overflow-x: hidden;
     position: relative;
-    perspective: 1000px; /* Adds 3D perspective to child elements */
+    perspective: 500px; /* Increased perspective for more depth */
 }
 
 body::before {
@@ -24,54 +24,74 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Create a grid of wireframe cubes with connected edges */
+    /* Create a complex grid of wireframe cubes with nested cubes */
     background: 
-        /* Front vertical edges */
+        /* Outer cube: Front vertical edges */
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 40px,
+            rgba(0, 247, 255, 0.3) 40px, /* Brighter cyan edge */
+            rgba(0, 247, 255, 0.3) 41px,
+            transparent 41px,
+            transparent 80px
+        ),
+        /* Outer cube: Front horizontal edges */
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 40px,
+            rgba(0, 247, 255, 0.3) 40px,
+            rgba(0, 247, 255, 0.3) 41px,
+            transparent 41px,
+            transparent 80px
+        ),
+        /* Outer cube: Back vertical edges (shifted for depth) */
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 20px,
+            rgba(0, 247, 255, 0.2) 20px,
+            rgba(0, 247, 255, 0.2) 21px,
+            transparent 21px,
+            transparent 60px
+        ),
+        /* Outer cube: Back horizontal edges (shifted for depth) */
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 20px,
+            rgba(0, 247, 255, 0.2) 20px,
+            rgba(0, 247, 255, 0.2) 21px,
+            transparent 21px,
+            transparent 60px
+        ),
+        /* Inner cube: Front vertical edges (nested inside) */
         repeating-linear-gradient(
             90deg,
             transparent 0px,
             transparent 30px,
-            rgba(0, 247, 255, 0.1) 30px, /* Cyan edge */
-            rgba(0, 247, 255, 0.1) 31px,
+            rgba(255, 0, 255, 0.2) 30px, /* Magenta for inner cube */
+            rgba(255, 0, 255, 0.2) 31px,
             transparent 31px,
-            transparent 60px
+            transparent 70px
         ),
-        /* Front horizontal edges */
+        /* Inner cube: Front horizontal edges */
         repeating-linear-gradient(
             0deg,
             transparent 0px,
             transparent 30px,
-            rgba(0, 247, 255, 0.1) 30px,
-            rgba(0, 247, 255, 0.1) 31px,
+            rgba(255, 0, 255, 0.2) 30px,
+            rgba(255, 0, 255, 0.2) 31px,
             transparent 31px,
-            transparent 60px
-        ),
-        /* Back vertical edges (shifted to simulate depth) */
-        repeating-linear-gradient(
-            90deg,
-            transparent 0px,
-            transparent 15px,
-            rgba(0, 247, 255, 0.1) 15px,
-            rgba(0, 247, 255, 0.1) 16px,
-            transparent 16px,
-            transparent 45px
-        ),
-        /* Back horizontal edges (shifted to simulate depth) */
-        repeating-linear-gradient(
-            0deg,
-            transparent 0px,
-            transparent 15px,
-            rgba(0, 247, 255, 0.1) 15px,
-            rgba(0, 247, 255, 0.1) 16px,
-            transparent 16px,
-            transparent 45px
+            transparent 70px
         );
-    background-size: 60px 60px; /* Size of each cube */
-    background-position: 0 0, 0 0, 15px 15px, 15px 15px; /* Shift back edges for depth */
+    background-size: 80px 80px; /* Size of each outer cube */
+    background-position: 0 0, 0 0, 20px 20px, 20px 20px, 10px 10px, 10px 10px; /* Shift for depth */
     z-index: -1;
     pointer-events: none;
-    transform: rotateX(20deg) rotateY(20deg); /* 3D rotation for perspective */
-    animation: float 10s infinite ease-in-out; /* Floating animation */
+    transform: rotateX(30deg) rotateY(30deg); /* Increased 3D rotation */
+    animation: float 8s infinite ease-in-out, rotate 20s infinite linear; /* Add rotation */
 }
 
 body::after {
@@ -81,37 +101,56 @@ body::after {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Add connecting lines for the cube sides */
+    /* Add connecting lines for the cube sides and glow */
     background: 
-        /* Diagonal lines (front-top to back-bottom) */
+        /* Outer cube: Diagonal lines (front-top to back-bottom) */
+        repeating-linear-gradient(
+            45deg,
+            transparent 0px,
+            transparent 28px,
+            rgba(0, 247, 255, 0.3) 28px,
+            rgba(0, 247, 255, 0.3) 29px,
+            transparent 29px,
+            transparent 57px
+        ),
+        /* Outer cube: Diagonal lines (front-bottom to back-top) */
+        repeating-linear-gradient(
+            -45deg,
+            transparent 0px,
+            transparent 28px,
+            rgba(0, 247, 255, 0.3) 28px,
+            rgba(0, 247, 255, 0.3) 29px,
+            transparent 29px,
+            transparent 57px
+        ),
+        /* Inner cube: Diagonal lines (front-top to back-bottom) */
         repeating-linear-gradient(
             45deg,
             transparent 0px,
             transparent 21px,
-            rgba(0, 247, 255, 0.1) 21px,
-            rgba(0, 247, 255, 0.1) 22px,
+            rgba(255, 0, 255, 0.2) 21px,
+            rgba(255, 0, 255, 0.2) 22px,
             transparent 22px,
-            transparent 43px
+            transparent 50px
         ),
-        /* Diagonal lines (front-bottom to back-top) */
+        /* Inner cube: Diagonal lines (front-bottom to back-top) */
         repeating-linear-gradient(
             -45deg,
             transparent 0px,
             transparent 21px,
-            rgba(0, 247, 255, 0.1) 21px,
-            rgba(0, 247, 255, 0.1) 22px,
+            rgba(255, 0, 255, 0.2) 21px,
+            rgba(255, 0, 255, 0.2) 22px,
             transparent 22px,
-            transparent 43px
+            transparent 50px
         );
-    background-size: 60px 60px;
+    background-size: 80px 80px;
     background-position: 0 0;
     z-index: -1;
     pointer-events: none;
-    transform: rotateX(20deg) rotateY(20deg); /* Match the 3D rotation */
-    filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.3)); /* Cyan glow */
-    animation: float 10s infinite ease-in-out reverse; /* Reverse float for depth */
+    transform: rotateX(30deg) rotateY(30deg); /* Match the 3D rotation */
+    filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.5)) drop-shadow(0 0 10px rgba(255, 0, 255, 0.3)) drop-shadow(0 0 15px rgba(0, 247, 255, 0.2)); /* Layered glows */
+    animation: float 8s infinite ease-in-out reverse, rotate 20s infinite linear reverse; /* Reverse animations */
 }
-
 
 /* Floating animation */
 @keyframes float {
@@ -124,6 +163,13 @@ body::after {
 @keyframes rotate {
     0% { transform: rotateX(30deg) rotateY(30deg) rotateZ(0deg); }
     100% { transform: rotateX(30deg) rotateY(30deg) rotateZ(360deg); }
+}
+
+/* Floating animation */
+@keyframes float {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(10px, 10px); }
+    100% { transform: translate(0, 0); }
 }
 
 /* Retro Nav Bar */
@@ -158,7 +204,7 @@ body::after {
 
 /* Hero Section */
 .hero {
-    min-height: 100vh; /* Already set, but ensuring consistency */
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -262,7 +308,6 @@ body::after {
 
 /* Mixes Section */
 .mixes {
-    min-height: 100vh; /* Updated to match viewport height */
     padding: 5rem 2rem;
     background: rgba(0, 0, 0, 0.5);
 }
@@ -315,7 +360,6 @@ body::after {
 
 /* Artist Section */
 .artist {
-    min-height: 100vh; /* Updated to match viewport height */
     padding: 5rem 2rem;
     background: rgba(0, 0, 0, 0.5);
 }
@@ -352,11 +396,11 @@ body::after {
 
 /* Booking Section */
 .booking {
-    min-height: 100vh; /* Updated to match viewport height */
     padding: 5rem 2rem;
     background: rgba(0, 0, 0, 0.5);
     position: relative;
 }
+
 .booking-grid {
     width: 100%;
     height: 200px;
@@ -404,39 +448,6 @@ body::after {
     color: #00f7ff;
     font-size: 1.2rem;
     text-shadow: 0 0 10px #00f7ff;
-}
-
-/* General Section Styles for Smooth Scrolling */
-section {
-    min-height: 100vh; /* Each section takes up the full viewport height */
-    width: 100%;
-    position: relative;
-    transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out; /* Smooth transition for sliding and zooming */
-    opacity: 1;
-}
-
-/* Class for sections that are out of view (above) */
-.out-of-view-up {
-    transform: translateY(-100%);
-    opacity: 0;
-}
-
-/* Class for sections that are out of view (below) */
-.out-of-view-down {
-    transform: translateY(100%);
-    opacity: 0;
-}
-
-/* Class for sections that are in view */
-.in-view {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-/* Class for zooming down effect when scrolling up */
-.zoom-down {
-    transform: translateY(100%) scale(0.95); /* Slight zoom effect */
-    opacity: 0;
 }
 
 /* Mobile Responsiveness */
