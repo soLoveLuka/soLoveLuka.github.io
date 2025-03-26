@@ -112,7 +112,6 @@ body::after {
     animation: float 10s infinite ease-in-out reverse; /* Reverse float for depth */
 }
 
-
 /* Subtle floating animation */
 @keyframes float {
     0% { transform: rotateX(20deg) rotateY(20deg) translate(0, 0); }
