@@ -29,8 +29,9 @@ body::before {
         repeating-linear-gradient(90deg, transparent 0px, transparent 40px, rgba(0, 247, 255, 0.3) 40px, rgba(0, 247, 255, 0.3) 41px, transparent 41px, transparent 80px),
         repeating-linear-gradient(0deg, transparent 0px, transparent 40px, rgba(0, 247, 255, 0.3) 40px, rgba(0, 247, 255, 0.3) 41px, transparent 41px, transparent 80px);
     background-size: 80px 80px;
-    z-index: -1;
+    z-index: 0;
     pointer-events: none;
+}
 
 body::after {
     content: '';
@@ -83,9 +84,9 @@ body::after {
         );
     background-size: 80px 80px;
     background-position: 0 0;
-    z-index: -1;
+    z-index: 0;
     pointer-events: none;
-    transform: rotateX(30deg) rotateY(30deg); /* Match the 3D effect */
+    transform: none;
     filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.5)) drop-shadow(0 0 10px rgba(255, 0, 255, 0.3)) drop-shadow(0 0 15px rgba(0, 247, 255, 0.2)); /* Layered glows */
     animation: float 8s infinite ease-in-out reverse; /* Reverse floating animation */
 }
