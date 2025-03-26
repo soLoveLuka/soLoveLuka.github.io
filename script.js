@@ -146,8 +146,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (heroSection && soundWaveContainer && soundBars.length > 0) {
         heroSection.addEventListener('mousemove', (e) => {
             const containerRect = soundWaveContainer.getBoundingClientRect();
-            const mouseX = e.clientX - containerRect.left; // Mouse X relative to the sound-wave-container
-            const mouseY = e.clientY - containerRect.top; // Mouse Y relative to the sound-wave-container
+            // Adjust for scroll position
+            const scrollX = window.scrollX || window.pageXOffset;
+            const scrollY = window.scrollY || window.pageYOffset;
+            const mouseX = e.clientX - containerRect.left + scrollX; // Adjust mouse X for scroll
+            const mouseY = e.clientY - containerRect.top + scrollY; // Adjust mouse Y for scroll
             const centerY = containerRect.height / 2;
 
             soundBars.forEach((bar, index) => {
@@ -162,6 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const influenceY = Math.max(0, 150 - distanceY);
                 const height = minHeight + (influenceX + influenceY) * 0.3;
                 bar.style.height = `${Math.min(maxHeight, height)}px`;
+
+                // Debugging: Log positions to compare
+                console.log(`Bar ${index}: barX=${barX}, mouseX=${mouseX}, distanceX=${distanceX}`);
             });
         });
 
