@@ -14,7 +14,7 @@ body {
     color: #fff;
     overflow-x: hidden;
     position: relative;
-    perspective: 1000px; /* Reduced perspective for less extreme 3D effect */
+    perspective: 1500px; /* Adjusted for a balanced 3D effect */
 }
 
 body::before {
@@ -24,9 +24,9 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Create a complex grid of wireframe cubes with nested cubes */
+    /* Create a grid of wireframe cubes */
     background: 
-        /* Outer cube: Front vertical edges */
+        /* Front vertical edges */
         repeating-linear-gradient(
             90deg,
             transparent 0px,
@@ -36,7 +36,7 @@ body::before {
             transparent 41px,
             transparent 80px
         ),
-        /* Outer cube: Front horizontal edges */
+        /* Front horizontal edges */
         repeating-linear-gradient(
             0deg,
             transparent 0px,
@@ -46,7 +46,7 @@ body::before {
             transparent 41px,
             transparent 80px
         ),
-        /* Outer cube: Back vertical edges (shifted for depth) */
+        /* Back vertical edges (shifted for depth) */
         repeating-linear-gradient(
             90deg,
             transparent 0px,
@@ -56,7 +56,7 @@ body::before {
             transparent 21px,
             transparent 60px
         ),
-        /* Outer cube: Back horizontal edges (shifted for depth) */
+        /* Back horizontal edges (shifted for depth) */
         repeating-linear-gradient(
             0deg,
             transparent 0px,
@@ -65,33 +65,13 @@ body::before {
             rgba(0, 247, 255, 0.2) 21px,
             transparent 21px,
             transparent 60px
-        ),
-        /* Inner cube: Front vertical edges (nested inside) */
-        repeating-linear-gradient(
-            90deg,
-            transparent 0px,
-            transparent 30px,
-            rgba(255, 0, 255, 0.2) 30px, /* Magenta for inner cube */
-            rgba(255, 0, 255, 0.2) 31px,
-            transparent 31px,
-            transparent 70px
-        ),
-        /* Inner cube: Front horizontal edges */
-        repeating-linear-gradient(
-            0deg,
-            transparent 0px,
-            transparent 30px,
-            rgba(255, 0, 255, 0.2) 30px,
-            rgba(255, 0, 255, 0.2) 31px,
-            transparent 31px,
-            transparent 70px
         );
-    background-size: 80px 80px; /* Size of each outer cube */
-    background-position: 0 0, 0 0, 20px 20px, 20px 20px, 10px 10px, 10px 10px; /* Shift for depth */
+    background-size: 80px 80px; /* Size of each cube */
+    background-position: 0 0, 0 0, 20px 20px, 20px 20px; /* Shift for depth */
     z-index: -1;
     pointer-events: none;
-    transform: rotateX(15deg) rotateY(15deg); /* Reduced rotation for stability */
-    animation: cubeMove 12s infinite ease-in-out; /* Combined animation */
+    transform: rotateX(20deg) rotateY(20deg); /* Adjusted for better 3D effect */
+    animation: float 10s infinite ease-in-out; /* Subtle floating animation */
 }
 
 body::after {
@@ -103,7 +83,7 @@ body::after {
     height: 100%;
     /* Add connecting lines for the cube sides and glow */
     background: 
-        /* Outer cube: Diagonal lines (front-top to back-bottom) */
+        /* Diagonal lines (front-top to back-bottom) */
         repeating-linear-gradient(
             45deg,
             transparent 0px,
@@ -113,7 +93,7 @@ body::after {
             transparent 29px,
             transparent 57px
         ),
-        /* Outer cube: Diagonal lines (front-bottom to back-top) */
+        /* Diagonal lines (front-bottom to back-top) */
         repeating-linear-gradient(
             -45deg,
             transparent 0px,
@@ -122,54 +102,22 @@ body::after {
             rgba(0, 247, 255, 0.3) 29px,
             transparent 29px,
             transparent 57px
-        ),
-        /* Inner cube: Diagonal lines (front-top to back-bottom) */
-        repeating-linear-gradient(
-            45deg,
-            transparent 0px,
-            transparent 21px,
-            rgba(255, 0, 255, 0.2) 21px,
-            rgba(255, 0, 255, 0.2) 22px,
-            transparent 22px,
-            transparent 50px
-        ),
-        /* Inner cube: Diagonal lines (front-bottom to back-top) */
-        repeating-linear-gradient(
-            -45deg,
-            transparent 0px,
-            transparent 21px,
-            rgba(255, 0, 255, 0.2) 21px,
-            rgba(255, 0, 255, 0.2) 22px,
-            transparent 22px,
-            transparent 50px
         );
     background-size: 80px 80px;
     background-position: 0 0;
     z-index: -1;
     pointer-events: none;
-    transform: rotateX(15deg) rotateY(15deg); /* Match the 3D rotation */
-    filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.5)) drop-shadow(0 0 10px rgba(255, 0, 255, 0.3)) drop-shadow(0 0 15px rgba(0, 247, 255, 0.2)); /* Layered glows */
-    animation: cubeMove 12s infinite ease-in-out reverse; /* Combined animation in reverse */
+    transform: rotateX(20deg) rotateY(20deg); /* Match the 3D rotation */
+    filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.5)) drop-shadow(0 0 10px rgba(0, 247, 255, 0.3)); /* Simplified glow */
+    animation: float 10s infinite ease-in-out reverse; /* Subtle floating in reverse */
 }
 
-/* Combined floating and rotation animation */
-@keyframes cubeMove {
-    0% {
-        transform: rotateX(15deg) rotateY(15deg) rotateZ(0deg) translate(0, 0);
-    }
-    50% {
-        transform: rotateX(15deg) rotateY(15deg) rotateZ(180deg) translate(5px, 5px);
-    }
-    100% {
-        transform: rotateX(15deg) rotateY(15deg) rotateZ(360deg) translate(0, 0);
-    }
-}
 
-/* Floating animation */
+/* Subtle floating animation */
 @keyframes float {
-    0% { transform: translate(0, 0); }
-    50% { transform: translate(10px, 10px); }
-    100% { transform: translate(0, 0); }
+    0% { transform: rotateX(20deg) rotateY(20deg) translate(0, 0); }
+    50% { transform: rotateX(20deg) rotateY(20deg) translate(5px, 5px); }
+    100% { transform: rotateX(20deg) rotateY(20deg) translate(0, 0); }
 }
 
 /* Retro Nav Bar */
