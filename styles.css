@@ -6,100 +6,15 @@
     font-family: 'VCR OSD Mono', monospace;
 }
 
-/* Body setup */
+/* Body with modern, simplistic, spacey background */
 body {
-    background-color: #0a0a1e;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    overflow-x: hidden; /* Allow scrolling but prevent horizontal overflow */
-    perspective: 1500px; /* Adjusted for better depth on mobile */
-}
-
-/* 3D Cube Grid Container */
-.cube-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); /* Responsive grid */
-    grid-template-rows: auto;
-    gap: 8px;
-    transform: rotateX(45deg) rotateY(45deg);
-}
-
-/* Individual Cube */
-.cube {
-    width: 60px;
-    height: 60px;
+    background: linear-gradient(rgba(0, 0, 20, 0.8), rgba(0, 0, 20, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
+    background-color: #1a1a3d; /* Lighter fallback color: dark blue-purple */
+    color: #fff;
+    overflow-x: hidden;
     position: relative;
-    transform-style: preserve-3d;
-}
-
-/* Cube Faces */
-.cube div {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    background: rgba(0, 247, 255, 0.7);
-    border: 1px solid #00f7ff;
-}
-
-/* Adjust cube face positioning */
-.front { transform: translateZ(30px); }
-.back { transform: rotateY(180deg) translateZ(30px); }
-.top { transform: rotateX(90deg) translateZ(30px); }
-.bottom { transform: rotateX(-90deg) translateZ(30px); }
-.left { transform: rotateY(-90deg) translateZ(30px); }
-.right { transform: rotateY(90deg) translateZ(30px); }
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    body {
-        perspective: 1200px; /* Reduce perspective for smaller screens */
-    }
-    
-    .cube-grid {
-        transform: rotateX(40deg) rotateY(40deg); /* Slightly adjust angles for better visibility */
-    }
-
-    .cube {
-        width: 50px;
-        height: 50px;
-    }
-
-    .cube div {
-        width: 50px;
-        height: 50px;
-    }
-
-    .front, .back, .top, .bottom, .left, .right {
-        transform: translateZ(25px);
-    }
-}
-
-@media (max-width: 480px) {
-    body {
-        flex-direction: column; /* Stack elements vertically */
-        perspective: 1000px;
-    }
-
-    .cube-grid {
-        transform: rotateX(30deg) rotateY(30deg); /* Further adjust angles */
-        gap: 5px; /* Reduce gap */
-    }
-
-    .cube {
-        width: 40px;
-        height: 40px;
-    }
-
-    .cube div {
-        width: 40px;
-        height: 40px;
-    }
-
-    .front, .back, .top, .bottom, .left, .right {
-        transform: translateZ(20px);
-    }
+    perspective: 1500px; /* Adjusted for a balanced 3D effect */
 }
 
 body::before {
@@ -109,12 +24,54 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background:
-        repeating-linear-gradient(90deg, transparent 0px, transparent 40px, rgba(0, 247, 255, 0.3) 40px, rgba(0, 247, 255, 0.3) 41px, transparent 41px, transparent 80px),
-        repeating-linear-gradient(0deg, transparent 0px, transparent 40px, rgba(0, 247, 255, 0.3) 40px, rgba(0, 247, 255, 0.3) 41px, transparent 41px, transparent 80px);
-    background-size: 80px 80px;
-    z-index: 0;
+    /* Create a grid of wireframe cubes */
+    background: 
+        /* Front vertical edges */
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 40px,
+            rgba(0, 247, 255, 0.3) 40px, /* Brighter cyan edge */
+            rgba(0, 247, 255, 0.3) 41px,
+            transparent 41px,
+            transparent 80px
+        ),
+        /* Front horizontal edges */
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 40px,
+            rgba(0, 247, 255, 0.3) 40px,
+            rgba(0, 247, 255, 0.3) 41px,
+            transparent 41px,
+            transparent 80px
+        ),
+        /* Back vertical edges (shifted for depth) */
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 20px,
+            rgba(0, 247, 255, 0.2) 20px,
+            rgba(0, 247, 255, 0.2) 21px,
+            transparent 21px,
+            transparent 60px
+        ),
+        /* Back horizontal edges (shifted for depth) */
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 20px,
+            rgba(0, 247, 255, 0.2) 20px,
+            rgba(0, 247, 255, 0.2) 21px,
+            transparent 21px,
+            transparent 60px
+        );
+    background-size: 80px 80px; /* Size of each cube */
+    background-position: 0 0, 0 0, 20px 20px, 20px 20px; /* Shift for depth */
+    z-index: -1;
     pointer-events: none;
+    transform: rotateX(20deg) rotateY(20deg); /* Adjusted for better 3D effect */
+    animation: float 10s infinite ease-in-out; /* Subtle floating animation */
 }
 
 body::after {
@@ -125,8 +82,8 @@ body::after {
     width: 100%;
     height: 100%;
     /* Add connecting lines for the cube sides and glow */
-    background:
-        /* Outer cube: Diagonal lines (front-top to back-bottom) */
+    background: 
+        /* Diagonal lines (front-top to back-bottom) */
         repeating-linear-gradient(
             45deg,
             transparent 0px,
@@ -136,7 +93,7 @@ body::after {
             transparent 29px,
             transparent 57px
         ),
-        /* Outer cube: Diagonal lines (front-bottom to back-top) */
+        /* Diagonal lines (front-bottom to back-top) */
         repeating-linear-gradient(
             -45deg,
             transparent 0px,
@@ -145,41 +102,21 @@ body::after {
             rgba(0, 247, 255, 0.3) 29px,
             transparent 29px,
             transparent 57px
-        ),
-        /* Inner cube: Diagonal lines (front-top to back-bottom) */
-        repeating-linear-gradient(
-            45deg,
-            transparent 0px,
-            transparent 21px,
-            rgba(255, 0, 255, 0.2) 21px,
-            rgba(255, 0, 255, 0.2) 22px,
-            transparent 22px,
-            transparent 50px
-        ),
-        /* Inner cube: Diagonal lines (front-bottom to back-top) */
-        repeating-linear-gradient(
-            -45deg,
-            transparent 0px,
-            transparent 21px,
-            rgba(255, 0, 255, 0.2) 21px,
-            rgba(255, 0, 255, 0.2) 22px,
-            transparent 22px,
-            transparent 50px
         );
     background-size: 80px 80px;
     background-position: 0 0;
-    z-index: 0;
+    z-index: -1;
     pointer-events: none;
-    transform: none;
-    filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.5)) drop-shadow(0 0 10px rgba(255, 0, 255, 0.3)) drop-shadow(0 0 15px rgba(0, 247, 255, 0.2)); /* Layered glows */
-    animation: float 8s infinite ease-in-out reverse; /* Reverse floating animation */
+    transform: rotateX(20deg) rotateY(20deg); /* Match the 3D rotation */
+    filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.5)) drop-shadow(0 0 10px rgba(0, 247, 255, 0.3)); /* Simplified glow */
+    animation: float 10s infinite ease-in-out reverse; /* Subtle floating in reverse */
 }
 
-/* Floating animation */
+/* Subtle floating animation */
 @keyframes float {
-    0% { transform: translate(0, 0) rotateX(30deg) rotateY(30deg); }
-    50% { transform: translate(15px, 15px) rotateX(30deg) rotateY(30deg); }
-    100% { transform: translate(0, 0) rotateX(30deg) rotateY(30deg); }
+    0% { transform: rotateX(20deg) rotateY(20deg) translate(0, 0); }
+    50% { transform: rotateX(20deg) rotateY(20deg) translate(5px, 5px); }
+    100% { transform: rotateX(20deg) rotateY(20deg) translate(0, 0); }
 }
 
 /* Retro Nav Bar */
@@ -212,9 +149,42 @@ body::after {
     color: #00f7ff;
 }
 
+/* General Section Styles for Smooth Scrolling */
+section {
+    min-height: 100vh; /* Each section takes up the full viewport height */
+    width: 100%;
+    position: relative;
+    transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out; /* Smooth transition for sliding and zooming */
+    opacity: 1;
+}
+
+/* Class for sections that are out of view (above) */
+.out-of-view-up {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+/* Class for sections that are out of view (below) */
+.out-of-view-down {
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+/* Class for sections that are in view */
+.in-view {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Class for zooming down effect when scrolling up */
+.zoom-down {
+    transform: translateY(100%) scale(0.95); /* Slight zoom effect */
+    opacity: 0;
+}
+
 /* Hero Section */
 .hero {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -282,19 +252,23 @@ body::after {
     62% { transform: translate(-11px, 1px) skew(21deg); }
 }
 
-/* Sound Wave Animation */
-.sound-wave {
+/* Sound Wave Container and Bars */
+.sound-wave-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
     width: 300px;
-    height: 50px;
-    background: linear-gradient(90deg, #ff00ff, #00f7ff);
-    animation: wave 2s infinite linear;
+    height: 100px;
     margin-bottom: 2rem;
 }
 
-@keyframes wave {
-    0% { transform: scaleX(1); }
-    50% { transform: scaleX(1.2); }
-    100% { transform: scaleX(1); }
+.sound-bar {
+    width: 20px;
+    height: 10px; /* Default height, will be adjusted by JavaScript */
+    background: linear-gradient(90deg, #ff00ff, #00f7ff);
+    margin: 0 5px;
+    transition: height 0.3s ease; /* Smooth height transition */
+    box-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
 }
 
 /* Neon Button */
@@ -318,6 +292,7 @@ body::after {
 
 /* Mixes Section */
 .mixes {
+    min-height: 100vh;
     padding: 5rem 2rem;
     background: rgba(0, 0, 0, 0.5);
 }
@@ -333,10 +308,10 @@ body::after {
 
 .mix-grid {
     display: flex;
-    flex-direction: column; /* Changed to column for vertical stacking */
-    align-items: center; 
+    flex-direction: column;
+    align-items: center;
     gap: 2rem;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-x: hidden;
     padding-bottom: 1rem;
 }
 
@@ -347,10 +322,12 @@ body::after {
     text-align: center;
     transition: transform 0.3s;
     box-shadow: 0 0 10px #ff00ff;
+    width: 100%;
+    max-width: 400px; /* Limit width for better layout */
 }
 
 .mix-card img {
-    width: 300px;
+    width: 100%;
     height: 300px;
     object-fit: cover;
 }
@@ -371,20 +348,22 @@ body::after {
 
 /* Artist Section */
 .artist {
+    min-height: 100vh;
     padding: 5rem 2rem;
     background: rgba(0, 0, 0, 0.5);
 }
 
 .artist-content {
     display: flex;
-    flex-direction: column; /* Ensure vertical alignment */
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 3rem;
 }
 
 .artist-content img {
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     height: 400px;
     object-fit: cover;
     border: 2px solid #00f7ff;
@@ -393,6 +372,7 @@ body::after {
 
 .artist-bio {
     max-width: 500px;
+    text-align: center;
 }
 
 .artist-bio p {
@@ -405,29 +385,9 @@ body::after {
     filter: hue-rotate(300deg);
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-    /* Other styles remain unchanged */
-
-    .mix-grid {
-        /* This will stack the mix cards on mobile */
-        flex-direction: column; 
-        align-items: center;
-    }
-
-    .artist-content {
-        /* Ensures images stack vertically on mobile */
-        flex-direction: column; 
-        text-align: center;
-    }
-}
-
-@media (max-width: 480px) {
-    /* Media styles for small screens remain unchanged */
-}
-
 /* Booking Section */
 .booking {
+    min-height: 100vh;
     padding: 5rem 2rem;
     background: rgba(0, 0, 0, 0.5);
     position: relative;
@@ -501,8 +461,18 @@ body::after {
         font-size: 1.5rem;
     }
 
-    .sound-wave {
+    .sound-wave-container {
         width: 200px;
+        height: 80px;
+    }
+
+    .sound-bar {
+        width: 15px;
+        margin: 0 3px;
+    }
+
+    .mixes, .artist, .booking {
+        padding: 3rem 1rem; /* Reduced padding for smaller screens */
     }
 
     .mix-grid {
@@ -511,12 +481,11 @@ body::after {
     }
 
     .mix-card {
-        width: 80%;
+        max-width: 300px; /* Smaller cards on tablet */
     }
 
     .mix-card img {
-        width: 100%;
-        height: auto;
+        height: 200px; /* Smaller images on tablet */
     }
 
     .artist-content {
@@ -525,11 +494,90 @@ body::after {
     }
 
     .artist-content img {
-        width: 80%;
-        height: auto;
+        max-width: 300px;
+        height: 300px;
     }
 
     .booking-form {
         width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .retro-nav {
+        padding: 0.5rem;
+    }
+
+    .retro-nav a {
+        font-size: 0.9rem;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero h2 {
+        font-size: 1.2rem;
+    }
+
+    .sound-wave-container {
+        width: 150px;
+        height: 60px;
+    }
+
+    .sound-bar {
+        width: 10px;
+        margin: 0 2px;
+    }
+
+    .neon-button {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .mixes, .artist, .booking {
+        padding: 2rem 0.5rem; /* Further reduced padding for mobile */
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .mix-card {
+        max-width: 250px; /* Even smaller cards on mobile */
+    }
+
+    .mix-card img {
+        height: 150px; /* Smaller images on mobile */
+    }
+
+    .mix-card h3 {
+        font-size: 1.2rem;
+    }
+
+    .artist-content img {
+        max-width: 250px;
+        height: 250px;
+    }
+
+    .artist-bio p {
+        font-size: 1rem;
+    }
+
+    .booking-grid {
+        height: 150px; /* Smaller grid on mobile */
+    }
+
+    .booking-form label {
+        font-size: 1rem;
+    }
+
+    .booking-form input,
+    .booking-form textarea {
+        font-size: 0.9rem;
+    }
+
+    .trust-signal {
+        font-size: 1rem;
     }
 }
