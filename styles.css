@@ -6,16 +6,77 @@
     font-family: 'VCR OSD Mono', monospace;
 }
 
-/* Body with modern, simplistic, spacey background */
+/* Body setup */
 body {
-    background: linear-gradient(rgba(0, 0, 20, 0.8), rgba(0, 0, 20, 0.8)), 
-                url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') 
-                no-repeat center center fixed;
-    background-size: cover;
-    background-color: #1a1a3d;
-    color: #fff;
-    overflow-x: hidden;
+    background-color: #0a0a1e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    perspective: 1000px;
+}
+
+/* 3D Cube Grid Container */
+.cube-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 80px);
+    grid-template-rows: repeat(5, 80px);
+    gap: 10px;
+    transform: rotateX(45deg) rotateY(45deg);
+}
+
+/* Individual Cube */
+.cube {
+    width: 80px;
+    height: 80px;
     position: relative;
+    transform-style: preserve-3d;
+}
+
+/* Cube Faces */
+.cube div {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: rgba(0, 247, 255, 0.7);
+    border: 1px solid #00f7ff;
+}
+
+/* Front Face */
+.front {
+    transform: translateZ(40px);
+    background: linear-gradient(135deg, #00f7ff, #002244);
+}
+
+/* Back Face */
+.back {
+    transform: rotateY(180deg) translateZ(40px);
+    background: linear-gradient(135deg, #002244, #00f7ff);
+}
+
+/* Top Face */
+.top {
+    transform: rotateX(90deg) translateZ(40px);
+    background: linear-gradient(135deg, #00ffff, #004488);
+}
+
+/* Bottom Face */
+.bottom {
+    transform: rotateX(-90deg) translateZ(40px);
+    background: linear-gradient(135deg, #004488, #00ffff);
+}
+
+/* Left Face */
+.left {
+    transform: rotateY(-90deg) translateZ(40px);
+    background: linear-gradient(135deg, #00f7ff, #001122);
+}
+
+/* Right Face */
+.right {
+    transform: rotateY(90deg) translateZ(40px);
+    background: linear-gradient(135deg, #001122, #00f7ff);
 }
 
 body::before {
@@ -426,6 +487,4 @@ body::after {
     .booking-form {
         width: 90%;
     }
-}
-
 }
