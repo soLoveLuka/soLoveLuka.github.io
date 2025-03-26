@@ -23,18 +23,53 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(
-        circle at 50% 50%,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0.1) 20px,
-        transparent 20px,
-        transparent 40px
-    );
-    background-size: 80px 80px; /* Size of each square */
+    /* Create a grid of wireframe-like cubes using gradients */
+    background: 
+        /* Vertical lines (front and back edges) */
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 30px,
+            rgba(0, 247, 255, 0.1) 30px, /* Cyan edge */
+            rgba(0, 247, 255, 0.1) 31px,
+            transparent 31px,
+            transparent 60px
+        ),
+        /* Horizontal lines (top and bottom edges) */
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 30px,
+            rgba(0, 247, 255, 0.1) 30px, /* Cyan edge */
+            rgba(0, 247, 255, 0.1) 31px,
+            transparent 31px,
+            transparent 60px
+        ),
+        /* Diagonal lines to simulate 3D perspective (front-top to back-bottom) */
+        repeating-linear-gradient(
+            45deg,
+            transparent 0px,
+            transparent 42px, /* Adjusted to align with the grid */
+            rgba(0, 247, 255, 0.1) 42px,
+            rgba(0, 247, 255, 0.1) 43px,
+            transparent 43px,
+            transparent 85px
+        ),
+        /* Diagonal lines (front-bottom to back-top) */
+        repeating-linear-gradient(
+            -45deg,
+            transparent 0px,
+            transparent 42px,
+            rgba(0, 247, 255, 0.1) 42px,
+            rgba(0, 247, 255, 0.1) 43px,
+            transparent 43px,
+            transparent 85px
+        );
+    background-size: 60px 60px; /* Size of each cube */
     background-position: 0 0;
     z-index: -1;
     pointer-events: none;
-    filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.3)); /* Cyan glow for 3D effect */
+    animation: float 10s infinite ease-in-out; /* Floating animation */
 }
 
 body::after {
@@ -44,17 +79,39 @@ body::after {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(
-        circle at 50% 50%,
-        rgba(0, 247, 255, 0.2) 0%, /* Cyan highlight */
-        rgba(0, 247, 255, 0.05) 10px,
-        transparent 20px,
-        transparent 40px
-    );
-    background-size: 80px 80px; /* Match the square size */
+    /* Add a subtle glow to the cubes */
+    background: 
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 30px,
+            rgba(0, 247, 255, 0.05) 30px,
+            rgba(0, 247, 255, 0.05) 31px,
+            transparent 31px,
+            transparent 60px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 30px,
+            rgba(0, 247, 255, 0.05) 30px,
+            rgba(0, 247, 255, 0.05) 31px,
+            transparent 31px,
+            transparent 60px
+        );
+    background-size: 60px 60px;
     background-position: 0 0;
     z-index: -1;
     pointer-events: none;
+    filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.3)); /* Cyan glow */
+    animation: float 10s infinite ease-in-out reverse; /* Reverse float for depth */
+}
+
+/* Floating animation */
+@keyframes float {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(10px, 10px); }
+    100% { transform: translate(0, 0); }
 }
 
 /* Retro Nav Bar */
