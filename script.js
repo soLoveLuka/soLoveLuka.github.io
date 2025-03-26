@@ -140,18 +140,20 @@ document.addEventListener('DOMContentLoaded', () => {
 // Sound wave interaction with mouse movement
 document.addEventListener('DOMContentLoaded', () => {
     const heroSection = document.querySelector('.hero');
+    const soundWaveContainer = document.querySelector('.sound-wave-container');
     const soundBars = document.querySelectorAll('.sound-bar');
 
-    if (heroSection && soundBars.length > 0) {
+    if (heroSection && soundWaveContainer && soundBars.length > 0) {
         heroSection.addEventListener('mousemove', (e) => {
-            const rect = heroSection.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
+            const containerRect = soundWaveContainer.getBoundingClientRect();
+            const mouseX = e.clientX - containerRect.left; // Mouse X relative to the sound-wave-container
+            const mouseY = e.clientY - containerRect.top; // Mouse Y relative to the sound-wave-container
+            const centerY = containerRect.height / 2;
 
             soundBars.forEach((bar, index) => {
-                const barX = (index * 30) + 15;
+                // Get the actual position of each bar relative to the container
+                const barRect = bar.getBoundingClientRect();
+                const barX = barRect.left - containerRect.left + (barRect.width / 2); // Center of the bar
                 const distanceX = Math.abs(mouseX - barX);
                 const distanceY = Math.abs(mouseY - centerY);
                 const maxHeight = 80;
