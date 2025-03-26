@@ -1,0 +1,294 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'VCR OSD Mono', monospace;
+}
+
+/* Body with galaxy background */
+body {
+    background: url('https://images.unsplash.com/photo-1447433693259-c8549e937d62?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Retro Nav Bar */
+.retro-nav {
+    position: sticky;
+    top: 0;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 1rem;
+    z-index: 100;
+    border-bottom: 2px solid #00f7ff;
+    box-shadow: 0 0 10px #00f7ff;
+}
+
+.retro-nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.retro-nav a {
+    color: #ff00ff;
+    text-decoration: none;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    transition: color 0.3s;
+}
+
+.retro-nav a:hover {
+    color: #00f7ff;
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+.hero h1 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.hero h2 {
+    font-size: 2rem;
+    color: #00f7ff;
+    margin-bottom: 2rem;
+}
+
+/* Glitch Effect for Title */
+.glitch {
+    position: relative;
+    color: #fff;
+    animation: glitch 1s linear infinite;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitch::before {
+    color: #ff00ff;
+    animation: glitch-top 0.5s linear infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+}
+
+.glitch::after {
+    color: #00f7ff;
+    animation: glitch-bottom 0.7s linear infinite;
+    clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+}
+
+@keyframes glitch {
+    2%, 64% { transform: translate(2px, 0) skew(0deg); }
+    4%, 60% { transform: translate(-2px, 0) skew(0deg); }
+    62% { transform: translate(0, 0) skew(5deg); }
+}
+
+@keyframes glitch-top {
+    2%, 64% { transform: translate(2px, -2px); }
+    4%, 60% { transform: translate(-2px, 2px); }
+    62% { transform: translate(13px, -1px) skew(-13deg); }
+}
+
+@keyframes glitch-bottom {
+    2%, 64% { transform: translate(-2px, 0); }
+    4%, 60% { transform: translate(2px, 0); }
+    62% { transform: translate(-11px, 1px) skew(21deg); }
+}
+
+/* Sound Wave Animation */
+.sound-wave {
+    width: 300px;
+    height: 50px;
+    background: linear-gradient(90deg, #ff00ff, #00f7ff);
+    animation: wave 2s infinite linear;
+    margin-bottom: 2rem;
+}
+
+@keyframes wave {
+    0% { transform: scaleX(1); }
+    50% { transform: scaleX(1.2); }
+    100% { transform: scaleX(1); }
+}
+
+/* Neon Button */
+.neon-button {
+    padding: 1rem 2rem;
+    background: none;
+    border: 2px solid #ff00ff;
+    color: #ff00ff;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 10px #ff00ff;
+}
+
+.neon-button:hover {
+    background: #ff00ff;
+    color: #000;
+    box-shadow: 0 0 20px #ff00ff;
+}
+
+/* Mixes Section */
+.mixes {
+    padding: 5rem 2rem;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.section-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #00f7ff;
+    text-shadow: 0 0 10px #00f7ff;
+}
+
+.mix-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+.mix-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #ff00ff;
+    padding: 1rem;
+    text-align: center;
+    transition: transform 0.3s;
+    box-shadow: 0 0 10px #ff00ff;
+}
+
+.mix-card img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+}
+
+.mix-card h3 {
+    font-size: 1.5rem;
+    color: #00f7ff;
+    margin: 1rem 0;
+}
+
+.mix-card p {
+    color: #fff;
+}
+
+.mix-card:hover {
+    transform: scale(1.05);
+}
+
+/* Artist Section */
+.artist {
+    padding: 5rem 2rem;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.artist-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
+.artist-content img {
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+    border: 2px solid #00f7ff;
+    box-shadow: 0 0 10px #00f7ff;
+}
+
+.artist-bio {
+    max-width: 500px;
+}
+
+.artist-bio p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.artist-bio audio {
+    width: 100%;
+    filter: hue-rotate(300deg);
+}
+
+/* Booking Section */
+.booking {
+    padding: 5rem 2rem;
+    background: rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.booking-grid {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(45deg, #ff00ff, #00f7ff);
+    animation: pulse 5s infinite;
+    margin-bottom: 2rem;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+.booking-form {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.booking-form label {
+    font-size: 1.2rem;
+    color: #00f7ff;
+}
+
+.booking-form input,
+.booking-form textarea {
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #ff00ff;
+    color: #fff;
+    font-family: 'VCR OSD Mono', monospace;
+    font-size: 1rem;
+}
+
+.booking-form textarea {
+    height: 150px;
+    resize: none;
+}
+
+.trust-signal {
+    text-align: center;
+    color: #00f7ff;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px #00f7ff;
+}

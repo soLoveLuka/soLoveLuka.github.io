@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luka - Mix Engineer & Artist</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VCR+OSD+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="retro-nav">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#mixes">Mixes</a></li>
+            <li><a href="#artist">Artist</a></li>
+            <li><a href="#book">Book a Mix</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <h1 class="glitch" data-text="Your Name">Your Name</h1>
+        <h2>Mix Engineer & Artist</h2>
+        <div class="sound-wave"></div>
+        <a href="#book" class="neon-button">Book a Mix</a>
+    </section>
+
+    <!-- Mixes Section -->
+    <section id="mixes" class="mixes">
+        <h2 class="section-title">Featured Mixes</h2>
+        <div class="mix-grid">
+            <div class="mix-card">
+                <img src="https://via.placeholder.com/300x300" alt="Mix 1">
+                <h3>Mix 1</h3>
+                <p>Indie Pop Banger</p>
+            </div>
+            <div class="mix-card">
+                <img src="https://via.placeholder.com/300x300" alt="Mix 2">
+                <h3>Mix 2</h3>
+                <p>Hip-Hop Dreamscape</p>
+            </div>
+            <div class="mix-card">
+                <img src="https://via.placeholder.com/300x300" alt="Mix 3">
+                <h3>Mix 3</h3>
+                <p>Retro Punk Vibes</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Artist Section -->
+    <section id="artist" class="artist">
+        <h2 class="section-title">The Artist</h2>
+        <div class="artist-content">
+            <img src="https://via.placeholder.com/400x400" alt="Your Photo">
+            <div class="artist-bio">
+                <p>Hey, I’m [Your Name]—a mix engineer and artist blending indie, hip-hop, and retro vibes into spacey, ethereal soundscapes. Check out my tracks below.</p>
+                <audio controls>
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="book" class="booking">
+        <h2 class="section-title">Book a Mix</h2>
+        <div class="booking-grid">
+            <div class="neon-grid"></div>
+        </div>
+        <form class="booking-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="message">Project Details:</label>
+            <textarea id="message" name="message" required></textarea>
+            <div class="trust-signal">✔ 100% Quality Guaranteed</div>
+            <button type="submit" class="neon-button">Submit</button>
+        </form>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
