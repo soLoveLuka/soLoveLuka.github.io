@@ -333,9 +333,10 @@ body::after {
 
 .mix-grid {
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* Changed to column for vertical stacking */
+    align-items: center; 
     gap: 2rem;
-    overflow-x: auto;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
     padding-bottom: 1rem;
 }
 
@@ -376,10 +377,10 @@ body::after {
 
 .artist-content {
     display: flex;
+    flex-direction: column; /* Ensure vertical alignment */
     justify-content: center;
     align-items: center;
     gap: 3rem;
-    flex-wrap: wrap;
 }
 
 .artist-content img {
@@ -402,6 +403,27 @@ body::after {
 .artist-bio audio {
     width: 100%;
     filter: hue-rotate(300deg);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    /* Other styles remain unchanged */
+
+    .mix-grid {
+        /* This will stack the mix cards on mobile */
+        flex-direction: column; 
+        align-items: center;
+    }
+
+    .artist-content {
+        /* Ensures images stack vertically on mobile */
+        flex-direction: column; 
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Media styles for small screens remain unchanged */
 }
 
 /* Booking Section */
