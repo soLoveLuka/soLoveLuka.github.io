@@ -6,13 +6,38 @@
     font-family: 'VCR OSD Mono', monospace;
 }
 
-/* Body with galaxy background */
+/* Body with modern, simplistic, spacey background */
 body {
-    background: url('https://images.unsplash.com/photo-1447433693259-c8549e937d62?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+    background: linear-gradient(rgba(0, 0, 20, 0.8), rgba(0, 0, 20, 0.8)), url('https://images.unsplash.com/photo-1611325058432-30bee87d45c8?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center fixed;
     background-size: cover;
     color: #fff;
     overflow-x: hidden;
     position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.05),
+        rgba(255, 255, 255, 0.05) 1px,
+        transparent 1px,
+        transparent 50px
+    ),
+    repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.05),
+        rgba(255, 255, 255, 0.05) 1px,
+        transparent 1px,
+        transparent 50px
+    );
+    z-index: -1;
+    pointer-events: none;
 }
 
 /* Retro Nav Bar */
