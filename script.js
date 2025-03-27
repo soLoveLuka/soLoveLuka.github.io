@@ -27,15 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Update background color based on section
-        const sectionId = sections[currentSectionIndex].id;
-        document.body.className = ''; // Reset classes
-        document.body.classList.add(`${sectionId}-bg`);
+        // Update background color based on section (disable on mobile)
+        const isMobile = window.innerWidth <= 768;
+        if (!isMobile) {
+            const sectionId = sections[currentSectionIndex].id;
+            document.body.className = ''; // Reset classes
+            document.body.classList.add(`${sectionId}-bg`);
+        }
 
-        // Add section transition particles
+        // Add section transition particles (fewer on mobile)
         if (sectionParticles) {
             sectionParticles.innerHTML = ''; // Clear previous particles
-            const particleCount = window.innerWidth <= 480 ? 10 : 20; // Fewer particles on mobile
+            const particleCount = isMobile ? 5 : 20; // Reduced particles on mobile
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('section-particle');
@@ -69,16 +72,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
 
         const sectionHeight = window.innerHeight;
-        const scrollThreshold = sectionHeight * 0.5;
+        const isMobile = window.innerWidth <= 768;
+        const scrollThreshold = sectionHeight * (isMobile ? 0.7 : 0.5); // Higher threshold on mobile
         if (Math.abs(scrollTop - lastScrollTop) > scrollThreshold) {
             updateSections(scrollDirection);
         }
 
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
 
-        // Navigation fade-in
+        // Navigation fade-in (keep visible on mobile)
         const nav = document.querySelector('.retro-nav');
-        if (scrollTop > 50) {
+        if (scrollTop > 50 || isMobile) {
             nav.classList.add('scrolled');
         } else {
             nav.classList.remove('scrolled');
@@ -108,6 +112,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }, 10));
+
+    // Smooth scrolling for nav links and buttons
+    document.querySelectorAll('.retro-nav a, .neon-button').forEach(anchor => {
+        anchor.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = anchor.getAttribute('href').substring(1);
+            const targetSection = document.getElementById(targetId);
+            const sectionIndex = Array.from(sections).indexOf(targetSection);
+            currentSectionIndex = sectionIndex;
+            updateSections(currentSectionIndex > currentSectionIndex ? 'down' : 'up');
+            targetSection.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
 });
 
 // Sound wave interaction with mouse movement and touch support
@@ -184,16 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
         heroSection.addEventListener('mouseleave', handleMouseLeave);
         heroSection.addEventListener('touchmove', handleTouchMove, { passive: false });
         heroSection.addEventListener('touchend', handleTouchEnd);
-
-        heroSection.removeEventListener('mousemove', handleMouseMove);
-        heroSection.removeEventListener('mouseleave', handleMouseLeave);
-        heroSection.removeEventListener('touchmove', handleTouchMove);
-        heroSection.removeEventListener('touchend', handleTouchEnd);
-
-        heroSection.addEventListener('mousemove', handleMouseMove);
-        heroSection.addEventListener('mouseleave', handleMouseLeave);
-        heroSection.addEventListener('touchmove', handleTouchMove, { passive: false });
-        heroSection.addEventListener('touchend', handleTouchEnd);
     }
 });
 
@@ -260,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (bookingSection) sectionObserver.observe(bookingSection);
 });
 
-// Preloader with waveform and progress indicator (disintegration effect removed)
+// Preloader with waveform and progress indicator
 document.addEventListener('DOMContentLoaded', () => {
     const preloader = document.querySelector('.preloader');
     const preloaderText = document.querySelector('.preloader-text');
@@ -274,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update progress percentage
         let progress = 0;
-        const totalDuration = 4000; // Reduced to 4 seconds since disintegration is removed
+        const totalDuration = 4000; // 4 seconds
         const interval = setInterval(() => {
             progress = Math.min(progress + (100 / (totalDuration / 50)), 100);
             progressText.textContent = `${Math.round(progress)}%`;
@@ -405,6 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
         neonGrid.classList.add('active');
     });
 
+    // Check if all fields before details are filled
     const checkAllFieldsBeforeDetails = () => {
         const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
         let allFilled = true;
@@ -426,6 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return allFilled;
     };
 
+    // Show details group with animation
     const showDetailsGroup = () => {
         const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
         formGroups.forEach((group, index) => {
@@ -441,6 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, formGroups.length * 200 + 500);
     };
 
+    // Revert form to initial state
     const revertForm = () => {
         detailsGroup.classList.remove('active');
         finishButtonInner.classList.remove('flipped');
@@ -456,44 +466,73 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Handle input interactions
     inputs.forEach(input => {
         const wrapper = input.closest('.input-wrapper');
         const label = wrapper.querySelector('.input-label');
+        const checkmark = wrapper.querySelector('.checkmark');
         const fieldName = input.closest('.form-group').dataset.field;
 
-        // Flip the input wrapper only when the input loses focus (blur) and has a value
+        // Show/hide label on focus/blur
+        input.addEventListener('focus', () => {
+            label.classList.add('hidden');
+        });
+
         input.addEventListener('blur', () => {
-            if (input.value.trim()) {
-                label.classList.add('hidden');
+            if (!input.value.trim()) {
+                label.classList.remove('hidden');
+            }
+        });
+
+        // Validate input and flip wrapper on Enter key or touch outside
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && input.checkValidity() && input.value.trim()) {
                 wrapper.classList.add('flipped');
                 filledFields.add(fieldName);
+                input.blur();
 
-                if (fieldName !== 'details' && checkAllFieldsBeforeDetails()) {
-                    showDetailsGroup();
-                    retroMessage.classList.add('visible');
-                }
-            } else {
-                label.classList.remove('hidden');
-                wrapper.classList.remove('flipped');
-                filledFields.delete(fieldName);
+                // Check if all required fields are filled to show retro message
+                const allFieldsFilled = checkAllFieldsBeforeDetails();
+                retroMessage.classList.toggle('visible', allFieldsFilled);
             }
         });
 
-        // Update label visibility while typing
-        input.addEventListener('input', () => {
-            if (input.value.trim()) {
-                label.classList.add('hidden');
-            } else {
-                label.classList.remove('hidden');
+        // On mobile, flip when tapping outside the input
+        document.addEventListener('touchend', (e) => {
+            if (!wrapper.contains(e.target) && input === document.activeElement && input.checkValidity() && input.value.trim()) {
+                wrapper.classList.add('flipped');
+                filledFields.add(fieldName);
+                input.blur();
+
+                // Check if all required fields are filled to show retro message
+                const allFieldsFilled = checkAllFieldsBeforeDetails();
+                retroMessage.classList.toggle('visible', allFieldsFilled);
             }
+        });
+
+        // Allow unflipping by clicking the checkmark
+        checkmark.addEventListener('click', () => {
+            wrapper.classList.remove('flipped');
+            filledFields.delete(fieldName);
+            label.classList.remove('hidden');
+            retroMessage.classList.remove('visible');
+            input.focus();
         });
     });
 
+    // Handle retro message click to show details group
+    retroMessage.addEventListener('click', () => {
+        if (checkAllFieldsBeforeDetails()) {
+            showDetailsGroup();
+        }
+    });
+
+    // Handle back arrow click to return to main form
     backArrow.addEventListener('click', () => {
         revertForm();
-        retroMessage.classList.remove('visible');
     });
 
+    // Handle form submission with finish button animation
     finishButtonWrapper.addEventListener('click', () => {
         if (!finishButtonInner.classList.contains('flipped')) {
             const wrapper = detailsInput.closest('.input-wrapper');
@@ -502,6 +541,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 filledFields.add('details');
             }
             finishButtonInner.classList.add('flipped');
+        }
+    });
+
+    // Ensure details input also has flip behavior
+    detailsInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && detailsInput.value.trim()) {
+            const wrapper = detailsInput.closest('.input-wrapper');
+            wrapper.classList.add('flipped');
+            filledFields.add('details');
+        }
+    });
+
+    // On mobile, flip details input when tapping outside
+    document.addEventListener('touchend', (e) => {
+        if (!detailsGroup.contains(e.target) && detailsInput === document.activeElement && detailsInput.value.trim()) {
+            const wrapper = detailsInput.closest('.input-wrapper');
+            wrapper.classList.add('flipped');
+            filledFields.add('details');
         }
     });
 });
