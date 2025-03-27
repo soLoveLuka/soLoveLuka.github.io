@@ -64,6 +64,24 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             backToTop.classList.remove('visible');
         }
+
+        // Check if mix cards should flip back when scrolling out of view
+        const mixesSection = document.querySelector('#mixes');
+        const mixCards = document.querySelectorAll('.mix-card');
+        const mixesRect = mixesSection.getBoundingClientRect();
+
+        // Define the threshold for when to flip back (e.g., when the section is 50% out of view)
+        const threshold = window.innerHeight * 0.5;
+
+        if (mixesRect.top > window.innerHeight - threshold || mixesRect.bottom < threshold) {
+            mixCards.forEach(card => {
+                if (card.classList.contains('flipped')) {
+                    card.classList.remove('flipped');
+                    const audio = card.querySelector('.mix-audio');
+                    if (audio) audio.pause();
+                }
+            });
+        }
     }, 10));
 });
 
@@ -213,4 +231,31 @@ document.addEventListener('DOMContentLoaded', () => {
             preloader.classList.add('hidden');
         }, 1000);
     }
+});
+
+// Mix card flip interaction
+document.addEventListener('DOMContentLoaded', () => {
+    const mixCards = document.querySelectorAll('.mix-card');
+    let currentlyFlippedCard = null;
+
+    mixCards.forEach(card => {
+        card.addEventListener('click', () => {
+            // If another card is flipped, flip it back and pause its audio
+            if (currentlyFlippedCard && currentlyFlippedCard !== card) {
+                currentlyFlippedCard.classList.remove('flipped');
+                const previousAudio = currentlyFlippedCard.querySelector('.mix-audio');
+                if (previousAudio) previousAudio.pause();
+            }
+
+            // Toggle the clicked card
+            card.classList.toggle('flipped');
+            currentlyFlippedCard = card.classList.contains('flipped') ? card : null;
+
+            // Pause audio when flipping back
+            const audio = card.querySelector('.mix-audio');
+            if (!card.classList.contains('flipped') && audio) {
+                audio.pause();
+            }
+        });
+    });
 });
