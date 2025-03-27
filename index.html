@@ -71,7 +71,7 @@
                         </div>
                         <div class="mix-card-back">
                             <audio controls class="mix-audio">
-                                <source src="https://raw.githubusercontent.com/soLoveLuka/soLoveLuka.github.io/main/audio/Interesting%20Stranger%20Master%20mp3.mp3" type="audio/mpeg">
+                                <source src="https://raw.githubusercontent.com/soLoveLuka/soLoveLuka.github.io/main/audio/Stranger%20Hunter.mp3" type="audio/mpeg">
                                 Your browser does not support the audio element.
                             </audio>
                         </div>
@@ -86,7 +86,7 @@
                         </div>
                         <div class="mix-card-back">
                             <audio controls class="mix-audio">
-                                <source src="https://raw.githubusercontent.com/soLoveLuka/soLoveLuka.github.io/main/audio/PrayNoTripleSix%20~%20Zoulex.mp3" type="audio/mpeg">
+                                <source src="https://raw.githubusercontent.com/soLoveLuka/soLoveLuka.github.io/main/audio/PrayNoTripleSix%20~%20Zoulex%20mp3.mp3" type="audio/mpeg">
                                 Your browser does not support the audio element.
                             </audio>
                         </div>
@@ -108,7 +108,7 @@
             <div class="artist-bio">
                 <p>Yo, it's Luka. I'm an engineer based in the U.S. I work with artists all over the world helping them find their sound and pave their way forward in the industry. Like what you hear? Book me here or add me on Discord |soloveluka| for more info!</p>
                 <audio controls class="artist-audio">
-                    <source src="https://raw.githubusercontent.com/soLoveLuka/soLoveLuka.github.io/main/audio/Obvious%20mp3.mp3" type="audio/mpeg">
+                    <source src="https://raw.githubusercontent.com/soLoveLuka/soLoveLuka.github.io/main/audio/Obvious.mp3" type="audio/mpeg">
                     Your browser does not support the audio element.
                 </audio>
             </div>
@@ -119,33 +119,63 @@
     <section id="booking" class="booking">
         <h2 class="section-title">Book Me</h2>
         <form id="booking-form" class="booking-form" action="https://formspree.io/f/xrbplnap" method="POST">
-            <div class="form-group">
+            <div class="form-group" data-field="name">
                 <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Your Name" required>
+                <div class="input-wrapper">
+                    <input type="text" id="name" name="name" placeholder="Your Name" required>
+                    <div class="input-back">
+                        <span class="checkmark">✔</span>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" data-field="email">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Your Email" required>
+                <div class="input-wrapper">
+                    <input type="email" id="email" name="email" placeholder="Your Email" required>
+                    <div class="input-back">
+                        <span class="checkmark">✔</span>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" data-field="phone">
                 <label for="phone">Phone</label>
-                <input type="tel" id="phone" name="phone" placeholder="Your Phone Number">
+                <div class="input-wrapper">
+                    <input type="tel" id="phone" name="phone" placeholder="Your Phone Number">
+                    <div class="input-back">
+                        <span class="checkmark">✔</span>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" data-field="date">
                 <label for="date">Preferred Date</label>
-                <input type="date" id="date" name="date" required>
+                <div class="input-wrapper">
+                    <input type="date" id="date" name="date" required>
+                    <div class="input-back">
+                        <span class="checkmark">✔</span>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" data-field="time">
                 <label for="time">Preferred Time</label>
-                <input type="time" id="time" name="time" required>
+                <div class="input-wrapper">
+                    <input type="time" id="time" name="time" required>
+                    <div class="input-back">
+                        <span class="checkmark">✔</span>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" data-field="details">
                 <label for="details">Details</label>
-                <textarea id="details" name="details" placeholder="Tell me about your project..." rows="5"></textarea>
+                <div class="input-wrapper">
+                    <textarea id="details" name="details" placeholder="Tell me about your project..." rows="5"></textarea>
+                    <div class="input-back">
+                        <span class="checkmark">✔</span>
+                    </div>
+                </div>
             </div>
-            <button type="submit" class="neon-btn">Book Mixes</button>
         </form>
         <div class="neon-grid"></div>
+        <div class="retro-message" id="retro-message">The more information the better!</div>
     </section>
 
     <!-- Back to Top Button -->
