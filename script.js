@@ -197,28 +197,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Mixes section animation with IntersectionObserver
+// Mixes section animation with IntersectionObserver, delayed until images load
 document.addEventListener('DOMContentLoaded', () => {
     const mixesSection = document.querySelector('#mixes');
     const mixGrid = document.querySelector('.mix-grid');
     const mixDescription = document.querySelector('.mix-description');
+    const mixImages = document.querySelectorAll('.mix-card-front img');
 
-    if (mixesSection && mixGrid && mixDescription) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    mixGrid.classList.add('active');
-                    mixDescription.classList.add('active');
-                } else {
-                    mixGrid.classList.remove('active');
-                    mixDescription.classList.remove('active');
-                }
+    if (mixesSection && mixGrid && mixDescription && mixImages.length > 0) {
+        // Function to check if all images are loaded
+        const checkImagesLoaded = () => {
+            return Promise.all(
+                Array.from(mixImages).map(img => {
+                    if (img.complete && img.naturalHeight !== 0) {
+                        return Promise.resolve();
+                    }
+                    return new Promise(resolve => {
+                        img.addEventListener('load', resolve);
+                        img.addEventListener('error', resolve); // Resolve even if image fails to load
+                    });
+                })
+            );
+        };
+
+        // Wait for images to load before setting up the observer
+        checkImagesLoaded().then(() => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        mixGrid.classList.add('active');
+                        mixDescription.classList.add('active');
+                    } else {
+                        mixGrid.classList.remove('active');
+                        mixDescription.classList.remove('active');
+                    }
+                });
+            }, {
+                threshold: 0.05 // Lowered threshold for better mobile visibility
             });
-        }, {
-            threshold: 0.05 // Lowered threshold for better mobile visibility
-        });
 
-        observer.observe(mixesSection);
+            observer.observe(mixesSection);
+        });
     }
 });
 
