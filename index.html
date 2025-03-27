@@ -74,23 +74,38 @@
         </div>
     </section>
 
-    <!-- Booking Section -->
-    <section id="booking" class="booking">
-        <h2 class="section-title">Book a Mix</h2>
-        <div class="booking-grid">
-            <div class="neon-grid"></div>
+<!-- Booking Section -->
+<section id="booking" class="booking">
+    <h2 class="section-title">Book Me</h2>
+    <form id="booking-form" class="booking-form" action="https://formspree.io/f/xrbplnap" method="POST">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
         </div>
-        <form class="booking-form">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <label for="message">Project Details:</label>
-            <textarea id="message" name="message" required></textarea>
-            <div class="trust-signal">✔ 100% Quality Guaranteed</div>
-            <button type="submit" class="neon-button">Submit</button>
-        </form>
-    </section>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" placeholder="Your Phone Number">
+        </div>
+        <div class="form-group">
+            <label for="date">Preferred Date</label>
+            <input type="date" id="date" name="date" required>
+        </div>
+        <div class="form-group">
+            <label for="time">Preferred Time</label>
+            <input type="time" id="time" name="time" required>
+        </div>
+        <div class="form-group">
+            <label for="details">Details</label>
+            <textarea id="details" name="details" placeholder="Tell me about your project..." rows="5"></textarea>
+        </div>
+        <button type="submit" class="neon-btn">Book Mixes</button>
+    </form>
+    <div class="neon-grid"></div>
+</section>
 
     <script src="script.js"></script>
 </body>
