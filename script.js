@@ -120,9 +120,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetId = anchor.getAttribute('href').substring(1);
             const targetSection = document.getElementById(targetId);
             const sectionIndex = Array.from(sections).indexOf(targetSection);
-            currentSectionIndex = sectionIndex;
-            updateSections(currentSectionIndex > currentSectionIndex ? 'down' : 'up');
+            const oldIndex = currentSectionIndex; // Store the old index
+            currentSectionIndex = sectionIndex; // Update the current index
+            const direction = sectionIndex > oldIndex ? 'down' : 'up'; // Correctly determine direction
+            updateSections(direction);
             targetSection.scrollIntoView({ behavior: 'smooth' });
+
+            // Ensure mix grid and description are visible when navigating to mixes
+            if (targetId === 'mixes') {
+                setTimeout(() => {
+                    const mixGrid = document.querySelector('.mix-grid');
+                    const mixDescription = document.querySelector('.mix-description');
+                    if (mixGrid) mixGrid.classList.add('active');
+                    if (mixDescription) mixDescription.classList.add('active');
+                }, 100);
+            }
         });
     });
 });
