@@ -465,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             detailsGroup.classList.add('active');
-            finishButtonWrapper.style.display = 'block'; // Ensure button is visible
+            finishButtonWrapper.style.display = 'block'; // Ensure button wrapper is visible
         }, formGroups.length * 200 + 500);
     };
 
@@ -551,15 +551,23 @@ document.addEventListener('DOMContentLoaded', () => {
         revertForm();
     });
 
-    // Handle form submission with finish button animation
-    finishButtonWrapper.addEventListener('click', () => {
+    // Function to flip the finish button and show "Book Now!"
+    const flipFinishButton = () => {
         if (!finishButtonInner.classList.contains('flipped')) {
             const wrapper = detailsInput.closest('.input-wrapper');
             if (detailsInput.value.trim()) {
                 wrapper.classList.add('flipped');
                 filledFields.add('details');
+                finishButtonInner.classList.add('flipped'); // Automatically flip to show "Book Now!"
             }
-            finishButtonInner.classList.add('flipped');
+        }
+    };
+
+    // Handle form submission with finish button animation
+    finishButtonWrapper.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent default form submission until we're ready
+        if (finishButtonInner.classList.contains('flipped')) {
+            // "Book Now!" button is visible and clicked
             setTimeout(() => {
                 alert('Booking submitted successfully!');
                 bookingForm.submit();
@@ -573,24 +581,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     label.classList.remove('hidden');
                 });
             }, 500);
+        } else {
+            // "Finish" button is clicked, flip to show "Book Now!"
+            flipFinishButton();
         }
     });
 
-    // Ensure details input also has flip behavior
+    // Ensure details input also has flip behavior and triggers the finish button flip
     detailsInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && detailsInput.value.trim()) {
             const wrapper = detailsInput.closest('.input-wrapper');
             wrapper.classList.add('flipped');
             filledFields.add('details');
+            flipFinishButton(); // Automatically flip the finish button to show "Book Now!"
         }
     });
 
-    // On mobile, flip details input when tapping outside
+    // On mobile, flip details input and finish button when tapping outside
     document.addEventListener('touchend', (e) => {
         if (!detailsGroup.contains(e.target) && detailsInput === document.activeElement && detailsInput.value.trim()) {
             const wrapper = detailsInput.closest('.input-wrapper');
             wrapper.classList.add('flipped');
             filledFields.add('details');
+            flipFinishButton(); // Automatically flip the finish button to show "Book Now!"
         }
     });
 });
