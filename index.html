@@ -6,9 +6,6 @@
     <title>SomewhatSmiley - Retro Music Experience</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VCR+OSD+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
 </head>
 <body>
     <!-- Preloader -->
@@ -39,7 +36,6 @@
         <ul>
             <li><a href="#hero">Home</a></li>
             <li><a href="#mixes">Mixes</a></li>
-            <li><a href="#portfolio">Portfolio</a></li>
             <li><a href="#artist">Artist</a></li>
             <li><a href="#booking">Book a Mix</a></li>
         </ul>
@@ -49,21 +45,18 @@
     <section id="hero" class="hero">
         <h1 class="glitch" data-text="SomewhatSmiley">SomewhatSmiley</h1>
         <h2>Retro Music Experience</h2>
-        <div class="visualizer-container">
-            <div id="visualizer"></div>
-            <div class="visualizer-controls">
-                <button id="toggle-audio" class="neon-button">Play Audio</button>
-                <select id="mood-selector">
-                    <option value="chill">Chill</option>
-                    <option value="hype">Hype</option>
-                    <option value="retro">Retro</option>
-                </select>
-            </div>
+        <div class="sound-wave-container">
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
         </div>
-        <audio id="background-audio" loop>
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
-            Your browser does not support the audio element.
-        </audio>
         <a href="#booking" class="neon-button">Book a Mix</a>
     </section>
 
@@ -121,72 +114,6 @@
             <div class="mix-description">
                 <h3>Explore the Beats</h3>
                 <p>Hover or tap on a mix to preview a 5-second snippet. Click or long-press to flip the card and listen to the full track. Each mix is a unique blend of retro and modern sounds, crafted to take you on a nostalgic journey.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Portfolio Section -->
-    <section id="portfolio" class="portfolio">
-        <h2 class="section-title">My Portfolio</h2>
-        <div class="timeline-container">
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-year">2021</div>
-                    <div class="timeline-content">
-                        <h3>Mixed a Hip-Hop Single for Artist X</h3>
-                        <div class="before-after">
-                            <p>Before:</p>
-                            <audio controls>
-                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
-                                Your browser does not support the audio element.
-                            </audio>
-                            <p>After:</p>
-                            <audio controls>
-                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mp3">
-                                Your browser does not support the audio element.
-                            </audio>
-                        </div>
-                        <button class="neon-button timeline-details">See Details</button>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2022</div>
-                    <div class="timeline-content">
-                        <h3>Mastered a Techno EP for Artist Y</h3>
-                        <div class="before-after">
-                            <p>Before:</p>
-                            <audio controls>
-                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mp3">
-                                Your browser does not support the audio element.
-                            </audio>
-                            <p>After:</p>
-                            <audio controls>
-                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mp3">
-                                Your browser does not support the audio element.
-                            </audio>
-                        </div>
-                        <button class="neon-button timeline-details">See Details</button>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2023</div>
-                    <div class="timeline-content">
-                        <h3>Engineered a Live Recording for Artist Z</h3>
-                        <div class="before-after">
-                            <p>Before:</p>
-                            <audio controls>
-                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" type="audio/mp3">
-                                Your browser does not support the audio element.
-                            </audio>
-                            <p>After:</p>
-                            <audio controls>
-                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" type="audio/mp3">
-                                Your browser does not support the audio element.
-                            </audio>
-                        </div>
-                        <button class="neon-button timeline-details">See Details</button>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
