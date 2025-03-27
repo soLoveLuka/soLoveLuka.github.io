@@ -369,19 +369,67 @@ section {
     animation: floatMix 5s infinite ease-in-out; /* Subtle floating animation */
 }
 
+/* Mix Card with 3D Flip Effect */
 .mix-card {
     background: rgba(0, 0, 0, 0.7);
     border: 2px solid #00f7ff;
     border-radius: 10px;
-    padding: 1rem;
     width: 300px;
+    height: 400px; /* Fixed height to accommodate both front and back */
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    perspective: 1000px; /* Enable 3D perspective */
+    position: relative;
 }
 
-.mix-card:hover {
+.mix-card:hover:not(.flipped) {
     transform: scale(1.05) translateY(-5px);
     box-shadow: 0 0 20px #ff00ff, 0 0 40px #00f7ff;
+}
+
+.mix-card.flipped .mix-card-inner {
+    transform: rotateY(180deg);
+}
+
+.mix-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Smooth cinematic flip */
+    transform-style: preserve-3d;
+}
+
+.mix-card-front,
+.mix-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.mix-card-front {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #00f7ff;
+}
+
+.mix-card-back {
+    background: rgba(0, 0, 20, 0.9);
+    border: 2px solid #ff00ff;
+    transform: rotateY(180deg);
+    box-shadow: 0 0 20px #ff00ff, 0 0 40px #00f7ff;
+    animation: glowPulse 2s infinite ease-in-out;
+}
+
+@keyframes glowPulse {
+    0% { box-shadow: 0 0 20px #ff00ff, 0 0 40px #00f7ff; }
+    50% { box-shadow: 0 0 30px #ff00ff, 0 0 60px #00f7ff; }
+    100% { box-shadow: 0 0 20px #ff00ff, 0 0 40px #00f7ff; }
 }
 
 .mix-card img {
@@ -409,6 +457,12 @@ section {
 .mix-grid.active .mix-card {
     border-color: #ff00ff;
     box-shadow: 0 0 15px #ff00ff, 0 0 30px #00f7ff;
+}
+
+.mix-audio {
+    width: 100%;
+    filter: hue-rotate(300deg);
+    margin-top: 1rem;
 }
 
 /* Mix Description */
@@ -634,6 +688,7 @@ section {
 
     .mix-card {
         width: 250px;
+        height: 350px; /* Adjust height for smaller screens */
     }
 
     .mix-description {
@@ -695,7 +750,7 @@ section {
     }
 
     .mix-card img {
-        height: 200px; /* Smaller images on tablet */
+        height: 150px; /* Smaller images on tablet */
     }
 
     .artist-content {
@@ -716,6 +771,19 @@ section {
 @media (max-width: 480px) {
     .mix-card {
         width: 200px;
+        height: 300px; /* Further adjust height for mobile */
+    }
+
+    .mix-card img {
+        height: 120px; /* Smaller images on mobile */
+    }
+
+    .mix-card h3 {
+        font-size: 1rem;
+    }
+
+    .mix-card p {
+        font-size: 0.8rem;
     }
 
     .mix-description h3 {
@@ -767,14 +835,6 @@ section {
 
     .mix-card {
         max-width: 250px; /* Even smaller cards on mobile */
-    }
-
-    .mix-card img {
-        height: 150px; /* Smaller images on mobile */
-    }
-
-    .mix-card h3 {
-        font-size: 1.2rem;
     }
 
     .artist-content img {
