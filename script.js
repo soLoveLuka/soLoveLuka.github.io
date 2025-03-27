@@ -6,24 +6,29 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentSectionIndex = 0;
 
     // Function to update section visibility based on scroll direction
-    function updateSections(scrollDirection) {
+    function updateSections(scrollDirection, targetIndex = null) {
         sections.forEach((section, index) => {
             section.classList.remove('in-view', 'out-of-view-up', 'out-of-view-down', 'zoom-down');
         });
 
-        if (scrollDirection === 'down' && currentSectionIndex < sections.length - 1) {
-            currentSectionIndex++;
-        } else if (scrollDirection === 'up' && currentSectionIndex > 0) {
-            currentSectionIndex--;
+        const oldIndex = currentSectionIndex;
+        if (targetIndex !== null) {
+            currentSectionIndex = targetIndex;
+        } else {
+            if (scrollDirection === 'down' && currentSectionIndex < sections.length - 1) {
+                currentSectionIndex++;
+            } else if (scrollDirection === 'up' && currentSectionIndex > 0) {
+                currentSectionIndex--;
+            }
         }
 
         sections.forEach((section, index) => {
             if (index < currentSectionIndex) {
-                section.classList.add(scrollDirection === 'down' ? 'out-of-view-up' : 'zoom-down');
+                section.classList.add(scrollDirection === 'down' || (targetIndex !== null && targetIndex > oldIndex) ? 'out-of-view-up' : 'zoom-down');
             } else if (index === currentSectionIndex) {
                 section.classList.add('in-view');
             } else {
-                section.classList.add(scrollDirection === 'down' ? 'out-of-view-down' : 'out-of-view-up');
+                section.classList.add(scrollDirection === 'down' || (targetIndex !== null && targetIndex > oldIndex) ? 'out-of-view-down' : 'out-of-view-up');
             }
         });
 
@@ -120,10 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetId = anchor.getAttribute('href').substring(1);
             const targetSection = document.getElementById(targetId);
             const sectionIndex = Array.from(sections).indexOf(targetSection);
-            const oldIndex = currentSectionIndex; // Store the old index
-            currentSectionIndex = sectionIndex; // Update the current index
-            const direction = sectionIndex > oldIndex ? 'down' : 'up'; // Correctly determine direction
-            updateSections(direction);
+            updateSections(sectionIndex > currentSectionIndex ? 'down' : 'up', sectionIndex);
             targetSection.scrollIntoView({ behavior: 'smooth' });
 
             // Ensure mix grid and description are visible when navigating to mixes
@@ -133,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const mixDescription = document.querySelector('.mix-description');
                     if (mixGrid) mixGrid.classList.add('active');
                     if (mixDescription) mixDescription.classList.add('active');
-                }, 100);
+                }, 500);
             }
         });
     });
@@ -463,6 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             detailsGroup.classList.add('active');
+            finishButtonWrapper.style.display = 'block'; // Ensure button is visible
         }, formGroups.length * 200 + 500);
     };
 
@@ -557,6 +560,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 filledFields.add('details');
             }
             finishButtonInner.classList.add('flipped');
+            setTimeout(() => {
+                alert('Booking submitted successfully!');
+                bookingForm.submit();
+                bookingForm.reset();
+                revertForm();
+                filledFields.clear();
+                inputs.forEach(input => {
+                    const wrapper = input.closest('.input-wrapper');
+                    wrapper.classList.remove('flipped');
+                    const label = wrapper.querySelector('.input-label');
+                    label.classList.remove('hidden');
+                });
+            }, 500);
         }
     });
 
