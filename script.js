@@ -69,8 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
 
         const sectionHeight = window.innerHeight;
-        const isMobile = window.innerWidth <= 768;
-        const scrollThreshold = sectionHeight * (isMobile ? 0.7 : 0.5); // Higher threshold on mobile
+        const scrollThreshold = sectionHeight * 0.5;
         if (Math.abs(scrollTop - lastScrollTop) > scrollThreshold) {
             updateSections(scrollDirection);
         }
@@ -109,19 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }, 10));
-
-    // Smooth scrolling for nav links
-    document.querySelectorAll('.retro-nav a').forEach(anchor => {
-        anchor.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = anchor.getAttribute('href').substring(1);
-            const targetSection = document.getElementById(targetId);
-            const sectionIndex = Array.from(sections).indexOf(targetSection);
-            currentSectionIndex = sectionIndex;
-            updateSections(currentSectionIndex > currentSectionIndex ? 'down' : 'up');
-            targetSection.scrollIntoView({ behavior: 'smooth' });
-        });
-    });
 });
 
 // Sound wave interaction with mouse movement and touch support
@@ -198,6 +184,16 @@ document.addEventListener('DOMContentLoaded', () => {
         heroSection.addEventListener('mouseleave', handleMouseLeave);
         heroSection.addEventListener('touchmove', handleTouchMove, { passive: false });
         heroSection.addEventListener('touchend', handleTouchEnd);
+
+        heroSection.removeEventListener('mousemove', handleMouseMove);
+        heroSection.removeEventListener('mouseleave', handleMouseLeave);
+        heroSection.removeEventListener('touchmove', handleTouchMove);
+        heroSection.removeEventListener('touchend', handleTouchEnd);
+
+        heroSection.addEventListener('mousemove', handleMouseMove);
+        heroSection.addEventListener('mouseleave', handleMouseLeave);
+        heroSection.addEventListener('touchmove', handleTouchMove, { passive: false });
+        heroSection.addEventListener('touchend', handleTouchEnd);
     }
 });
 
@@ -264,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (bookingSection) sectionObserver.observe(bookingSection);
 });
 
-// Preloader with waveform and progress indicator
+// Preloader with waveform and progress indicator (disintegration effect removed)
 document.addEventListener('DOMContentLoaded', () => {
     const preloader = document.querySelector('.preloader');
     const preloaderText = document.querySelector('.preloader-text');
@@ -278,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update progress percentage
         let progress = 0;
-        const totalDuration = 4000; // 4 seconds
+        const totalDuration = 4000; // Reduced to 4 seconds since disintegration is removed
         const interval = setInterval(() => {
             progress = Math.min(progress + (100 / (totalDuration / 50)), 100);
             progressText.textContent = `${Math.round(progress)}%`;
@@ -409,7 +405,6 @@ document.addEventListener('DOMContentLoaded', () => {
         neonGrid.classList.add('active');
     });
 
-    // Check if all fields before details are filled
     const checkAllFieldsBeforeDetails = () => {
         const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
         let allFilled = true;
@@ -431,100 +426,82 @@ document.addEventListener('DOMContentLoaded', () => {
         return allFilled;
     };
 
-    // Handle input interactions
+    const showDetailsGroup = () => {
+        const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
+        formGroups.forEach((group, index) => {
+            setTimeout(() => {
+                group.style.transition = 'transform 1s ease-in-out, opacity 0.5s ease-in-out';
+                group.style.transform = `translateY(${(formGroups.length / 2 - index) * 60}px)`;
+                group.style.opacity = '0';
+            }, index * 200);
+        });
+
+        setTimeout(() => {
+            detailsGroup.classList.add('active');
+        }, formGroups.length * 200 + 500);
+    };
+
+    const revertForm = () => {
+        detailsGroup.classList.remove('active');
+        finishButtonInner.classList.remove('flipped');
+        filledFields.delete('details');
+
+        const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
+        formGroups.forEach((group, index) => {
+            setTimeout(() => {
+                group.style.transition = 'transform 1s ease-in-out, opacity 0.5s ease-in-out';
+                group.style.transform = 'translateY(0)';
+                group.style.opacity = '1';
+            }, index * 200);
+        });
+    };
+
     inputs.forEach(input => {
         const wrapper = input.closest('.input-wrapper');
         const label = wrapper.querySelector('.input-label');
-        const checkmark = wrapper.querySelector('.checkmark');
         const fieldName = input.closest('.form-group').dataset.field;
 
-        // Show/hide label on focus/blur
-        input.addEventListener('focus', () => {
-            label.classList.add('hidden');
-        });
-
+        // Flip the input wrapper only when the input loses focus (blur) and has a value
         input.addEventListener('blur', () => {
-            if (!input.value.trim()) {
-                label.classList.remove('hidden');
-            }
-        });
-
-        // Validate input and flip wrapper
-        input.addEventListener('input', () => {
-            if (input.checkValidity() && input.value.trim()) {
+            if (input.value.trim()) {
+                label.classList.add('hidden');
                 wrapper.classList.add('flipped');
                 filledFields.add(fieldName);
+
+                if (fieldName !== 'details' && checkAllFieldsBeforeDetails()) {
+                    showDetailsGroup();
+                    retroMessage.classList.add('visible');
+                }
             } else {
+                label.classList.remove('hidden');
                 wrapper.classList.remove('flipped');
                 filledFields.delete(fieldName);
             }
-
-            // Check if all required fields are filled to show retro message
-            const allFieldsFilled = checkAllFieldsBeforeDetails();
-            retroMessage.classList.toggle('visible', allFieldsFilled);
         });
 
-        // Allow unflipping by clicking the checkmark
-        checkmark.addEventListener('click', () => {
-            wrapper.classList.remove('flipped');
-            filledFields.delete(fieldName);
-            input.value = ''; // Clear the input
-            label.classList.remove('hidden');
-            retroMessage.classList.remove('visible');
-            input.focus();
-        });
-    });
-
-    // Handle retro message click to show details group
-    retroMessage.addEventListener('click', () => {
-        if (checkAllFieldsBeforeDetails()) {
-            bookingForm.querySelectorAll('.form-group:not(.details-group)').forEach(group => {
-                group.style.display = 'none';
-            });
-            detailsGroup.classList.add('active');
-            detailsInput.focus();
-        }
-    });
-
-    // Handle back arrow click to return to main form
-    backArrow.addEventListener('click', () => {
-        bookingForm.querySelectorAll('.form-group:not(.details-group)').forEach(group => {
-            group.style.display = 'block';
-        });
-        detailsGroup.classList.remove('active');
-    });
-
-    // Handle form submission with finish button animation
-    finishButtonInner.addEventListener('click', (e) => {
-        e.preventDefault();
-        finishButtonInner.classList.add('flipped');
-        setTimeout(() => {
-            // Simulate form submission (replace with actual submission logic if needed)
-            console.log('Form submitted:', new FormData(bookingForm));
-            // Reset form
-            bookingForm.reset();
-            filledFields.clear();
-            bookingForm.querySelectorAll('.input-wrapper').forEach(wrapper => {
-                wrapper.classList.remove('flipped');
-                const label = wrapper.querySelector('.input-label');
+        // Update label visibility while typing
+        input.addEventListener('input', () => {
+            if (input.value.trim()) {
+                label.classList.add('hidden');
+            } else {
                 label.classList.remove('hidden');
-            });
-            retroMessage.classList.remove('visible');
-            detailsGroup.classList.remove('active');
-            bookingForm.querySelectorAll('.form-group:not(.details-group)').forEach(group => {
-                group.style.display = 'block';
-            });
-            neonGrid.classList.remove('active');
-        }, 1000); // Wait for flip animation to complete
+            }
+        });
     });
 
-    // Ensure details input also has flip behavior
-    detailsInput.addEventListener('input', () => {
-        const wrapper = detailsInput.closest('.input-wrapper');
-        if (detailsInput.value.trim()) {
-            wrapper.classList.add('flipped');
-        } else {
-            wrapper.classList.remove('flipped');
+    backArrow.addEventListener('click', () => {
+        revertForm();
+        retroMessage.classList.remove('visible');
+    });
+
+    finishButtonWrapper.addEventListener('click', () => {
+        if (!finishButtonInner.classList.contains('flipped')) {
+            const wrapper = detailsInput.closest('.input-wrapper');
+            if (detailsInput.value.trim()) {
+                wrapper.classList.add('flipped');
+                filledFields.add('details');
+            }
+            finishButtonInner.classList.add('flipped');
         }
     });
 });
