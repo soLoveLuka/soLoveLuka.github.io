@@ -1,88 +1,3 @@
-// Ensure DOM is fully loaded before running scripts
-document.addEventListener('DOMContentLoaded', () => {
-    // Floating Stars (Particle Effect)
-    const canvas = document.createElement('canvas');
-    document.body.appendChild(canvas);
-    canvas.style.position = 'fixed';
-    canvas.style.top = '0';
-    canvas.style.left = '0';
-    canvas.style.zIndex = '-1';
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    const ctx = canvas.getContext('2d');
-
-    const stars = [];
-    const numStars = 100;
-
-    for (let i = 0; i < numStars; i++) {
-        stars.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            radius: Math.random() * 2,
-            speed: Math.random() * 0.5 + 0.1
-        });
-    }
-
-    function animateStars() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        stars.forEach(star => {
-            ctx.beginPath();
-            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.fill();
-
-            star.y += star.speed;
-            if (star.y > canvas.height) {
-                star.y = 0;
-                star.x = Math.random() * canvas.width;
-            }
-        });
-        requestAnimationFrame(animateStars);
-    }
-
-    animateStars();
-
-    // Resize canvas on window resize
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-
-    // Scroll Animation for Mix Cards
-    const mixCards = document.querySelectorAll('.mix-card');
-    const observerOptions = {
-        threshold: 0.2
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-    mixCards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(50px)';
-        card.style.transition = 'all 0.5s ease';
-        observer.observe(card);
-    });
-
-    // Booking Form Feedback
-    const form = document.querySelector('.booking-form');
-    const bookingGrid = document.querySelector('.booking-grid');
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault(); // Prevent actual form submission for now
-        bookingGrid.style.animation = 'pulse 1s 2'; // Pulse the grid twice
-        form.reset(); // Clear the form
-        alert('Booking submitted! We’ll get back to you soon.'); // Placeholder feedback
-    });
-});
-
 // Smooth scrolling animation for sections
 document.addEventListener('DOMContentLoaded', () => {
     const sections = document.querySelectorAll('section');
@@ -91,50 +6,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to update section visibility based on scroll direction
     function updateSections(scrollDirection) {
-        // Remove all classes from sections
         sections.forEach((section, index) => {
             section.classList.remove('in-view', 'out-of-view-up', 'out-of-view-down', 'zoom-down');
         });
 
-        // Determine the new current section based on scroll direction
         if (scrollDirection === 'down' && currentSectionIndex < sections.length - 1) {
             currentSectionIndex++;
         } else if (scrollDirection === 'up' && currentSectionIndex > 0) {
             currentSectionIndex--;
         }
 
-        // Apply classes to sections based on their position relative to the current section
         sections.forEach((section, index) => {
             if (index < currentSectionIndex) {
-                // Sections above the current section
                 section.classList.add(scrollDirection === 'down' ? 'out-of-view-up' : 'zoom-down');
             } else if (index === currentSectionIndex) {
-                // Current section
                 section.classList.add('in-view');
             } else {
-                // Sections below the current section
                 section.classList.add(scrollDirection === 'down' ? 'out-of-view-down' : 'out-of-view-up');
             }
         });
     }
 
+    // Debounced scroll handler
+    const debounce = (func, wait) => {
+        let timeout;
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    };
+
     // Scroll event listener
-    window.addEventListener('scroll', () => {
+    window.addEventListener('scroll', debounce(() => {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
 
-        // Update sections only if the scroll direction changes significantly
         const sectionHeight = window.innerHeight;
-        const scrollThreshold = sectionHeight * 0.5; // Trigger when scrolled halfway into a section
+        const scrollThreshold = sectionHeight * 0.5;
         if (Math.abs(scrollTop - lastScrollTop) > scrollThreshold) {
             updateSections(scrollDirection);
         }
 
-        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // Prevent negative scroll
-    });
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
 
-    // Initial setup: Ensure the first section is visible
-    sections[0].classList.add('in-view'); // Explicitly set the first section (hero) to in-view
+        // Navigation fade-in
+        const nav = document.querySelector('.retro-nav');
+        if (scrollTop > 50) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+
+        // Back to Top button visibility
+        const backToTop = document.querySelector('.back-to-top');
+        if (scrollTop > 300) {
+            backToTop.classList.add('visible');
+        } else {
+            backToTop.classList.remove('visible');
+        }
+    }, 10));
 });
 
 // Sound wave interaction with mouse movement
@@ -177,9 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (bookingForm) {
         bookingForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Prevent default form submission
+            e.preventDefault();
 
-            // Collect form data
             const formData = new FormData(bookingForm);
             const formObject = {};
             formData.forEach((value, key) => {
@@ -187,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             try {
-                // Send form data to Formspree via AJAX
                 const response = await fetch(bookingForm.action, {
                     method: 'POST',
                     headers: {
@@ -198,21 +126,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    // Show success message
                     const successMessage = document.createElement('p');
-                    successMessage.textContent = 'Thanks for booking with me! My ears are with you.';
+                    successMessage.textContent = 'Thank you for your booking! I’ll get back to you soon.';
                     successMessage.style.color = '#00f7ff';
                     successMessage.style.textShadow = '0 0 10px #00f7ff';
                     successMessage.style.marginTop = '1rem';
                     bookingForm.appendChild(successMessage);
-
-                    // Reset the form
                     bookingForm.reset();
                 } else {
                     throw new Error('Form submission failed');
                 }
             } catch (error) {
-                // Show error message
                 const errorMessage = document.createElement('p');
                 errorMessage.textContent = 'Oops! Something went wrong. Please try again later.';
                 errorMessage.style.color = '#ff00ff';
@@ -221,5 +145,60 @@ document.addEventListener('DOMContentLoaded', () => {
                 bookingForm.appendChild(errorMessage);
             }
         });
+    }
+});
+
+// Mixes section animation with IntersectionObserver
+document.addEventListener('DOMContentLoaded', () => {
+    const mixesSection = document.querySelector('#mixes');
+    const mixGrid = document.querySelector('.mix-grid');
+    const mixDescription = document.querySelector('.mix-description');
+
+    if (mixesSection && mixGrid && mixDescription) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    mixGrid.classList.add('active');
+                    mixDescription.classList.add('active');
+                } else {
+                    mixGrid.classList.remove('active');
+                    mixDescription.classList.remove('active');
+                }
+            });
+        }, {
+            threshold: 0.5 // Trigger when 50% of the section is visible
+        });
+
+        observer.observe(mixesSection);
+    }
+});
+
+// Fade-in animations for artist and booking sections with IntersectionObserver
+document.addEventListener('DOMContentLoaded', () => {
+    const artistSection = document.querySelector('#artist');
+    const bookingSection = document.querySelector('#booking');
+
+    const observerOptions = { threshold: 0.3 }; // Trigger when 30% of the section is visible
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, observerOptions);
+
+    if (artistSection) sectionObserver.observe(artistSection);
+    if (bookingSection) sectionObserver.observe(bookingSection);
+});
+
+// Preloader
+document.addEventListener('DOMContentLoaded', () => {
+    const preloader = document.querySelector('.preloader');
+    if (preloader) {
+        // Hide preloader after 1 second (adjust as needed)
+        setTimeout(() => {
+            preloader.classList.add('hidden');
+        }, 1000);
     }
 });
