@@ -18,7 +18,7 @@ body {
     color: #fff;
     overflow-x: hidden;
     position: relative;
-    transition: background 2s ease; /* Smoother background transition */
+    transition: background 1s ease; /* For dynamic background color shift */
 }
 
 body.hero-bg {
@@ -34,7 +34,7 @@ body.artist-bg {
 }
 
 body.booking-bg {
-    background: linear-gradient(rgba(20, 20, 0, 0.8), rgba(20, 20, 0, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed; /* Adjusted for less jarring color */
+    background: linear-gradient(rgba(50, 50, 0, 0.8), rgba(50, 50, 0, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
 }
 
 body::before {
@@ -119,7 +119,7 @@ body::after {
     z-index: -1;
     pointer-events: none;
     filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.5)) drop-shadow(0 0 10px rgba(0, 247, 255, 0.3));
-    animationA: float 10s infinite ease-in-out reverse;
+    animation: float 10s infinite ease-in-out reverse;
 }
 
 /* Subtle floating animation */
@@ -298,14 +298,12 @@ section {
 .out-of-view-up {
     transform: translateY(-100%);
     opacity: 0;
-    transition: transform 1s ease-in-out, opacity 1s ease-in-out; /* Smoother transition */
 }
 
 /* Class for sections that are out of view (below) */
 .out-of-view-down {
     transform: translateY(100%);
     opacity: 0;
-    transition: transform 1s ease-in-out, opacity 1s ease-in-out;
 }
 
 /* Class for sections that are in view */
@@ -318,7 +316,6 @@ section {
 .zoom-down {
     transform: translateY(100%) scale(0.95);
     opacity: 0;
-    transition: transform 1s ease-in-out, opacity 1s ease-in-out;
 }
 
 /* Hero Section */
@@ -800,28 +797,19 @@ section {
     background: rgba(0, 0, 20, 0.8);
     border: 2px solid #00f7ff;
     border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     backface-visibility: hidden;
     transform: rotateY(180deg);
-    z-index: 1; /* Ensure it covers the front side */
 }
 
 .input-wrapper.flipped .input-back {
     transform: rotateY(0deg);
-    animation: fadeOutBox 0.5s ease forwards; /* Fade out the box after flipping */
 }
 
 .input-wrapper:not(.flipped) .input-back {
     transform: rotateY(180deg);
-}
-
-@keyframes fadeOutBox {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-        visibility: hidden;
-    }
 }
 
 .input-wrapper {
@@ -835,25 +823,15 @@ section {
 
 .input-wrapper.flipped .input-label {
     display: none; /* Hide the label on the back side */
-    visibility: hidden; /* Fallback to ensure it's not visible */
 }
 
 .checkmark {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     font-size: 3rem; /* Larger checkmark to fill the box */
     color: #00ff00;
     text-shadow: 0 0 10px #00ff00;
-    z-index: 2; /* Ensure checkmark is above the input-back */
-    opacity: 0; /* Initially hidden */
-    transition: opacity 0.5s ease;
-    cursor: pointer; /* Make it clickable */
 }
 
 .input-wrapper.flipped .checkmark {
-    opacity: 1; /* Show checkmark when flipped */
     animation: glowCheckmark 2s infinite ease-in-out;
 }
 
@@ -955,15 +933,6 @@ section {
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-    body {
-        transition: background 1s ease; /* Faster transition on mobile */
-    }
-
-    body::before,
-    body::after {
-        animation-duration: 5s; /* Reduce animation duration for performance */
-    }
-
     .hero h1 {
         font-size: 3rem;
     }
@@ -979,11 +948,6 @@ section {
 
     .sound-bar {
         width: 8px;
-    }
-
-    .neon-button {
-        font-size: 1rem;
-        padding: 1rem 2rem; /* Larger touch target */
     }
 
     .mix-grid {
@@ -1005,7 +969,6 @@ section {
 
     .mix-card-inner {
         min-height: 300px; /* Ensure inner container has minimum height on mobile */
-        transition: transform 0.5s ease; /* Faster flip on mobile */
     }
 
     .mix-card-front,
@@ -1045,48 +1008,18 @@ section {
     }
 
     .back-arrow {
-        font-size: 1.5rem; /* Larger touch target */
-        top: -2rem;
-        padding: 0.5rem; /* Larger touch area */
+        font-size: 1.2rem;
+        top: -1.5rem;
     }
 
     .finish-button-wrapper {
-        width: 180px; /* Slightly larger for touch */
-        height: 50px;
-    }
-
-    .finish-button-inner {
-        transition: transform 0.5s ease; /* Faster flip on mobile */
+        width: 150px;
+        height: 40px;
     }
 
     .finish-button-front,
     .finish-button-back {
-        font-size: 0.9rem;
-    }
-
-    .input-wrapper {
-        transition: transform 0.5s ease; /* Faster flip on mobile */
-    }
-
-    .input-wrapper input,
-    .input-wrapper textarea,
-    .input-wrapper select {
-        font-size: 1rem; /* Larger font for readability */
-        padding: 1rem; /* Larger touch area */
-    }
-
-    .input-label {
-        font-size: 1rem;
-    }
-
-    .checkmark {
-        font-size: 3.5rem; /* Larger checkmark for touch */
-        padding: 1rem; /* Larger touch area */
-    }
-
-    .retro-message {
         font-size: 0.8rem;
-        bottom: -2.5rem;
     }
 
     .preloader-text {
@@ -1117,14 +1050,7 @@ section {
     }
 
     .retro-nav a {
-        font-size: 0.8rem; /* Slightly larger for readability */
-        padding: 0.5rem; /* Larger touch area */
-    }
-
-    .out-of-view-up,
-    .out-of-view-down,
-    .zoom-down {
-        transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out; /* Faster transitions on mobile */
+        font-size: 0.7rem; /* Further reduce font size */
     }
 }
 
@@ -1147,8 +1073,8 @@ section {
     }
 
     .neon-button {
-        font-size: 0.9rem;
-        padding: 0.8rem 1.5rem;
+        font-size: 0.8rem;
+        padding: 0.6rem 1rem;
     }
 
     .mix-description h3 {
@@ -1190,39 +1116,34 @@ section {
     }
 
     .back-arrow {
-        font-size: 1.2rem;
-        top: -1.5rem;
+        font-size: 1rem;
+        top: -1.2rem;
     }
 
     .finish-button-wrapper {
-        width: 150px;
-        height: 40px;
+        width: 120px;
+        height: 35px;
     }
 
     .finish-button-front,
     .finish-button-back {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
     }
 
     .input-wrapper input,
     .input-wrapper textarea,
     .input-wrapper select {
         font-size: 0.9rem;
-        padding: 0.8rem;
+        padding: 0.6rem;
     }
 
     .input-label {
         font-size: 0.9rem;
     }
 
-    .checkmark {
-        font-size: 3rem;
-        padding: 0.8rem;
-    }
-
     .retro-message {
         font-size: 0.7rem;
-        bottom: -2rem;
+        bottom: -2.5rem;
     }
 
     .preloader-text {
@@ -1253,8 +1174,7 @@ section {
     }
 
     .retro-nav a {
-        font-size: 0.7rem; /* Slightly larger for readability */
-        padding: 0.5rem;
+        font-size: 0.55rem; /* Further reduce font size */
     }
 
     .progress-text {
