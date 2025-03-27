@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const relativeY = y - containerRect.top;
 
             // Adjust influence range based on container size
-            const maxDistance = Math.max(containerRect.width, containerRect.height) * 0.6; // Increased range for better effect
+            const maxDistance = Math.max(containerRect.width, containerRect.height) * 0.6;
             const maxHeight = 80;
             const minHeight = 10;
 
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Calculate height based on distance (closer = taller)
                 const influence = Math.max(0, (maxDistance - distance) / maxDistance);
-                const height = minHeight + (maxHeight - minHeight) * influence * 1.5; // Increased multiplier for more pronounced effect
+                const height = minHeight + (maxHeight - minHeight) * influence * 1.5;
 
                 bar.style.height = `${Math.min(maxHeight, Math.max(minHeight, height))}px`;
             });
@@ -134,11 +134,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Touch movement handler
         const handleTouchMove = (e) => {
-            e.preventDefault(); // Prevent scrolling while interacting
             const touch = e.touches[0];
             const x = touch.clientX;
             const y = touch.clientY;
-            updateBars(x, y);
+
+            // Check if the touch is within the sound wave container
+            const containerRect = soundWaveContainer.getBoundingClientRect();
+            if (
+                x >= containerRect.left &&
+                x <= containerRect.right &&
+                y >= containerRect.top &&
+                y <= containerRect.bottom
+            ) {
+                e.preventDefault(); // Prevent scrolling only when touching the visualizer
+                updateBars(x, y);
+            }
+            // If touch is outside the container, allow default scrolling behavior
         };
 
         // Mouse leave handler to reset sound bars
@@ -155,11 +166,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
-        // Add event listeners for mouse
+        // Add event listeners for mouse (unchanged for desktop)
         heroSection.addEventListener('mousemove', handleMouseMove);
         heroSection.addEventListener('mouseleave', handleMouseLeave);
 
-        // Add event listeners for touch
+        // Add event listeners for touch (modified to allow scrolling)
         heroSection.addEventListener('touchmove', handleTouchMove, { passive: false });
         heroSection.addEventListener('touchend', handleTouchEnd);
 
@@ -271,15 +282,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const detailsInput = detailsGroup.querySelector('textarea');
     let filledFields = new Set();
 
-    // Function to check if all required fields (except details) are filled
-    const checkAllFieldsFilledExceptDetails = () => {
-        const requiredInputs = bookingForm.querySelectorAll('input[required], select[required]');
+    // Function to check if all fields before details are filled and flipped
+    const checkAllFieldsBeforeDetails = () => {
+        const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
         let allFilled = true;
-        requiredInputs.forEach(input => {
-            if (!input.value.trim()) {
+
+        formGroups.forEach(group => {
+            const wrapper = group.querySelector('.input-wrapper');
+            const input = group.querySelector('input, select');
+            const isRequired = input.hasAttribute('required');
+
+            // Check if the field is required and not filled
+            if (isRequired && !input.value.trim()) {
+                allFilled = false;
+            }
+
+            // Check if the wrapper has the flipped class (indicating the field has been interacted with)
+            if (!wrapper.classList.contains('flipped')) {
                 allFilled = false;
             }
         });
+
         return allFilled;
     };
 
@@ -361,8 +384,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 wrapper.classList.add('flipped');
                 filledFields.add(fieldName);
 
-                // Check if all required fields (except details) are filled
-                if (fieldName !== 'details' && checkAllFieldsFilledExceptDetails()) {
+                // Check if all fields before details are filled and flipped
+                if (fieldName !== 'details' && checkAllFieldsBeforeDetails()) {
                     showDetailsGroup();
                 }
             } else if (!input.value.trim()) {
@@ -377,8 +400,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     wrapper.classList.add('flipped');
                     filledFields.add(fieldName);
 
-                    // Check if all required fields (except details) are filled
-                    if (checkAllFieldsFilledExceptDetails()) {
+                    // Check if all fields before details are filled and flipped
+                    if (checkAllFieldsBeforeDetails()) {
                         showDetailsGroup();
                     }
                 }
