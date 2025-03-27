@@ -123,34 +123,74 @@ body::after {
     100% { transform: translate(0, 0); }
 }
 
+/* Preloader */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1a1a3d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    transition: opacity 0.5s ease;
+}
+
+.preloader.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.preloader-text {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    color: #00f7ff;
+    text-shadow: 0 0 10px #00f7ff;
+    animation: glitch 2s infinite;
+}
+
 /* Retro Nav Bar */
 .retro-nav {
-    position: sticky;
+    position: fixed;
     top: 0;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 1rem;
-    z-index: 100;
-    border-bottom: 2px solid #00f7ff;
-    box-shadow: 0 0 10px #00f7ff;
+    width: 100%;
+    background: rgba(0, 0, 20, 0.8);
+    z-index: 1000;
+    transition: background 0.3s ease;
 }
 
 .retro-nav ul {
-    list-style: none;
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    list-style: none;
+    padding: 1rem 0;
+    margin: 0;
+}
+
+.retro-nav li {
+    margin: 0 1.5rem;
 }
 
 .retro-nav a {
-    color: #ff00ff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1rem;
+    color: #00f7ff;
     text-decoration: none;
-    font-size: 1.2rem;
-    text-transform: uppercase;
-    transition: color 0.3s;
+    text-shadow: 0 0 10px #00f7ff;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, color 0.3s ease;
 }
 
 .retro-nav a:hover {
-    color: #00f7ff;
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+    opacity: 1;
+}
+
+.retro-nav.scrolled a {
+    opacity: 1;
 }
 
 /* General Section Styles for Smooth Scrolling */
@@ -339,6 +379,11 @@ section {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.mix-card:hover {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 0 20px #ff00ff, 0 0 40px #00f7ff;
+}
+
 .mix-card img {
     width: 100%;
     height: 200px;
@@ -430,48 +475,6 @@ section {
     100% { transform: translateX(0) translateY(-50%); }
 }
 
-/* Enhance Navigation */
-.retro-nav {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(0, 0, 20, 0.8);
-    z-index: 1000;
-    transition: background 0.3s ease;
-}
-
-.retro-nav ul {
-    display: flex;
-    justify-content: center;
-    list-style: none;
-    padding: 1rem 0;
-    margin: 0;
-}
-
-.retro-nav li {
-    margin: 0 1.5rem;
-}
-
-.retro-nav a {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 1rem;
-    color: #00f7ff;
-    text-decoration: none;
-    text-shadow: 0 0 10px #00f7ff;
-    opacity: 0.7;
-    transition: opacity 0.3s ease, color 0.3s ease;
-}
-
-.retro-nav a:hover {
-    color: #ff00ff;
-    text-shadow: 0 0 10px #ff00ff;
-    opacity: 1;
-}
-
-.retro-nav.scrolled a {
-    opacity: 1;
-}
-
 /* Back to Top Button */
 .back-to-top {
     position: fixed;
@@ -502,63 +505,19 @@ section {
     transform: translateY(-5px);
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .mix-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .mix-grid {
-        gap: 1rem;
-    }
-
-    .mix-grid.active {
-        transform: translateX(0); /* Center on mobile */
-    }
-
-    .mix-card {
-        width: 250px;
-    }
-
-    .mix-description {
-        position: static;
-        max-width: 100%;
-        margin-top: 2rem;
-        transform: none;
-    }
-
-    .mix-description.active {
-        transform: none;
-        animation: floatText 5s infinite ease-in-out;
-    }
-
-    @keyframes floatText {
-        0% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-        100% { transform: translateY(0); }
-    }
-}
-
-@media (max-width: 480px) {
-    .mix-card {
-        width: 200px;
-    }
-
-    .mix-description h3 {
-        font-size: 1.2rem;
-    }
-
-    .mix-description p {
-        font-size: 0.9rem;
-    }
-}
-
 /* Artist Section */
 .artist {
     min-height: 100vh;
     padding: 5rem 2rem;
     background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
+
+.artist.active {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .artist-content {
@@ -599,9 +558,17 @@ section {
     padding: 5rem 2rem;
     background: rgba(0, 0, 0, 0.5);
     position: relative;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
 }
 
-.booking-grid {
+.booking.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.neon-grid {
     width: 100%;
     height: 200px;
     background: linear-gradient(45deg, #ff00ff, #00f7ff);
@@ -650,8 +617,43 @@ section {
     text-shadow: 0 0 10px #00f7ff;
 }
 
-/* Mobile Responsiveness */
+/* Responsive Adjustments */
 @media (max-width: 768px) {
+    .mix-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .mix-grid {
+        gap: 1rem;
+    }
+
+    .mix-grid.active {
+        transform: translateX(0); /* Center on mobile */
+    }
+
+    .mix-card {
+        width: 250px;
+    }
+
+    .mix-description {
+        position: static;
+        max-width: 100%;
+        margin-top: 2rem;
+        transform: none;
+    }
+
+    .mix-description.active {
+        transform: none;
+        animation: floatText 5s infinite ease-in-out;
+    }
+
+    @keyframes floatText {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0); }
+    }
+
     .retro-nav ul {
         flex-direction: column;
         gap: 1rem;
@@ -712,6 +714,18 @@ section {
 }
 
 @media (max-width: 480px) {
+    .mix-card {
+        width: 200px;
+    }
+
+    .mix-description h3 {
+        font-size: 1.2rem;
+    }
+
+    .mix-description p {
+        font-size: 0.9rem;
+    }
+
     .retro-nav {
         padding: 0.5rem;
     }
@@ -772,7 +786,7 @@ section {
         font-size: 1rem;
     }
 
-    .booking-grid {
+    .neon-grid {
         height: 150px; /* Smaller grid on mobile */
     }
 
