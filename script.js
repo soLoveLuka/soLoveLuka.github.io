@@ -131,53 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Handle booking form submission with AJAX
-document.addEventListener('DOMContentLoaded', () => {
-    const bookingForm = document.getElementById('booking-form');
-
-    if (bookingForm) {
-        bookingForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const formData = new FormData(bookingForm);
-            const formObject = {};
-            formData.forEach((value, key) => {
-                formObject[key] = value;
-            });
-
-            try {
-                const response = await fetch(bookingForm.action, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formObject)
-                });
-
-                if (response.ok) {
-                    const successMessage = document.createElement('p');
-                    successMessage.textContent = 'Thank you for your booking! I’ll get back to you soon.';
-                    successMessage.style.color = '#00f7ff';
-                    successMessage.style.textShadow = '0 0 10px #00f7ff';
-                    successMessage.style.marginTop = '1rem';
-                    bookingForm.appendChild(successMessage);
-                    bookingForm.reset();
-                } else {
-                    throw new Error('Form submission failed');
-                }
-            } catch (error) {
-                const errorMessage = document.createElement('p');
-                errorMessage.textContent = 'Oops! Something went wrong. Please try again later.';
-                errorMessage.style.color = '#ff00ff';
-                errorMessage.style.textShadow = '0 0 10px #ff00ff';
-                errorMessage.style.marginTop = '1rem';
-                bookingForm.appendChild(errorMessage);
-            }
-        });
-    }
-});
-
 // Mixes section animation with IntersectionObserver
 document.addEventListener('DOMContentLoaded', () => {
     const mixesSection = document.querySelector('#mixes');
@@ -257,5 +210,159 @@ document.addEventListener('DOMContentLoaded', () => {
                 audio.pause();
             }
         });
+    });
+});
+
+// Booking form interaction
+document.addEventListener('DOMContentLoaded', () => {
+    const bookingForm = document.getElementById('booking-form');
+    const inputs = bookingForm.querySelectorAll('input, textarea');
+    const retroMessage = document.getElementById('retro-message');
+    let filledFields = new Set();
+
+    // Function to check if all required fields are filled
+    const checkAllFieldsFilled = () => {
+        const requiredInputs = bookingForm.querySelectorAll('input[required], textarea[required]');
+        let allFilled = true;
+        requiredInputs.forEach(input => {
+            if (!input.value.trim()) {
+                allFilled = false;
+            }
+        });
+        return allFilled;
+    };
+
+    // Function to show the final submit button
+    const showFinalSubmitButton = () => {
+        let finalSubmitButton = document.querySelector('.final-submit');
+        if (!finalSubmitButton) {
+            finalSubmitButton = document.createElement('button');
+            finalSubmitButton.classList.add('final-submit');
+            finalSubmitButton.textContent = 'BOOK NOW!';
+            bookingForm.appendChild(finalSubmitButton);
+
+            // Add click event to submit the form
+            finalSubmitButton.addEventListener('click', () => {
+                bookingForm.requestSubmit();
+            });
+        }
+
+        // Animate form groups to slide into the final button
+        const formGroups = bookingForm.querySelectorAll('.form-group');
+        formGroups.forEach((group, index) => {
+            setTimeout(() => {
+                group.style.transition = 'transform 1s ease-in-out, opacity 0.5s ease-in-out';
+                group.style.transform = `translateY(${(formGroups.length / 2 - index) * 60}px)`;
+                group.style.opacity = '0';
+            }, index * 200);
+        });
+
+        setTimeout(() => {
+            finalSubmitButton.classList.add('visible');
+        }, formGroups.length * 200 + 500);
+    };
+
+    // Handle input focus and blur for each field
+    inputs.forEach((input, index) => {
+        const wrapper = input.closest('.input-wrapper');
+        const formGroup = input.closest('.form-group');
+        const fieldName = formGroup.dataset.field;
+
+        // On blur (when leaving the input)
+        input.addEventListener('blur', () => {
+            const nextInput = inputs[index + 1];
+            if (input.value.trim() && !wrapper.classList.contains('flipped')) {
+                wrapper.classList.add('flipped');
+                filledFields.add(fieldName);
+
+                // Check if all required fields are filled
+                if (checkAllFieldsFilled()) {
+                    showFinalSubmitButton();
+                }
+            }
+
+            // Focus the next input if it exists
+            if (nextInput) {
+                nextInput.focus();
+            }
+        });
+
+        // On focus (when clicking back into the input)
+        input.addEventListener('focus', () => {
+            if (wrapper.classList.contains('flipped')) {
+                wrapper.classList.remove('flipped');
+                filledFields.delete(fieldName);
+
+                // Show retro message
+                retroMessage.classList.add('visible');
+                setTimeout(() => {
+                    retroMessage.classList.remove('visible');
+                }, 5000);
+
+                // Remove final submit button if it exists
+                const finalSubmitButton = document.querySelector('.final-submit');
+                if (finalSubmitButton) {
+                    finalSubmitButton.classList.remove('visible');
+                    setTimeout(() => {
+                        finalSubmitButton.remove();
+                    }, 500);
+
+                    // Reset form groups position
+                    const formGroups = bookingForm.querySelectorAll('.form-group');
+                    formGroups.forEach(group => {
+                        group.style.transform = 'translateY(0)';
+                        group.style.opacity = '1';
+                    });
+                }
+            }
+        });
+
+        // Ensure the input is focused when clicking the back side
+        wrapper.querySelector('.input-back').addEventListener('click', () => {
+            input.focus();
+        });
+    });
+
+    // Handle form submission with AJAX
+    bookingForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(bookingForm);
+        const formObject = {};
+        formData.forEach((value, key) => {
+            formObject[key] = value;
+        });
+
+        try {
+            const response = await fetch(bookingForm.action, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formObject)
+            });
+
+            if (response.ok) {
+                const successMessage = document.createElement('p');
+                successMessage.textContent = 'Thank you for your booking! I’ll get back to you soon.';
+                successMessage.style.color = '#00f7ff';
+                successMessage.style.textShadow = '0 0 10px #00f7ff';
+                successMessage.style.marginTop = '1rem';
+                successMessage.style.textAlign = 'center';
+                bookingForm.innerHTML = '';
+                bookingForm.appendChild(successMessage);
+            } else {
+                throw new Error('Form submission failed');
+            }
+        } catch (error) {
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = 'Oops! Something went wrong. Please try again later.';
+            errorMessage.style.color = '#ff00ff';
+            errorMessage.style.textShadow = '0 0 10px #ff00ff';
+            errorMessage.style.marginTop = '1rem';
+            errorMessage.style.textAlign = 'center';
+            bookingForm.appendChild(errorMessage);
+        }
     });
 });
