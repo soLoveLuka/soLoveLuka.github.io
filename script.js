@@ -264,11 +264,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const bookingForm = document.getElementById('booking-form');
     const inputs = bookingForm.querySelectorAll('input, textarea, select');
     const retroMessage = document.getElementById('retro-message');
+    const detailsGroup = bookingForm.querySelector('.details-group');
+    const backArrow = detailsGroup.querySelector('.back-arrow');
+    const finishButtonWrapper = detailsGroup.querySelector('.finish-button-wrapper');
+    const finishButtonInner = finishButtonWrapper.querySelector('.finish-button-inner');
+    const detailsInput = detailsGroup.querySelector('textarea');
     let filledFields = new Set();
 
-    // Function to check if all required fields are filled
-    const checkAllFieldsFilled = () => {
-        const requiredInputs = bookingForm.querySelectorAll('input[required], textarea[required], select[required]');
+    // Function to check if all required fields (except details) are filled
+    const checkAllFieldsFilledExceptDetails = () => {
+        const requiredInputs = bookingForm.querySelectorAll('input[required], select[required]');
         let allFilled = true;
         requiredInputs.forEach(input => {
             if (!input.value.trim()) {
@@ -278,23 +283,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return allFilled;
     };
 
-    // Function to show the final submit button
-    const showFinalSubmitButton = () => {
-        let finalSubmitButton = document.querySelector('.final-submit');
-        if (!finalSubmitButton) {
-            finalSubmitButton = document.createElement('button');
-            finalSubmitButton.classList.add('final-submit');
-            finalSubmitButton.textContent = 'BOOK NOW!';
-            bookingForm.appendChild(finalSubmitButton);
-
-            // Add click event to submit the form
-            finalSubmitButton.addEventListener('click', () => {
-                bookingForm.requestSubmit();
-            });
-        }
-
-        // Animate form groups to slide into the final button
-        const formGroups = bookingForm.querySelectorAll('.form-group');
+    // Function to show the details group and collapse other fields
+    const showDetailsGroup = () => {
+        // Collapse other form groups
+        const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
         formGroups.forEach((group, index) => {
             setTimeout(() => {
                 group.style.transition = 'transform 1s ease-in-out, opacity 0.5s ease-in-out';
@@ -303,9 +295,35 @@ document.addEventListener('DOMContentLoaded', () => {
             }, index * 200);
         });
 
+        // Show the details group after the collapse animation
         setTimeout(() => {
-            finalSubmitButton.classList.add('visible');
+            detailsGroup.classList.add('active');
         }, formGroups.length * 200 + 500);
+    };
+
+    // Function to revert the form to its initial state
+    const revertForm = () => {
+        // Hide the details group
+        detailsGroup.classList.remove('active');
+
+        // Reset the finish button
+        finishButtonInner.classList.remove('flipped');
+
+        // Reset the filled fields for the details input
+        filledFields.delete('details');
+
+        // Show the other form groups again
+        const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
+        formGroups.forEach(group => {
+            group.style.transform = 'translateY(0)';
+            group.style.opacity = '1';
+        });
+
+        // Show retro message
+        retroMessage.classList.add('visible');
+        setTimeout(() => {
+            retroMessage.classList.remove('visible');
+        }, 5000);
     };
 
     // Handle input focus, blur, and change for each field
@@ -330,20 +348,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     retroMessage.classList.remove('visible');
                 }, 5000);
 
-                // Remove final submit button if it exists
-                const finalSubmitButton = document.querySelector('.final-submit');
-                if (finalSubmitButton) {
-                    finalSubmitButton.classList.remove('visible');
-                    setTimeout(() => {
-                        finalSubmitButton.remove();
-                    }, 500);
-
-                    // Reset form groups position
-                    const formGroups = bookingForm.querySelectorAll('.form-group');
-                    formGroups.forEach(group => {
-                        group.style.transform = 'translateY(0)';
-                        group.style.opacity = '1';
-                    });
+                // If reverting from the details group, revert the entire form
+                if (fieldName === 'details') {
+                    revertForm();
                 }
             }
         });
@@ -354,9 +361,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 wrapper.classList.add('flipped');
                 filledFields.add(fieldName);
 
-                // Check if all required fields are filled
-                if (checkAllFieldsFilled()) {
-                    showFinalSubmitButton();
+                // Check if all required fields (except details) are filled
+                if (fieldName !== 'details' && checkAllFieldsFilledExceptDetails()) {
+                    showDetailsGroup();
                 }
             } else if (!input.value.trim()) {
                 label.classList.remove('hidden');
@@ -370,9 +377,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     wrapper.classList.add('flipped');
                     filledFields.add(fieldName);
 
-                    // Check if all required fields are filled
-                    if (checkAllFieldsFilled()) {
-                        showFinalSubmitButton();
+                    // Check if all required fields (except details) are filled
+                    if (checkAllFieldsFilledExceptDetails()) {
+                        showDetailsGroup();
                     }
                 }
             });
@@ -382,6 +389,25 @@ document.addEventListener('DOMContentLoaded', () => {
         wrapper.querySelector('.input-back').addEventListener('click', () => {
             input.focus();
         });
+    });
+
+    // Back arrow click handler
+    backArrow.addEventListener('click', () => {
+        revertForm();
+    });
+
+    // Finish button click handler
+    finishButtonInner.querySelector('.finish-button-front').addEventListener('click', () => {
+        if (detailsInput.value.trim()) {
+            finishButtonInner.classList.add('flipped');
+            filledFields.add('details');
+        } else {
+            // Show retro message if details are empty
+            retroMessage.classList.add('visible');
+            setTimeout(() => {
+                retroMessage.classList.remove('visible');
+            }, 5000);
+        }
     });
 
     // Handle form submission with AJAX
