@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }, {
-            threshold: 0.1 // Lower threshold to ensure visibility on mobile
+            threshold: 0.05 // Lowered threshold for better mobile visibility
         });
 
         observer.observe(mixesSection);
@@ -241,22 +241,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (bookingSection) sectionObserver.observe(bookingSection);
 });
 
-// Preloader with waveform, disintegration effect, and progress indicator
+// Preloader with waveform and progress indicator (disintegration effect removed)
 document.addEventListener('DOMContentLoaded', () => {
     const preloader = document.querySelector('.preloader');
     const preloaderText = document.querySelector('.preloader-text');
     const preloaderChars = document.querySelectorAll('.preloader-char');
-    const particleContainer = document.querySelector('.particle-container');
     const progressBar = document.querySelector('.progress-bar');
     const progressText = document.querySelector('.progress-text');
 
-    if (preloader && preloaderText && preloaderChars.length > 0 && particleContainer && progressBar && progressText) {
+    if (preloader && preloaderText && preloaderChars.length > 0 && progressBar && progressText) {
         // Start progress bar animation
         progressBar.classList.add('active');
 
         // Update progress percentage
         let progress = 0;
-        const totalDuration = 6000; // 6 seconds total
+        const totalDuration = 4000; // Reduced to 4 seconds since disintegration is removed
         const interval = setInterval(() => {
             progress = Math.min(progress + (100 / (totalDuration / 50)), 100);
             progressText.textContent = `${Math.round(progress)}%`;
@@ -265,50 +264,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Step 1: Show "Loading..." with glitch effect for 1 second
         setTimeout(() => {
-            // Step 2: Transform "Loading..." into a waveform for 3 seconds
+            // Step 2: Transform "Loading..." into a waveform for 2 seconds
             preloaderChars.forEach((char, index) => {
                 char.style.setProperty('--char-index', index);
                 char.classList.add('wave');
             });
 
-            // Step 3: After waveform animation, disintegrate the preloader
+            // Step 3: Fade out the preloader after waveform animation
             setTimeout(() => {
-                // Hide the preloader text and progress
-                preloaderText.style.opacity = '0';
-                document.querySelector('.preloader-progress').style.opacity = '0';
-
-                // Create particles for disintegration effect
-                const particleCountX = window.innerWidth <= 480 ? 15 : 20;
-                const particleCountY = window.innerWidth <= 480 ? 15 : 20;
-                const particleSize = window.innerWidth / particleCountX;
-
-                for (let x = 0; x < particleCountX; x++) {
-                    for (let y = 0; y < particleCountY; y++) {
-                        const particle = document.createElement('div');
-                        particle.classList.add('particle');
-                        particle.style.width = `${particleSize}px`;
-                        particle.style.height = `${particleSize}px`;
-                        particle.style.left = `${x * particleSize}px`;
-                        particle.style.top = `${y * particleSize}px`;
-                        particleContainer.appendChild(particle);
-
-                        const angle = Math.random() * 2 * Math.PI;
-                        const distance = 300 + Math.random() * 200;
-                        const translateX = Math.cos(angle) * distance;
-                        const translateY = Math.sin(angle) * distance;
-
-                        setTimeout(() => {
-                            particle.classList.add('disintegrate');
-                            particle.style.transform = `translate(${translateX}px, ${translateY}px)`;
-                        }, (x + y) * 20);
-                    }
-                }
-
-                // Step 4: Hide the preloader after disintegration
-                setTimeout(() => {
-                    preloader.classList.add('hidden');
-                }, 2000);
-            }, 3000);
+                preloader.classList.add('hidden');
+            }, 2000); // Waveform lasts 2 seconds, then fade out
         }, 1000);
     }
 });
@@ -463,127 +428,51 @@ document.addEventListener('DOMContentLoaded', () => {
         filledFields.delete('details');
 
         const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
-        formGroups.forEach(group => {
-            group.style.transform = 'translateY(0)';
-            group.style.opacity = '1';
+        formGroups.forEach((group, index) => {
+            setTimeout(() => {
+                group.style.transition = 'transform 1s ease-in-out, opacity 0.5s ease-in-out';
+                group.style.transform = 'translateY(0)';
+                group.style.opacity = '1';
+            }, index * 200);
         });
-
-        retroMessage.classList.add('visible');
-        setTimeout(() => {
-            retroMessage.classList.remove('visible');
-        }, 5000);
     };
 
-    inputs.forEach((input) => {
+    inputs.forEach(input => {
         const wrapper = input.closest('.input-wrapper');
-        const formGroup = input.closest('.form-group');
-        const fieldName = formGroup.dataset.field;
         const label = wrapper.querySelector('.input-label');
+        const fieldName = input.closest('.form-group').dataset.field;
 
-        input.addEventListener('focus', () => {
-            label.classList.add('hidden');
-
-            if (wrapper.classList.contains('flipped')) {
-                wrapper.classList.remove('flipped');
-                filledFields.delete(fieldName);
-
-                retroMessage.classList.add('visible');
-                setTimeout(() => {
-                    retroMessage.classList.remove('visible');
-                }, 5000);
-
-                if (fieldName === 'details') {
-                    revertForm();
-                }
-            }
-        });
-
-        input.addEventListener('blur', () => {
-            if (input.value.trim() && !wrapper.classList.contains('flipped')) {
+        input.addEventListener('input', () => {
+            if (input.value.trim()) {
+                label.classList.add('hidden');
                 wrapper.classList.add('flipped');
                 filledFields.add(fieldName);
 
                 if (fieldName !== 'details' && checkAllFieldsBeforeDetails()) {
                     showDetailsGroup();
+                    retroMessage.classList.add('visible');
                 }
-            } else if (!input.value.trim()) {
+            } else {
                 label.classList.remove('hidden');
+                wrapper.classList.remove('flipped');
+                filledFields.delete(fieldName);
             }
-        });
-
-        if (input.tagName === 'SELECT') {
-            input.addEventListener('change', () => {
-                if (input.value && !wrapper.classList.contains('flipped')) {
-                    wrapper.classList.add('flipped');
-                    filledFields.add(fieldName);
-
-                    if (checkAllFieldsBeforeDetails()) {
-                        showDetailsGroup();
-                    }
-                }
-            });
-        }
-
-        wrapper.querySelector('.input-back').addEventListener('click', () => {
-            input.focus();
         });
     });
 
     backArrow.addEventListener('click', () => {
         revertForm();
+        retroMessage.classList.remove('visible');
     });
 
-    finishButtonInner.querySelector('.finish-button-front').addEventListener('click', () => {
-        if (detailsInput.value.trim()) {
-            finishButtonInner.classList.add('flipped');
-            filledFields.add('details');
-        } else {
-            retroMessage.classList.add('visible');
-            setTimeout(() => {
-                retroMessage.classList.remove('visible');
-            }, 5000);
-        }
-    });
-
-    bookingForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const formData = new FormData(bookingForm);
-        const formObject = {};
-        formData.forEach((value, key) => {
-            formObject[key] = value;
-        });
-
-        try {
-            const response = await fetch(bookingForm.action, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formObject)
-            });
-
-            if (response.ok) {
-                const successMessage = document.createElement('p');
-                successMessage.textContent = 'Thank you for your booking! I’ll get back to you soon.';
-                successMessage.style.color = '#00f7ff';
-                successMessage.style.textShadow = '0 0 10px #00f7ff';
-                successMessage.style.marginTop = '1rem';
-                successMessage.style.textAlign = 'center';
-                bookingForm.innerHTML = '';
-                bookingForm.appendChild(successMessage);
-            } else {
-                throw new Error('Form submission failed');
+    finishButtonWrapper.addEventListener('click', () => {
+        if (!finishButtonInner.classList.contains('flipped')) {
+            const wrapper = detailsInput.closest('.input-wrapper');
+            if (detailsInput.value.trim()) {
+                wrapper.classList.add('flipped');
+                filledFields.add('details');
             }
-        } catch (error) {
-            const errorMessage = document.createElement('p');
-            errorMessage.textContent = 'Oops! Something went wrong. Please try again later.';
-            errorMessage.style.color = '#ff00ff';
-            errorMessage.style.textShadow = '0 0 10px #ff00ff';
-            errorMessage.style.marginTop = '1rem';
-            errorMessage.style.textAlign = 'center';
-            bookingForm.appendChild(errorMessage);
+            finishButtonInner.classList.add('flipped');
         }
     });
 });
