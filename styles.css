@@ -18,7 +18,7 @@ body {
     color: #fff;
     overflow-x: hidden;
     position: relative;
-    transition: background 1s ease; /* For dynamic background color shift */
+    transition: background 1s ease;
 }
 
 body.hero-bg {
@@ -34,7 +34,7 @@ body.artist-bg {
 }
 
 body.booking-bg {
-    background: linear-gradient(rgba(50, 50, 0, 0.8), rgba(50, 🙂, 0, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+    background: linear-gradient(rgba(50, 50, 0, 0.8), rgba(50, 50, 0, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
 }
 
 body::before {
@@ -256,8 +256,8 @@ body::after {
     list-style: none;
     padding: 1rem 0;
     margin: 0;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    max-width: 100%; /* Prevent overflow */
+    flex-wrap: wrap;
+    max-width: 100%;
 }
 
 .retro-nav li {
@@ -449,7 +449,7 @@ section {
 }
 
 .mix-grid {
-    display: grid !important; /* Ensure grid display */
+    display: grid !important;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
     max-width: 900px;
@@ -494,20 +494,16 @@ section {
     perspective: 1000px;
     width: 100%;
     min-width: 250px;
-    min-height: 300px; /* Ensure minimum height to prevent collapse */
+    min-height: 300px;
     position: relative;
-    animation: float 6s infinite ease-in-out; /* Float animation */
-}
-
-.mix-card:hover {
-    box-shadow: 0 0 30px rgba(0, 247, 255, 0.8); /* Glow effect on hover for desktop */
+    animation: float 6s infinite ease-in-out;
 }
 
 .mix-card-inner {
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 300px; /* Ensure inner container has minimum height */
+    min-height: 300px;
     transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     transform-style: preserve-3d;
 }
@@ -521,7 +517,7 @@ section {
     position: absolute;
     width: 100%;
     height: 100%;
-    min-height: 300px; /* Ensure front/back have minimum height */
+    min-height: 300px;
     backface-visibility: hidden;
     display: flex;
     flex-direction: column;
@@ -530,22 +526,22 @@ section {
     background: rgba(0, 0, 20, 0.8);
     border: 2px solid #00f7ff;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 247, 255, 0.5); /* Static glow */
+    box-shadow: 0 0 20px rgba(0, 247, 255, 0.5);
 }
 
 .mix-card-front {
     padding: 1rem;
-    background: rgba(0, 0, 20, 0.8) url('https://via.placeholder.com/250x150/333/fff?text=Image+Not+Loaded') no-repeat center center; /* Fallback background */
+    background: rgba(0, 0, 20, 0.8) url('https://via.placeholder.com/250x150/333/fff?text=Image+Not+Loaded') no-repeat center center;
     background-size: cover;
 }
 
 .mix-card-front img {
     width: 100%;
-    max-height: 150px; /* Cap the height but allow scaling */
+    max-height: 150px;
     object-fit: cover;
     border-radius: 5px;
     margin-bottom: 1rem;
-    display: block; /* Ensure image is a block element */
+    display: block;
 }
 
 .mix-card-front h3 {
@@ -644,14 +640,18 @@ section {
 
 /* Initially hide the details group on all devices */
 .form-group.details-group {
-    display: none !important;
+    visibility: hidden;
+    opacity: 0;
     position: relative;
     margin-top: 2rem;
+    transition: visibility 0s 0.5s, opacity 0.5s ease-in-out;
 }
 
 /* Show the details group when active */
 .form-group.details-group.active {
-    display: block !important;
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 0s, opacity 0.5s ease-in-out;
 }
 
 /* Back Arrow */
@@ -752,7 +752,7 @@ section {
     font-family: 'VCR OSD Mono', monospace;
     font-size: 1rem;
     transition: border-color 0.3s ease;
-    backface-visibility: hidden; /* Hide the front side when flipped */
+    backface-visibility: hidden;
 }
 
 .input-wrapper input:focus,
@@ -823,14 +823,14 @@ section {
 }
 
 .input-wrapper.flipped .input-label {
-    display: none; /* Hide the label on the back side */
+    display: none;
 }
 
 .checkmark {
-    font-size: 3rem; /* Larger checkmark to fill the box */
+    font-size: 3rem;
     color: #00ff00;
     text-shadow: 0 0 10px #00ff00;
-    cursor: pointer; /* Indicate the checkmark is clickable */
+    cursor: pointer;
 }
 
 .input-wrapper.flipped .checkmark {
@@ -953,42 +953,38 @@ section {
     }
 
     .mix-grid {
-        grid-template-columns: 1fr !important; /* Ensure single column on mobile */
+        grid-template-columns: 1fr !important;
         max-width: 100%;
     }
 
     .mix-card {
         width: 100%;
         max-width: 300px;
-        min-height: 300px; /* Ensure minimum height on mobile */
+        min-height: 300px;
         margin: 0 auto;
-        animation: none; /* Disable float animation on mobile for performance */
-    }
-
-    .mix-card:hover {
-        box-shadow: 0 0 20px rgba(0, 247, 255, 0.5); /* No hover glow on mobile */
+        animation: none;
     }
 
     .mix-card-inner {
-        min-height: 300px; /* Ensure inner container has minimum height on mobile */
+        min-height: 300px;
     }
 
     .mix-card-front,
     .mix-card-back {
-        min-height: 300px; /* Ensure front/back have minimum height on mobile */
+        min-height: 300px;
     }
 
     .mix-card-front img {
-        max-height: 150px; /* Cap the height but allow scaling */
-        object-fit: cover; /* Ensure image fills space */
+        max-height: 150px;
+        object-fit: cover;
     }
 
     .mix-card-front h3 {
-        font-size: 1rem; /* Slightly smaller font for better fit */
+        font-size: 1rem;
     }
 
     .mix-card-front p {
-        font-size: 0.8rem; /* Slightly smaller font for better fit */
+        font-size: 0.8rem;
     }
 
     .artist-content {
@@ -1029,13 +1025,13 @@ section {
     }
 
     .preloader-char.wave {
-        animation: waveform-mobile 1.2s infinite ease-in-out; /* Slower waveform for mobile */
+        animation: waveform-mobile 1.2s infinite ease-in-out;
         animation-delay: calc(var(--char-index) * 0.15s);
     }
 
     @keyframes waveform-mobile {
         0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-8px); } /* Reduced amplitude */
+        50% { transform: translateY(-8px); }
     }
 
     .section-particle {
@@ -1044,15 +1040,46 @@ section {
     }
 
     .retro-nav ul {
-        padding: 0.5rem 0; /* Reduce padding */
+        padding: 0.5rem 0;
     }
 
     .retro-nav li {
-        margin: 0 0.8rem; /* Reduce margin */
+        margin: 0 0.8rem;
     }
 
     .retro-nav a {
-        font-size: 0.7rem; /* Further reduce font size */
+        font-size: 0.7rem;
+    }
+
+    /* Disable hover effects on mobile */
+    .mix-card:hover {
+        box-shadow: 0 0 20px rgba(0, 247, 255, 0.5);
+    }
+
+    .neon-button:hover {
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .finish-button-front:hover {
+        background: rgba(0, 0, 20, 0.8);
+        box-shadow: none;
+    }
+
+    .back-arrow:hover {
+        color: #00f7ff;
+        text-shadow: 0 0 10px #00f7ff;
+        transform: none;
+    }
+
+    .back-to-top:hover {
+        color: #00f7ff;
+        text-shadow: 0 0 10px #00f7ff;
+    }
+
+    .retro-nav a:hover {
+        color: #00f7ff;
+        text-shadow: 0 0 10px #00f7ff;
     }
 }
 
@@ -1092,8 +1119,8 @@ section {
     }
 
     .mix-card {
-        max-width: 280px; /* Slightly smaller max-width for very small screens */
-        min-height: 280px; /* Adjust minimum height for smaller screens */
+        max-width: 280px;
+        min-height: 280px;
     }
 
     .mix-card-inner {
@@ -1106,7 +1133,7 @@ section {
     }
 
     .mix-card-front img {
-        max-height: 140px; /* Slightly smaller image height for very small screens */
+        max-height: 140px;
     }
 
     .mix-card-front h3 {
@@ -1168,15 +1195,15 @@ section {
     }
 
     .retro-nav ul {
-        padding: 0.3rem 0; /* Further reduce padding */
+        padding: 0.3rem 0;
     }
 
     .retro-nav li {
-        margin: 0 0.4rem; /* Further reduce margin */
+        margin: 0 0.4rem;
     }
 
     .retro-nav a {
-        font-size: 0.55rem; /* Further reduce font size */
+        font-size: 0.55rem;
     }
 
     .progress-text {
