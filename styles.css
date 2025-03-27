@@ -1,3 +1,7 @@
+html {
+    scroll-behavior: smooth;
+}
+
 /* Reset default styles */
 * {
     margin: 0;
@@ -151,12 +155,12 @@ body::after {
 
 /* General Section Styles for Smooth Scrolling */
 section {
-    min-height: 100vh; /* Each section takes up the full viewport height */
+    min-height: 100vh;
     width: 100%;
     position: relative;
-    transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out; /* Smooth transition for sliding and zooming */
-    opacity: 1; /* Default to visible */
-    transform: translateY(0); /* Default to in-view position */
+    transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Class for sections that are out of view (above) */
@@ -293,58 +297,261 @@ section {
 
 /* Mixes Section */
 .mixes {
-    min-height: 100vh;
-    padding: 5rem 2rem;
-    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
 }
 
-.section-title {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 3rem;
-    color: #00f7ff;
-    text-shadow: 0 0 10px #00f7ff;
+.mix-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+    min-height: 60vh; /* Ensure enough space for both elements */
 }
 
 .mix-grid {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 2rem;
-    overflow-x: hidden;
-    padding-bottom: 1rem;
+    transition: transform 1s ease-in-out; /* Smooth gliding effect */
+    position: relative;
+}
+
+.mix-grid.active {
+    transform: translateX(-30%); /* Move to the left side */
+    animation: floatMix 5s infinite ease-in-out; /* Subtle floating animation */
 }
 
 .mix-card {
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid #ff00ff;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #00f7ff;
+    border-radius: 10px;
     padding: 1rem;
+    width: 300px;
     text-align: center;
-    transition: transform 0.3s;
-    box-shadow: 0 0 10px #ff00ff;
-    width: 100%;
-    max-width: 400px; /* Limit width for better layout */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .mix-card img {
     width: 100%;
-    height: 300px;
+    height: 200px;
     object-fit: cover;
+    border-radius: 5px;
 }
 
 .mix-card h3 {
-    font-size: 1.5rem;
-    color: #00f7ff;
-    margin: 1rem 0;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2rem;
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+    margin: 0.5rem 0;
 }
 
 .mix-card p {
-    color: #fff;
+    font-family: 'VCR OSD Mono', monospace;
+    font-size: 1rem;
+    color: #00f7ff;
+    text-shadow: 0 0 5px #00f7ff;
 }
 
-.mix-card:hover {
-    transform: scale(1.05);
+.mix-grid.active .mix-card {
+    border-color: #ff00ff;
+    box-shadow: 0 0 15px #ff00ff, 0 0 30px #00f7ff;
+}
+
+/* Mix Description */
+.mix-description {
+    opacity: 0;
+    transform: translateX(100%); /* Start off-screen to the right */
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+    max-width: 400px;
+    background: rgba(0, 0, 20, 0.8);
+    border: 2px solid #ff00ff;
+    border-radius: 10px;
+    padding: 2rem;
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform-origin: center;
+    animation: none;
+}
+
+.mix-description.active {
+    opacity: 1;
+    transform: translateX(0) translateY(-50%); /* Move into view and center vertically */
+    animation: floatText 5s infinite ease-in-out, glitch 2s infinite; /* Floating and glitch effect */
+}
+
+.mix-description h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    color: #00f7ff;
+    text-shadow: 0 0 10px #00f7ff;
+    margin-bottom: 1rem;
+}
+
+.mix-description p {
+    font-family: 'VCR OSD Mono', monospace;
+    font-size: 1rem;
+    color: #fff;
+    text-shadow: 0 0 5px #fff;
+    line-height: 1.5;
+}
+
+/* Floating Animations */
+@keyframes floatMix {
+    0% { transform: translateX(-30%) translateY(0); }
+    50% { transform: translateX(-30%) translateY(-10px); }
+    100% { transform: translateX(-30%) translateY(0); }
+}
+
+@keyframes floatText {
+    0% { transform: translateX(0) translateY(-50%); }
+    50% { transform: translateX(0) translateY(calc(-50% + 10px)); }
+    100% { transform: translateX(0) translateY(-50%); }
+}
+
+/* Glitch Effect for Retro Text Box */
+@keyframes glitch {
+    0% { transform: translateX(0) translateY(-50%); }
+    2% { transform: translateX(0) translateY(-50%) skew(5deg); }
+    4% { transform: translateX(0) translateY(-50%) skew(-5deg); }
+    6% { transform: translateX(0) translateY(-50%); }
+    8% { transform: translateX(0) translateY(-50%) skew(5deg); }
+    10% { transform: translateX(0) translateY(-50%) skew(-5deg); }
+    12% { transform: translateX(0) translateY(-50%); }
+    100% { transform: translateX(0) translateY(-50%); }
+}
+
+/* Enhance Navigation */
+.retro-nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0, 0, 20, 0.8);
+    z-index: 1000;
+    transition: background 0.3s ease;
+}
+
+.retro-nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 1rem 0;
+    margin: 0;
+}
+
+.retro-nav li {
+    margin: 0 1.5rem;
+}
+
+.retro-nav a {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1rem;
+    color: #00f7ff;
+    text-decoration: none;
+    text-shadow: 0 0 10px #00f7ff;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.retro-nav a:hover {
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+    opacity: 1;
+}
+
+.retro-nav.scrolled a {
+    opacity: 1;
+}
+
+/* Back to Top Button */
+.back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: rgba(0, 0, 20, 0.8);
+    border: 2px solid #ff00ff;
+    color: #00f7ff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-shadow: 0 0 10px #00f7ff;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 1000;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.back-to-top:hover {
+    background: rgba(255, 0, 255, 0.2);
+    transform: translateY(-5px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .mix-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .mix-grid {
+        gap: 1rem;
+    }
+
+    .mix-grid.active {
+        transform: translateX(0); /* Center on mobile */
+    }
+
+    .mix-card {
+        width: 250px;
+    }
+
+    .mix-description {
+        position: static;
+        max-width: 100%;
+        margin-top: 2rem;
+        transform: none;
+    }
+
+    .mix-description.active {
+        transform: none;
+        animation: floatText 5s infinite ease-in-out;
+    }
+
+    @keyframes floatText {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0); }
+    }
+}
+
+@media (max-width: 480px) {
+    .mix-card {
+        width: 200px;
+    }
+
+    .mix-description h3 {
+        font-size: 1.2rem;
+    }
+
+    .mix-description p {
+        font-size: 0.9rem;
+    }
 }
 
 /* Artist Section */
