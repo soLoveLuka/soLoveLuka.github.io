@@ -650,13 +650,6 @@ section {
     perspective: 1000px;
 }
 
-.booking-form label {
-    font-size: 1.2rem;
-    color: #00f7ff;
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
 .input-wrapper {
     position: relative;
     width: 100%;
@@ -670,7 +663,8 @@ section {
 }
 
 .booking-form input,
-.booking-form textarea {
+.booking-form textarea,
+.booking-form select {
     width: 100%;
     padding: 0.5rem;
     background: rgba(255, 255, 255, 0.1);
@@ -678,15 +672,45 @@ section {
     color: #fff;
     font-family: 'VCR OSD Mono', monospace;
     font-size: 1rem;
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
+    z-index: 1;
     backface-visibility: hidden;
+    transition: background 0.3s ease;
+}
+
+.booking-form input:focus,
+.booking-form textarea:focus,
+.booking-form select:focus {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .booking-form textarea {
     height: 150px;
     resize: none;
+}
+
+.booking-form select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: rgba(255, 255, 255, 0.1) url('data:image/svg+xml;utf8,<svg fill="%23ff00ff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 0.5rem center;
+    background-size: 1rem;
+}
+
+.input-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    color: #00f7ff;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.input-label.hidden {
+    opacity: 0;
 }
 
 .input-back {
@@ -895,6 +919,10 @@ section {
         height: 80px;
         font-size: 1.2rem;
     }
+
+    .input-label {
+        font-size: 0.9rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -979,13 +1007,8 @@ section {
         height: 150px; /* Smaller grid on mobile */
     }
 
-    .booking-form label {
-        font-size: 1rem;
-    }
-
-    .booking-form input,
-    .booking-form textarea {
-        font-size: 0.9rem;
+    .input-label {
+        font-size: 0.8rem;
     }
 
     .retro-message {
