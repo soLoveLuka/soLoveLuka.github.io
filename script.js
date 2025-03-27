@@ -461,7 +461,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const label = wrapper.querySelector('.input-label');
         const fieldName = input.closest('.form-group').dataset.field;
 
-        input.addEventListener('input', () => {
+        // Flip the input wrapper only when the input loses focus (blur) and has a value
+        input.addEventListener('blur', () => {
             if (input.value.trim()) {
                 label.classList.add('hidden');
                 wrapper.classList.add('flipped');
@@ -475,6 +476,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 label.classList.remove('hidden');
                 wrapper.classList.remove('flipped');
                 filledFields.delete(fieldName);
+            }
+        });
+
+        // Update label visibility while typing
+        input.addEventListener('input', () => {
+            if (input.value.trim()) {
+                label.classList.add('hidden');
+            } else {
+                label.classList.remove('hidden');
             }
         });
     });
