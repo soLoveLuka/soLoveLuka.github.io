@@ -74,7 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const soundBars = document.querySelectorAll('.sound-bar');
 
     if (heroSection && soundWaveContainer && soundBars.length > 0) {
-        heroSection.addEventListener('mousemove', (e) => {
+        // Mouse movement handler for sound wave interaction
+        const handleMouseMove = (e) => {
             const containerRect = soundWaveContainer.getBoundingClientRect();
             const mouseX = e.clientX - containerRect.left;
             const mouseY = e.clientY - containerRect.top;
@@ -91,13 +92,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const height = minHeight + (influenceX + influenceY) * 0.3;
                 bar.style.height = `${Math.min(maxHeight, height)}px`;
             });
-        });
+        };
 
-        heroSection.addEventListener('mouseleave', () => {
+        // Mouse leave handler to reset sound bars
+        const handleMouseLeave = () => {
             soundBars.forEach((bar) => {
                 bar.style.height = '10px';
             });
-        });
+        };
+
+        // Add event listeners
+        heroSection.addEventListener('mousemove', handleMouseMove);
+        heroSection.addEventListener('mouseleave', handleMouseLeave);
+
+        // Ensure event listeners are not added multiple times
+        heroSection.removeEventListener('mousemove', handleMouseMove);
+        heroSection.removeEventListener('mouseleave', handleMouseLeave);
+        heroSection.addEventListener('mousemove', handleMouseMove);
+        heroSection.addEventListener('mouseleave', handleMouseLeave);
     }
 });
 
