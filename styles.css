@@ -1,368 +1,1027 @@
-// Smooth scrolling animation for sections
-document.addEventListener('DOMContentLoaded', () => {
-    const sections = document.querySelectorAll('section');
-    let lastScrollTop = 0;
-    let currentSectionIndex = 0;
+html {
+    scroll-behavior: smooth;
+}
 
-    // Function to update section visibility based on scroll direction
-    function updateSections(scrollDirection) {
-        sections.forEach((section, index) => {
-            section.classList.remove('in-view', 'out-of-view-up', 'out-of-view-down', 'zoom-down');
-        });
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'VCR OSD Mono', monospace;
+}
 
-        if (scrollDirection === 'down' && currentSectionIndex < sections.length - 1) {
-            currentSectionIndex++;
-        } else if (scrollDirection === 'up' && currentSectionIndex > 0) {
-            currentSectionIndex--;
-        }
+/* Body with modern, simplistic, spacey background */
+body {
+    background: linear-gradient(rgba(0, 0, 20, 0.8), rgba(0, 0, 20, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
+    background-color: #1a1a3d; /* Lighter fallback color: dark blue-purple */
+    color: #fff;
+    overflow-x: hidden;
+    position: relative;
+    /* Removed perspective to flatten the grid */
+}
 
-        sections.forEach((section, index) => {
-            if (index < currentSectionIndex) {
-                section.classList.add(scrollDirection === 'down' ? 'out-of-view-up' : 'zoom-down');
-            } else if (index === currentSectionIndex) {
-                section.classList.add('in-view');
-            } else {
-                section.classList.add(scrollDirection === 'down' ? 'out-of-view-down' : 'out-of-view-up');
-            }
-        });
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Create a grid of wireframe cubes */
+    background: 
+        /* Front vertical edges */
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 40px,
+            rgba(0, 247, 255, 0.3) 40px, /* Brighter cyan edge */
+            rgba(0, 247, 255, 0.3) 41px,
+            transparent 41px,
+            transparent 80px
+        ),
+        /* Front horizontal edges */
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 40px,
+            rgba(0, 247, 255, 0.3) 40px,
+            rgba(0, 247, 255, 0.3) 41px,
+            transparent 41px,
+            transparent 80px
+        ),
+        /* Back vertical edges (shifted for depth) */
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 20px,
+            rgba(0, 247, 255, 0.2) 20px,
+            rgba(0, 247, 255, 0.2) 21px,
+            transparent 21px,
+            transparent 60px
+        ),
+        /* Back horizontal edges (shifted for depth) */
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 20px,
+            rgba(0, 247, 255, 0.2) 20px,
+            rgba(0, 247, 255, 0.2) 21px,
+            transparent 21px,
+            transparent 60px
+        );
+    background-size: 80px 80px; /* Size of each cube */
+    background-position: 0 0, 0 0, 20px 20px, 20px 20px; /* Shift for depth */
+    z-index: -1;
+    pointer-events: none;
+    transform: none; /* Removed rotateX and rotateY to flatten the grid */
+    animation: float 10s infinite ease-in-out; /* Subtle floating animation */
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Add connecting lines for the cube sides and glow */
+    background: 
+        /* Diagonal lines (front-top to back-bottom) */
+        repeating-linear-gradient(
+            45deg,
+            transparent 0px,
+            transparent 28px,
+            rgba(0, 247, 255, 0.3) 28px,
+            rgba(0, 247, 255, 0.3) 29px,
+            transparent 29px,
+            transparent 57px
+        ),
+        /* Diagonal lines (front-bottom to back-top) */
+        repeating-linear-gradient(
+            -45deg,
+            transparent 0px,
+            transparent 28px,
+            rgba(0, 247, 255, 0.3) 28px,
+            rgba(0, 247, 255, 0.3) 29px,
+            transparent 29px,
+            transparent 57px
+        );
+    background-size: 80px 80px;
+    background-position: 0 0;
+    z-index: -1;
+    pointer-events: none;
+    transform: none; /* Removed rotateX and rotateY to flatten the grid */
+    filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.5)) drop-shadow(0 0 10px rgba(0, 247, 255, 0.3)); /* Simplified glow */
+    animation: float 10s infinite ease-in-out reverse; /* Subtle floating in reverse */
+}
+
+/* Subtle floating animation */
+@keyframes float {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(5px, 5px); }
+    100% { transform: translate(0, 0); }
+}
+
+/* Preloader */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1a1a3d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    transition: opacity 0.5s ease;
+}
+
+.preloader.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.preloader-text {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    color: #00f7ff;
+    text-shadow: 0 0 10px #00f7ff;
+    animation: glitch 2s infinite;
+}
+
+/* Retro Nav Bar */
+.retro-nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0, 0, 20, 0.8);
+    z-index: 1000;
+    transition: background 0.3s ease;
+}
+
+.retro-nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 1rem 0;
+    margin: 0;
+}
+
+.retro-nav li {
+    margin: 0 1.5rem;
+}
+
+.retro-nav a {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1rem;
+    color: #00f7ff;
+    text-decoration: none;
+    text-shadow: 0 0 10px #00f7ff;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.retro-nav a:hover {
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+    opacity: 1;
+}
+
+.retro-nav.scrolled a {
+    opacity: 1;
+}
+
+/* General Section Styles for Smooth Scrolling */
+section {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Class for sections that are out of view (above) */
+.out-of-view-up {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+/* Class for sections that are out of view (below) */
+.out-of-view-down {
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+/* Class for sections that are in view */
+.in-view {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Class for zooming down effect when scrolling up */
+.zoom-down {
+    transform: translateY(100%) scale(0.95); /* Slight zoom effect */
+    opacity: 0;
+}
+
+/* Hero Section */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+.hero h1 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.hero h2 {
+    font-size: 2rem;
+    color: #00f7ff;
+    margin-bottom: 2rem;
+}
+
+/* Glitch Effect for Title */
+.glitch {
+    position: relative;
+    color: #fff;
+    animation: glitch 1s linear infinite;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitch::before {
+    color: #ff00ff;
+    animation: glitch-top 0.5s linear infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+}
+
+.glitch::after {
+    color: #00f7ff;
+    animation: glitch-bottom 0.7s linear infinite;
+    clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+}
+
+@keyframes glitch {
+    2%, 64% { transform: translate(2px, 0) skew(0deg); }
+    4%, 60% { transform: translate(-2px, 0) skew(0deg); }
+    62% { transform: translate(0, 0) skew(5deg); }
+}
+
+@keyframes glitch-top {
+    2%, 64% { transform: translate(2px, -2px); }
+    4%, 60% { transform: translate(-2px, 2px); }
+    62% { transform: translate(13px, -1px) skew(-13deg); }
+}
+
+@keyframes glitch-bottom {
+    2%, 64% { transform: translate(-2px, 0); }
+    4%, 60% { transform: translate(2px, 0); }
+    62% { transform: translate(-11px, 1px) skew(21deg); }
+}
+
+/* Sound Wave Container and Bars */
+.sound-wave-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    width: 300px;
+    height: 100px;
+    margin-bottom: 2rem;
+    position: relative;
+    touch-action: none; /* Prevent default touch behavior to improve responsiveness */
+}
+
+.sound-bar {
+    width: 20px;
+    height: 10px; /* Default height, will be adjusted by JavaScript */
+    background: linear-gradient(90deg, #ff00ff, #00f7ff);
+    margin: 0 5px;
+    transition: height 0.2s ease; /* Smoother transition for better responsiveness */
+    box-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+}
+
+/* Neon Button */
+.neon-button {
+    padding: 1rem 2rem;
+    background: none;
+    border: 2px solid #ff00ff;
+    color: #ff00ff;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 10px #ff00ff;
+}
+
+.neon-button:hover {
+    background: #ff00ff;
+    color: #000;
+    box-shadow: 0 0 20px #ff00ff;
+}
+
+/* Mixes Section */
+.mixes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+}
+
+.mix-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+    min-height: 60vh; /* Ensure enough space for both elements */
+}
+
+.mix-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    transition: transform 1s ease-in-out; /* Smooth gliding effect */
+    position: relative;
+}
+
+.mix-grid.active {
+    transform: translateX(-30%); /* Move to the left side */
+    animation: floatMix 5s infinite ease-in-out; /* Subtle floating animation */
+}
+
+/* Mix Card with 3D Flip Effect */
+.mix-card {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #00f7ff;
+    border-radius: 10px;
+    width: 300px;
+    height: 400px; /* Fixed height to accommodate both front and back */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    perspective: 1000px; /* Enable 3D perspective */
+    position: relative;
+}
+
+.mix-card:hover:not(.flipped) {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 0 20px #ff00ff, 0 0 40px #00f7ff;
+}
+
+.mix-card.flipped .mix-card-inner {
+    transform: rotateY(180deg);
+}
+
+.mix-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Smooth cinematic flip */
+    transform-style: preserve-3d;
+}
+
+.mix-card-front,
+.mix-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.mix-card-front {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #00f7ff;
+}
+
+.mix-card-back {
+    background: rgba(0, 0, 20, 0.9);
+    border: 2px solid #ff00ff;
+    transform: rotateY(180deg);
+    box-shadow: 0 0 20px #ff00ff, 0 0 40px #00f7ff;
+    animation: glowPulse 2s infinite ease-in-out;
+}
+
+@keyframes glowPulse {
+    0% { box-shadow: 0 0 20px #ff00ff, 0 0 40px #00f7ff; }
+    50% { box-shadow: 0 0 30px #ff00ff, 0 0 60px #00f7ff; }
+    100% { box-shadow: 0 0 20px #ff00ff, 0 0 40px #00f7ff; }
+}
+
+.mix-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.mix-card h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2rem;
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+    margin: 0.5rem 0;
+}
+
+.mix-card p {
+    font-family: 'VCR OSD Mono', monospace;
+    font-size: 1rem;
+    color: #00f7ff;
+    text-shadow: 0 0 5px #00f7ff;
+}
+
+.mix-grid.active .mix-card {
+    border-color: #ff00ff;
+    box-shadow: 0 0 15px #ff00ff, 0 0 30px #00f7ff;
+}
+
+.mix-audio {
+    width: 100%;
+    filter: hue-rotate(300deg);
+    margin-top: 1rem;
+}
+
+/* Mix Description */
+.mix-description {
+    opacity: 0;
+    transform: translateX(100%); /* Start off-screen to the right */
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+    max-width: 400px;
+    background: rgba(0, 0, 20, 0.8);
+    border: 2px solid #ff00ff;
+    border-radius: 10px;
+    padding: 2rem;
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform-origin: center;
+    animation: none;
+}
+
+.mix-description.active {
+    opacity: 1;
+    transform: translateX(0) translateY(-50%); /* Move into view and center vertically */
+    animation: floatText 5s infinite ease-in-out, glitch 2s infinite; /* Floating and glitch effect */
+}
+
+.mix-description h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    color: #00f7ff;
+    text-shadow: 0 0 10px #00f7ff;
+    margin-bottom: 1rem;
+}
+
+.mix-description p {
+    font-family: 'VCR OSD Mono', monospace;
+    font-size: 1rem;
+    color: #fff;
+    text-shadow: 0 0 5px #fff;
+    line-height: 1.5;
+}
+
+/* Floating Animations */
+@keyframes floatMix {
+    0% { transform: translateX(-30%) translateY(0); }
+    50% { transform: translateX(-30%) translateY(-10px); }
+    100% { transform: translateX(-30%) translateY(0); }
+}
+
+@keyframes floatText {
+    0% { transform: translateX(0) translateY(-50%); }
+    50% { transform: translateX(0) translateY(calc(-50% + 10px)); }
+    100% { transform: translateX(0) translateY(-50%); }
+}
+
+/* Glitch Effect for Retro Text Box */
+@keyframes glitch {
+    0% { transform: translateX(0) translateY(-50%); }
+    2% { transform: translateX(0) translateY(-50%) skew(5deg); }
+    4% { transform: translateX(0) translateY(-50%) skew(-5deg); }
+    6% { transform: translateX(0) translateY(-50%); }
+    8% { transform: translateX(0) translateY(-50%) skew(5deg); }
+    10% { transform: translateX(0) translateY(-50%) skew(-5deg); }
+    12% { transform: translateX(0) translateY(-50%); }
+    100% { transform: translateX(0) translateY(-50%); }
+}
+
+/* Back to Top Button */
+.back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: rgba(0, 0, 20, 0.8);
+    border: 2px solid #ff00ff;
+    color: #00f7ff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-shadow: 0 0 10px #00f7ff;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 1000;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.back-to-top:hover {
+    background: rgba(255, 0, 255, 0.2);
+    transform: translateY(-5px);
+}
+
+/* Artist Section */
+.artist {
+    min-height: 100vh;
+    padding: 5rem 2rem;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
+
+.artist.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.artist-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+}
+
+.artist-content img {
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
+    object-fit: cover;
+    border: 2px solid #00f7ff;
+    box-shadow: 0 0 10px #00f7ff;
+}
+
+.artist-bio {
+    max-width: 500px;
+    text-align: center;
+}
+
+.artist-bio p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.artist-bio audio {
+    width: 100%;
+    filter: hue-rotate(300deg);
+}
+
+/* Booking Section */
+.booking {
+    min-height: 100vh;
+    padding: 5rem 2rem;
+    background: rgba(0, 0, 0, 0.5);
+    position: relative;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
+
+.booking.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.neon-grid {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(45deg, #ff00ff, #00f7ff);
+    animation: pulse 5s infinite;
+    margin-bottom: 2rem;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+.booking-form {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+}
+
+.form-group {
+    position: relative;
+    perspective: 1000px;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transform-style: preserve-3d;
+}
+
+.input-wrapper.flipped {
+    transform: rotateY(180deg);
+}
+
+.booking-form input,
+.booking-form textarea,
+.booking-form select {
+    width: 100%;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #ff00ff;
+    color: #fff;
+    font-family: 'VCR OSD Mono', monospace;
+    font-size: 1rem;
+    position: relative;
+    z-index: 1;
+    backface-visibility: hidden;
+    transition: background 0.3s ease;
+}
+
+.booking-form input:focus,
+.booking-form textarea:focus,
+.booking-form select:focus {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.booking-form textarea {
+    height: 150px;
+    resize: none;
+}
+
+.booking-form select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: rgba(255, 255, 255, 0.1) url('data:image/svg+xml;utf8,<svg fill="%23ff00ff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 0.5rem center;
+    background-size: 1rem;
+}
+
+.input-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    color: #00f7ff;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.input-label.hidden {
+    opacity: 0;
+}
+
+.input-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border: 2px solid #00f7ff;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-back .checkmark {
+    font-size: 2rem;
+    color: #ff00ff;
+    opacity: 0;
+    animation: checkmarkFade 1s ease-in-out forwards, colorShift 2s infinite ease-in-out;
+}
+
+@keyframes checkmarkFade {
+    0% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes colorShift {
+    0% { color: #ff00ff; text-shadow: 0 0 10px #ff00ff; }
+    50% { color: #00f7ff; text-shadow: 0 0 10px #00f7ff; }
+    100% { color: #ff00ff; text-shadow: 0 0 10px #ff00ff; }
+}
+
+/* Retro Message */
+.retro-message {
+    position: fixed;
+    top: 50%;
+    right: 2rem;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 20, 0.9);
+    border: 2px solid #ff00ff;
+    padding: 1rem 2rem;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1rem;
+    color: #00f7ff;
+    text-shadow: 0 0 10px #00f7ff;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1000;
+    animation: glitch 2s infinite;
+}
+
+.retro-message.visible {
+    opacity: 1;
+    animation: slideIn 0.5s ease-in-out forwards, glitch 2s infinite;
+}
+
+@keyframes slideIn {
+    0% { transform: translateX(100%) translateY(-50%); opacity: 0; }
+    100% { transform: translateX(0) translateY(-50%); opacity: 1; }
+}
+
+/* Final Submit Button */
+.final-submit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 100px;
+    background: #00ff00;
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    color: #000;
+    text-transform: uppercase;
+    cursor: pointer;
+    animation: pulseGreen 1.5s infinite ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.final-submit.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@keyframes pulseGreen {
+    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; }
+    50% { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00; }
+    100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .mix-container {
+        flex-direction: column;
+        align-items: center;
     }
 
-    // Debounced scroll handler
-    const debounce = (func, wait) => {
-        let timeout;
-        return (...args) => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), wait);
-        };
-    };
-
-    // Scroll event listener
-    window.addEventListener('scroll', debounce(() => {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
-
-        const sectionHeight = window.innerHeight;
-        const scrollThreshold = sectionHeight * 0.5;
-        if (Math.abs(scrollTop - lastScrollTop) > scrollThreshold) {
-            updateSections(scrollDirection);
-        }
-
-        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-
-        // Navigation fade-in
-        const nav = document.querySelector('.retro-nav');
-        if (scrollTop > 50) {
-            nav.classList.add('scrolled');
-        } else {
-            nav.classList.remove('scrolled');
-        }
-
-        // Back to Top button visibility
-        const backToTop = document.querySelector('.back-to-top');
-        if (scrollTop > 300) {
-            backToTop.classList.add('visible');
-        } else {
-            backToTop.classList.remove('visible');
-        }
-
-        // Check if mix cards should flip back when scrolling out of view
-        const mixesSection = document.querySelector('#mixes');
-        const mixCards = document.querySelectorAll('.mix-card');
-        const mixesRect = mixesSection.getBoundingClientRect();
-
-        // Define the threshold for when to flip back (e.g., when the section is 50% out of view)
-        const threshold = window.innerHeight * 0.5;
-
-        if (mixesRect.top > window.innerHeight - threshold || mixesRect.bottom < threshold) {
-            mixCards.forEach(card => {
-                if (card.classList.contains('flipped')) {
-                    card.classList.remove('flipped');
-                    const audio = card.querySelector('.mix-audio');
-                    if (audio) audio.pause();
-                }
-            });
-        }
-    }, 10));
-});
-
-// Sound wave interaction with mouse movement
-document.addEventListener('DOMContentLoaded', () => {
-    const heroSection = document.querySelector('.hero');
-    const soundWaveContainer = document.querySelector('.sound-wave-container');
-    const soundBars = document.querySelectorAll('.sound-bar');
-
-    if (heroSection && soundWaveContainer && soundBars.length > 0) {
-        // Mouse movement handler for sound wave interaction
-        const handleMouseMove = (e) => {
-            const containerRect = soundWaveContainer.getBoundingClientRect();
-            const mouseX = e.clientX - containerRect.left;
-            const mouseY = e.clientY - containerRect.top;
-            const centerY = containerRect.height / 2;
-
-            soundBars.forEach((bar, index) => {
-                const barX = bar.offsetLeft + (bar.offsetWidth / 2);
-                const distanceX = Math.abs(mouseX - barX);
-                const distanceY = Math.abs(mouseY - centerY);
-                const maxHeight = 80;
-                const minHeight = 10;
-                const influenceX = Math.max(0, 150 - distanceX);
-                const influenceY = Math.max(0, 150 - distanceY);
-                const height = minHeight + (influenceX + influenceY) * 0.3;
-                bar.style.height = `${Math.min(maxHeight, height)}px`;
-            });
-        };
-
-        // Mouse leave handler to reset sound bars
-        const handleMouseLeave = () => {
-            soundBars.forEach((bar) => {
-                bar.style.height = '10px';
-            });
-        };
-
-        // Add event listeners
-        heroSection.addEventListener('mousemove', handleMouseMove);
-        heroSection.addEventListener('mouseleave', handleMouseLeave);
-
-        // Ensure event listeners are not added multiple times
-        heroSection.removeEventListener('mousemove', handleMouseMove);
-        heroSection.removeEventListener('mouseleave', handleMouseLeave);
-        heroSection.addEventListener('mousemove', handleMouseMove);
-        heroSection.addEventListener('mouseleave', handleMouseLeave);
+    .mix-grid {
+        gap: 1rem;
     }
-});
 
-// Mixes section animation with IntersectionObserver
-document.addEventListener('DOMContentLoaded', () => {
-    const mixesSection = document.querySelector('#mixes');
-    const mixGrid = document.querySelector('.mix-grid');
-    const mixDescription = document.querySelector('.mix-description');
-
-    if (mixesSection && mixGrid && mixDescription) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    mixGrid.classList.add('active');
-                    mixDescription.classList.add('active');
-                } else {
-                    mixGrid.classList.remove('active');
-                    mixDescription.classList.remove('active');
-                }
-            });
-        }, {
-            threshold: 0.5 // Trigger when 50% of the section is visible
-        });
-
-        observer.observe(mixesSection);
+    .mix-grid.active {
+        transform: translateX(0); /* Center on mobile */
     }
-});
 
-// Fade-in animations for artist and booking sections with IntersectionObserver
-document.addEventListener('DOMContentLoaded', () => {
-    const artistSection = document.querySelector('#artist');
-    const bookingSection = document.querySelector('#booking');
-
-    const observerOptions = { threshold: 0.3 }; // Trigger when 30% of the section is visible
-
-    const sectionObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-            }
-        });
-    }, observerOptions);
-
-    if (artistSection) sectionObserver.observe(artistSection);
-    if (bookingSection) sectionObserver.observe(bookingSection);
-});
-
-// Preloader
-document.addEventListener('DOMContentLoaded', () => {
-    const preloader = document.querySelector('.preloader');
-    if (preloader) {
-        // Hide preloader after 1 second (adjust as needed)
-        setTimeout(() => {
-            preloader.classList.add('hidden');
-        }, 1000);
+    .mix-card {
+        width: 250px;
+        height: 350px; /* Adjust height for smaller screens */
     }
-});
 
-// Mix card flip interaction
-document.addEventListener('DOMContentLoaded', () => {
-    const mixCards = document.querySelectorAll('.mix-card');
-    let currentlyFlippedCard = null;
+    .mix-description {
+        position: static;
+        max-width: 100%;
+        margin-top: 2rem;
+        transform: none;
+    }
 
-    mixCards.forEach(card => {
-        card.addEventListener('click', () => {
-            // If another card is flipped, flip it back and pause its audio
-            if (currentlyFlippedCard && currentlyFlippedCard !== card) {
-                currentlyFlippedCard.classList.remove('flipped');
-                const previousAudio = currentlyFlippedCard.querySelector('.mix-audio');
-                if (previousAudio) previousAudio.pause();
-            }
+    .mix-description.active {
+        transform: none;
+        animation: floatText 5s infinite ease-in-out;
+    }
 
-            // Toggle the clicked card
-            card.classList.toggle('flipped');
-            currentlyFlippedCard = card.classList.contains('flipped') ? card : null;
+    @keyframes floatText {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0); }
+    }
 
-            // Pause audio when flipping back
-            const audio = card.querySelector('.mix-audio');
-            if (!card.classList.contains('flipped') && audio) {
-                audio.pause();
-            }
-        });
-    });
-});
+    .retro-nav ul {
+        flex-direction: column;
+        gap: 1rem;
+    }
 
-// Booking form interaction
-document.addEventListener('DOMContentLoaded', () => {
-    const bookingForm = document.getElementById('booking-form');
-    const inputs = bookingForm.querySelectorAll('input, textarea');
-    const retroMessage = document.getElementById('retro-message');
-    let filledFields = new Set();
+    .retro-nav a {
+        font-size: 1rem;
+    }
 
-    // Function to check if all required fields are filled
-    const checkAllFieldsFilled = () => {
-        const requiredInputs = bookingForm.querySelectorAll('input[required], textarea[required]');
-        let allFilled = true;
-        requiredInputs.forEach(input => {
-            if (!input.value.trim()) {
-                allFilled = false;
-            }
-        });
-        return allFilled;
-    };
+    .hero h1 {
+        font-size: 2.5rem;
+    }
 
-    // Function to show the final submit button
-    const showFinalSubmitButton = () => {
-        let finalSubmitButton = document.querySelector('.final-submit');
-        if (!finalSubmitButton) {
-            finalSubmitButton = document.createElement('button');
-            finalSubmitButton.classList.add('final-submit');
-            finalSubmitButton.textContent = 'BOOK NOW!';
-            bookingForm.appendChild(finalSubmitButton);
+    .hero h2 {
+        font-size: 1.5rem;
+    }
 
-            // Add click event to submit the form
-            finalSubmitButton.addEventListener('click', () => {
-                bookingForm.requestSubmit();
-            });
-        }
+    .sound-wave-container {
+        width: 200px;
+        height: 80px;
+    }
 
-        // Animate form groups to slide into the final button
-        const formGroups = bookingForm.querySelectorAll('.form-group');
-        formGroups.forEach((group, index) => {
-            setTimeout(() => {
-                group.style.transition = 'transform 1s ease-in-out, opacity 0.5s ease-in-out';
-                group.style.transform = `translateY(${(formGroups.length / 2 - index) * 60}px)`;
-                group.style.opacity = '0';
-            }, index * 200);
-        });
+    .sound-bar {
+        width: 15px;
+        margin: 0 3px;
+    }
 
-        setTimeout(() => {
-            finalSubmitButton.classList.add('visible');
-        }, formGroups.length * 200 + 500);
-    };
+    .mixes, .artist, .booking {
+        padding: 3rem 1rem; /* Reduced padding for smaller screens */
+    }
 
-    // Handle input focus and blur for each field
-    inputs.forEach((input, index) => {
-        const wrapper = input.closest('.input-wrapper');
-        const formGroup = input.closest('.form-group');
-        const fieldName = formGroup.dataset.field;
+    .mix-grid {
+        flex-direction: column;
+        align-items: center;
+    }
 
-        // On blur (when leaving the input)
-        input.addEventListener('blur', () => {
-            const nextInput = inputs[index + 1];
-            if (input.value.trim() && !wrapper.classList.contains('flipped')) {
-                wrapper.classList.add('flipped');
-                filledFields.add(fieldName);
+    .mix-card {
+        max-width: 300px; /* Smaller cards on tablet */
+    }
 
-                // Check if all required fields are filled
-                if (checkAllFieldsFilled()) {
-                    showFinalSubmitButton();
-                }
-            }
+    .mix-card img {
+        height: 150px; /* Smaller images on tablet */
+    }
 
-            // Focus the next input if it exists
-            if (nextInput) {
-                nextInput.focus();
-            }
-        });
+    .artist-content {
+        flex-direction: column;
+        text-align: center;
+    }
 
-        // On focus (when clicking back into the input)
-        input.addEventListener('focus', () => {
-            if (wrapper.classList.contains('flipped')) {
-                wrapper.classList.remove('flipped');
-                filledFields.delete(fieldName);
+    .artist-content img {
+        max-width: 300px;
+        height: 300px;
+    }
 
-                // Show retro message
-                retroMessage.classList.add('visible');
-                setTimeout(() => {
-                    retroMessage.classList.remove('visible');
-                }, 5000);
+    .booking-form {
+        width: 90%;
+    }
 
-                // Remove final submit button if it exists
-                const finalSubmitButton = document.querySelector('.final-submit');
-                if (finalSubmitButton) {
-                    finalSubmitButton.classList.remove('visible');
-                    setTimeout(() => {
-                        finalSubmitButton.remove();
-                    }, 500);
+    .retro-message {
+        right: 1rem;
+        font-size: 0.8rem;
+        padding: 0.8rem 1.5rem;
+    }
 
-                    // Reset form groups position
-                    const formGroups = bookingForm.querySelectorAll('.form-group');
-                    formGroups.forEach(group => {
-                        group.style.transform = 'translateY(0)';
-                        group.style.opacity = '1';
-                    });
-                }
-            }
-        });
+    .final-submit {
+        width: 250px;
+        height: 80px;
+        font-size: 1.2rem;
+    }
 
-        // Ensure the input is focused when clicking the back side
-        wrapper.querySelector('.input-back').addEventListener('click', () => {
-            input.focus();
-        });
-    });
+    .input-label {
+        font-size: 0.9rem;
+    }
+}
 
-    // Handle form submission with AJAX
-    bookingForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+@media (max-width: 480px) {
+    .mix-card {
+        width: 200px;
+        height: 300px; /* Further adjust height for mobile */
+    }
 
-        const formData = new FormData(bookingForm);
-        const formObject = {};
-        formData.forEach((value, key) => {
-            formObject[key] = value;
-        });
+    .mix-card img {
+        height: 120px; /* Smaller images on mobile */
+    }
 
-        try {
-            const response = await fetch(bookingForm.action, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formObject)
-            });
+    .mix-card h3 {
+        font-size: 1rem;
+    }
 
-            if (response.ok) {
-                const successMessage = document.createElement('p');
-                successMessage.textContent = 'Thank you for your booking! I’ll get back to you soon.';
-                successMessage.style.color = '#00f7ff';
-                successMessage.style.textShadow = '0 0 10px #00f7ff';
-                successMessage.style.marginTop = '1rem';
-                successMessage.style.textAlign = 'center';
-                bookingForm.innerHTML = '';
-                bookingForm.appendChild(successMessage);
-            } else {
-                throw new Error('Form submission failed');
-            }
-        } catch (error) {
-            const errorMessage = document.createElement('p');
-            errorMessage.textContent = 'Oops! Something went wrong. Please try again later.';
-            errorMessage.style.color = '#ff00ff';
-            errorMessage.style.textShadow = '0 0 10px #ff00ff';
-            errorMessage.style.marginTop = '1rem';
-            errorMessage.style.textAlign = 'center';
-            bookingForm.appendChild(errorMessage);
-        }
-    });
-});
+    .mix-card p {
+        font-size: 0.8rem;
+    }
+
+    .mix-description h3 {
+        font-size: 1.2rem;
+    }
+
+    .mix-description p {
+        font-size: 0.9rem;
+    }
+
+    .retro-nav {
+        padding: 0.5rem;
+    }
+
+    .retro-nav a {
+        font-size: 0.9rem;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero h2 {
+        font-size: 1.2rem;
+    }
+
+    .sound-wave-container {
+        width: 150px;
+        height: 60px;
+    }
+
+    .sound-bar {
+        width: 10px;
+        margin: 0 2px;
+    }
+
+    .neon-button {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .mixes, .artist, .booking {
+        padding: 2rem 0.5rem; /* Further reduced padding for mobile */
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .mix-card {
+        max-width: 250px; /* Even smaller cards on mobile */
+    }
+
+    .artist-content img {
+        max-width: 250px;
+        height: 250px;
+    }
+
+    .artist-bio p {
+        font-size: 1rem;
+    }
+
+    .neon-grid {
+        height: 150px; /* Smaller grid on mobile */
+    }
+
+    .input-label {
+        font-size: 0.8rem;
+    }
+
+    .retro-message {
+        right: 0.5rem;
+        font-size: 0.7rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .final-submit {
+        width: 200px;
+        height: 60px;
+        font-size: 1rem;
+    }
+}
