@@ -34,7 +34,7 @@ body.artist-bg {
 }
 
 body.booking-bg {
-    background: linear-gradient(rgba(50, 50, 0, 0.8), rgba(50, 50, 0, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+    background: linear-gradient(rgba(50, 50, 0, 0.8), rgba(50, 🙂, 0, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
 }
 
 body::before {
@@ -752,6 +752,7 @@ section {
     font-family: 'VCR OSD Mono', monospace;
     font-size: 1rem;
     transition: border-color 0.3s ease;
+    backface-visibility: hidden; /* Hide the front side when flipped */
 }
 
 .input-wrapper input:focus,
@@ -829,6 +830,7 @@ section {
     font-size: 3rem; /* Larger checkmark to fill the box */
     color: #00ff00;
     text-shadow: 0 0 10px #00ff00;
+    cursor: pointer; /* Indicate the checkmark is clickable */
 }
 
 .input-wrapper.flipped .checkmark {
