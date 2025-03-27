@@ -146,17 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (heroSection && soundWaveContainer && soundBars.length > 0) {
         heroSection.addEventListener('mousemove', (e) => {
             const containerRect = soundWaveContainer.getBoundingClientRect();
-            // Adjust for scroll position
-            const scrollX = window.scrollX || window.pageXOffset;
-            const scrollY = window.scrollY || window.pageYOffset;
-            const mouseX = e.clientX - containerRect.left + scrollX; // Adjust mouse X for scroll
-            const mouseY = e.clientY - containerRect.top + scrollY; // Adjust mouse Y for scroll
+            const mouseX = e.clientX - containerRect.left;
+            const mouseY = e.clientY - containerRect.top;
             const centerY = containerRect.height / 2;
 
             soundBars.forEach((bar, index) => {
-                // Get the actual position of each bar relative to the container
-                const barRect = bar.getBoundingClientRect();
-                const barX = barRect.left - containerRect.left + (barRect.width / 2); // Center of the bar
+                const barX = bar.offsetLeft + (bar.offsetWidth / 2);
                 const distanceX = Math.abs(mouseX - barX);
                 const distanceY = Math.abs(mouseY - centerY);
                 const maxHeight = 80;
@@ -165,9 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const influenceY = Math.max(0, 150 - distanceY);
                 const height = minHeight + (influenceX + influenceY) * 0.3;
                 bar.style.height = `${Math.min(maxHeight, height)}px`;
-
-                // Debugging: Log positions to compare
-                console.log(`Bar ${index}: barX=${barX}, mouseX=${mouseX}, distanceX=${distanceX}`);
             });
         });
 
@@ -175,6 +167,59 @@ document.addEventListener('DOMContentLoaded', () => {
             soundBars.forEach((bar) => {
                 bar.style.height = '10px';
             });
+        });
+    }
+});
+
+// Handle booking form submission with AJAX
+document.addEventListener('DOMContentLoaded', () => {
+    const bookingForm = document.getElementById('booking-form');
+
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            // Collect form data
+            const formData = new FormData(bookingForm);
+            const formObject = {};
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+
+            try {
+                // Send form data to Formspree via AJAX
+                const response = await fetch(bookingForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formObject)
+                });
+
+                if (response.ok) {
+                    // Show success message
+                    const successMessage = document.createElement('p');
+                    successMessage.textContent = 'Thanks for booking with me! My ears are with you.';
+                    successMessage.style.color = '#00f7ff';
+                    successMessage.style.textShadow = '0 0 10px #00f7ff';
+                    successMessage.style.marginTop = '1rem';
+                    bookingForm.appendChild(successMessage);
+
+                    // Reset the form
+                    bookingForm.reset();
+                } else {
+                    throw new Error('Form submission failed');
+                }
+            } catch (error) {
+                // Show error message
+                const errorMessage = document.createElement('p');
+                errorMessage.textContent = 'Oops! Something went wrong. Please try again later.';
+                errorMessage.style.color = '#ff00ff';
+                errorMessage.style.textShadow = '0 0 10px #ff00ff';
+                errorMessage.style.marginTop = '1rem';
+                bookingForm.appendChild(errorMessage);
+            }
         });
     }
 });
