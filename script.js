@@ -85,31 +85,60 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 10));
 });
 
-// Sound wave interaction with mouse movement
+// Sound wave interaction with mouse movement and touch support
 document.addEventListener('DOMContentLoaded', () => {
     const heroSection = document.querySelector('.hero');
     const soundWaveContainer = document.querySelector('.sound-wave-container');
     const soundBars = document.querySelectorAll('.sound-bar');
 
     if (heroSection && soundWaveContainer && soundBars.length > 0) {
-        // Mouse movement handler for sound wave interaction
-        const handleMouseMove = (e) => {
+        // Function to update bar heights based on position
+        const updateBars = (x, y) => {
             const containerRect = soundWaveContainer.getBoundingClientRect();
-            const mouseX = e.clientX - containerRect.left;
-            const mouseY = e.clientY - containerRect.top;
-            const centerY = containerRect.height / 2;
+            const containerCenterX = containerRect.left + containerRect.width / 2;
+            const containerCenterY = containerRect.top + containerRect.height / 2;
+
+            // Calculate position relative to the center of the container
+            const relativeX = x - containerRect.left;
+            const relativeY = y - containerRect.top;
+
+            // Adjust influence range based on container size
+            const maxDistance = Math.max(containerRect.width, containerRect.height) * 0.6; // Increased range for better effect
+            const maxHeight = 80;
+            const minHeight = 10;
 
             soundBars.forEach((bar, index) => {
-                const barX = bar.offsetLeft + (bar.offsetWidth / 2);
-                const distanceX = Math.abs(mouseX - barX);
-                const distanceY = Math.abs(mouseY - centerY);
-                const maxHeight = 80;
-                const minHeight = 10;
-                const influenceX = Math.max(0, 150 - distanceX);
-                const influenceY = Math.max(0, 150 - distanceY);
-                const height = minHeight + (influenceX + influenceY) * 0.3;
-                bar.style.height = `${Math.min(maxHeight, height)}px`;
+                const barRect = bar.getBoundingClientRect();
+                const barCenterX = barRect.left - containerRect.left + barRect.width / 2;
+                const barCenterY = barRect.top - containerRect.top + barRect.height / 2;
+
+                // Calculate distance from the cursor/touch to the bar center
+                const distanceX = Math.abs(relativeX - barCenterX);
+                const distanceY = Math.abs(relativeY - barCenterY);
+                const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+                // Calculate height based on distance (closer = taller)
+                const influence = Math.max(0, (maxDistance - distance) / maxDistance);
+                const height = minHeight + (maxHeight - minHeight) * influence * 1.5; // Increased multiplier for more pronounced effect
+
+                bar.style.height = `${Math.min(maxHeight, Math.max(minHeight, height))}px`;
             });
+        };
+
+        // Mouse movement handler
+        const handleMouseMove = (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            updateBars(x, y);
+        };
+
+        // Touch movement handler
+        const handleTouchMove = (e) => {
+            e.preventDefault(); // Prevent scrolling while interacting
+            const touch = e.touches[0];
+            const x = touch.clientX;
+            const y = touch.clientY;
+            updateBars(x, y);
         };
 
         // Mouse leave handler to reset sound bars
@@ -119,15 +148,32 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
-        // Add event listeners
+        // Touch end handler to reset sound bars
+        const handleTouchEnd = () => {
+            soundBars.forEach((bar) => {
+                bar.style.height = '10px';
+            });
+        };
+
+        // Add event listeners for mouse
         heroSection.addEventListener('mousemove', handleMouseMove);
         heroSection.addEventListener('mouseleave', handleMouseLeave);
 
-        // Ensure event listeners are not added multiple times
+        // Add event listeners for touch
+        heroSection.addEventListener('touchmove', handleTouchMove, { passive: false });
+        heroSection.addEventListener('touchend', handleTouchEnd);
+
+        // Remove existing listeners to prevent duplicates
         heroSection.removeEventListener('mousemove', handleMouseMove);
         heroSection.removeEventListener('mouseleave', handleMouseLeave);
+        heroSection.removeEventListener('touchmove', handleTouchMove);
+        heroSection.removeEventListener('touchend', handleTouchEnd);
+
+        // Re-add listeners
         heroSection.addEventListener('mousemove', handleMouseMove);
         heroSection.addEventListener('mouseleave', handleMouseLeave);
+        heroSection.addEventListener('touchmove', handleTouchMove, { passive: false });
+        heroSection.addEventListener('touchend', handleTouchEnd);
     }
 });
 
