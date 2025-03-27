@@ -8,6 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VCR+OSD+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="preloader-text">Loading...</div>
+    </div>
+
     <!-- Navigation -->
     <nav class="retro-nav">
         <ul>
@@ -36,41 +41,34 @@
         </div>
         <button class="neon-button">Book a Mix</button>
     </section>
-    
-<!-- Back to Top Button -->
-<a href="#hero" class="back-to-top">Back to Top</a>
 
-<script src="script.js"></script>
-</body>
-</html>
-
-<!-- Mixes Section -->
-<section id="mixes" class="mixes">
-    <h2 class="section-title">Featured Mixes</h2>
-    <div class="mix-container">
-        <div class="mix-grid">
-            <div class="mix-card">
-                <img src="https://i.imgur.com/SwdmNiV.jpeg" alt="Hip-Hop">
-                <h3>Hip-Hop</h3>
-                <p>BBBH | SomewhatSmiley</p>
+    <!-- Mixes Section -->
+    <section id="mixes" class="mixes">
+        <h2 class="section-title">Featured Mixes</h2>
+        <div class="mix-container">
+            <div class="mix-grid">
+                <div class="mix-card">
+                    <img src="https://i.imgur.com/SwdmNiV.jpeg" alt="Hip-Hop">
+                    <h3>Hip-Hop</h3>
+                    <p>BBBH | SomewhatSmiley</p>
+                </div>
+                <div class="mix-card">
+                    <img src="https://i.imgur.com/H9DSehi.jpeg" alt="Indie Pop">
+                    <h3>Indie Pop</h3>
+                    <p>Interesting Stranger | Hunter Tremblay</p>
+                </div>
+                <div class="mix-card">
+                    <img src="https://i.imgur.com/leHWLwZ.jpeg" alt="Alternative">
+                    <h3>Alternative</h3>
+                    <p>PrayNoTripleSix | Zoulex</p>
+                </div>
             </div>
-            <div class="mix-card">
-                <img src="https://i.imgur.com/H9DSehi.jpeg" alt="Indie Pop">
-                <h3>Indie Pop</h3>
-                <p>Interesting Stranger | Hunter Tremblay</p>
-            </div>
-            <div class="mix-card">
-                <img src="https://i.imgur.com/leHWLwZ.jpeg" alt="Alternative">
-                <h3>Alternative</h3>
-                <p>PrayNoTripleSix | Zoulex</p>
+            <div class="mix-description">
+                <h3>Explore the Mixes</h3>
+                <p>These featured mixes showcase a blend of genres, from the hard-hitting beats of Hip-Hop to the dreamy melodies of Indie Pop and the raw energy of Alternative. Each mix is crafted to bring out the artist’s unique sound, with a focus on clarity, depth, and vibe. Whether you’re looking for something to hype up a party or set a chill mood, there’s a mix here for you. Want to hear more? Book a session with me to create your own custom mix!</p>
             </div>
         </div>
-        <div class="mix-description">
-            <h3>Explore the Mixes</h3>
-            <p>These featured mixes showcase a blend of genres, from the hard-hitting beats of Hip-Hop to the dreamy melodies of Indie Pop and the raw energy of Alternative. Each mix is crafted to bring out the artist’s unique sound, with a focus on clarity, depth, and vibe. Whether you’re looking for something to hype up a party or set a chill mood, there’s a mix here for you. Want to hear more? Book a session with me to create your own custom mix!</p>
-        </div>
-    </div>
-</section>
+    </section>
 
     <!-- Artist Section -->
     <section id="artist" class="artist">
@@ -80,45 +78,48 @@
             <div class="artist-bio">
                 <p>Yo, it's Luka. I'm an engineer based in the U.S. I work with artists all over the world helping them find their sound and pave their way forward in the industry. Like what you hear? Book me here or add me on Discord |soloveluka| for more info!</p>
                 <audio controls>
-                    <source src="https://github.com/soLoveLuka/soLoveLuka.github.io/blob/main/audio/Obvious%20mp3.mp3" type="audio/mpeg">
+                    <source src="https://raw.githubusercontent.com/soLoveLuka/soLoveLuka.github.io/main/audio/Obvious%20mp3.mp3" type="audio/mpeg">
                     Your browser does not support the audio element.
                 </audio>
             </div>
         </div>
     </section>
 
-<!-- Booking Section -->
-<section id="booking" class="booking">
-    <h2 class="section-title">Book Me</h2>
-    <form id="booking-form" class="booking-form" action="https://formspree.io/f/xrbplnap" method="POST">
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" placeholder="Your Name" required>
-        </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Your Email" required>
-        </div>
-        <div class="form-group">
-            <label for="phone">Phone</label>
-            <input type="tel" id="phone" name="phone" placeholder="Your Phone Number">
-        </div>
-        <div class="form-group">
-            <label for="date">Preferred Date</label>
-            <input type="date" id="date" name="date" required>
-        </div>
-        <div class="form-group">
-            <label for="time">Preferred Time</label>
-            <input type="time" id="time" name="time" required>
-        </div>
-        <div class="form-group">
-            <label for="details">Details</label>
-            <textarea id="details" name="details" placeholder="Tell me about your project..." rows="5"></textarea>
-        </div>
-        <button type="submit" class="neon-btn">Book Mixes</button>
-    </form>
-    <div class="neon-grid"></div>
-</section>
+    <!-- Booking Section -->
+    <section id="booking" class="booking">
+        <h2 class="section-title">Book Me</h2>
+        <form id="booking-form" class="booking-form" action="https://formspree.io/f/xrbplnap" method="POST">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Your Email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" name="phone" placeholder="Your Phone Number">
+            </div>
+            <div class="form-group">
+                <label for="date">Preferred Date</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            <div class="form-group">
+                <label for="time">Preferred Time</label>
+                <input type="time" id="time" name="time" required>
+            </div>
+            <div class="form-group">
+                <label for="details">Details</label>
+                <textarea id="details" name="details" placeholder="Tell me about your project..." rows="5"></textarea>
+            </div>
+            <button type="submit" class="neon-btn">Book Mixes</button>
+        </form>
+        <div class="neon-grid"></div>
+    </section>
+
+    <!-- Back to Top Button -->
+    <a href="#hero" class="back-to-top">Back to Top</a>
 
     <script src="script.js"></script>
 </body>
