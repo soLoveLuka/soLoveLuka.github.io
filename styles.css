@@ -1025,3 +1025,138 @@ section {
         font-size: 1rem;
     }
 }
+
+/* Add to the existing styles.css */
+
+/* Initially hide the details group */
+.form-group.details-group {
+    display: none;
+    position: relative;
+    margin-top: 2rem;
+}
+
+/* Show the details group when active */
+.form-group.details-group.active {
+    display: block;
+}
+
+/* Back Arrow */
+.back-arrow {
+    position: absolute;
+    top: -2rem;
+    left: 0;
+    font-size: 1.5rem;
+    color: #00f7ff;
+    text-shadow: 0 0 10px #00f7ff;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.back-arrow:hover {
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+    transform: translateX(-5px);
+}
+
+/* Finish Button Wrapper with Flip Effect */
+.finish-button-wrapper {
+    margin-top: 1rem;
+    perspective: 1000px;
+}
+
+.finish-button-inner {
+    position: relative;
+    width: 200px;
+    height: 50px;
+    margin: 0 auto;
+    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transform-style: preserve-3d;
+}
+
+.finish-button-inner.flipped {
+    transform: rotateY(180deg);
+}
+
+.finish-button-front,
+.finish-button-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 2px solid;
+    border-radius: 5px;
+}
+
+.finish-button-front {
+    background: rgba(0, 0, 20, 0.8);
+    border-color: #00f7ff;
+    color: #00f7ff;
+    text-shadow: 0 0 10px #00f7ff;
+}
+
+.finish-button-front:hover {
+    background: rgba(0, 247, 255, 0.2);
+    box-shadow: 0 0 20px #00f7ff;
+}
+
+.finish-button-back {
+    background: #00ff00;
+    border-color: #00ff00;
+    color: #000;
+    transform: rotateY(180deg);
+    box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00;
+    animation: pulseGreen 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseGreen {
+    0% { transform: rotateY(180deg) scale(1); box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; }
+    50% { transform: rotateY(180deg) scale(1.05); box-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00; }
+    100% { transform: rotateY(180deg) scale(1); box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; }
+}
+
+/* Adjust the booking form layout */
+.booking-form {
+    position: relative;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .back-arrow {
+        font-size: 1.2rem;
+        top: -1.5rem;
+    }
+
+    .finish-button-wrapper {
+        width: 150px;
+        height: 40px;
+    }
+
+    .finish-button-front,
+    .finish-button-back {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .back-arrow {
+        font-size: 1rem;
+        top: -1.2rem;
+    }
+
+    .finish-button-wrapper {
+        width: 120px;
+        height: 35px;
+    }
+
+    .finish-button-front,
+    .finish-button-back {
+        font-size: 0.7rem;
+    }
+}
