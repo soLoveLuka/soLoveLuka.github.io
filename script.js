@@ -216,13 +216,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // Booking form interaction
 document.addEventListener('DOMContentLoaded', () => {
     const bookingForm = document.getElementById('booking-form');
-    const inputs = bookingForm.querySelectorAll('input, textarea');
+    const inputs = bookingForm.querySelectorAll('input, textarea, select');
     const retroMessage = document.getElementById('retro-message');
     let filledFields = new Set();
 
     // Function to check if all required fields are filled
     const checkAllFieldsFilled = () => {
-        const requiredInputs = bookingForm.querySelectorAll('input[required], textarea[required]');
+        const requiredInputs = bookingForm.querySelectorAll('input[required], textarea[required], select[required]');
         let allFilled = true;
         requiredInputs.forEach(input => {
             if (!input.value.trim()) {
@@ -262,33 +262,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }, formGroups.length * 200 + 500);
     };
 
-    // Handle input focus and blur for each field
-    inputs.forEach((input, index) => {
+    // Handle input focus, blur, and change for each field
+    inputs.forEach((input) => {
         const wrapper = input.closest('.input-wrapper');
         const formGroup = input.closest('.form-group');
         const fieldName = formGroup.dataset.field;
+        const label = wrapper.querySelector('.input-label');
 
-        // On blur (when leaving the input)
-        input.addEventListener('blur', () => {
-            const nextInput = inputs[index + 1];
-            if (input.value.trim() && !wrapper.classList.contains('flipped')) {
-                wrapper.classList.add('flipped');
-                filledFields.add(fieldName);
-
-                // Check if all required fields are filled
-                if (checkAllFieldsFilled()) {
-                    showFinalSubmitButton();
-                }
-            }
-
-            // Focus the next input if it exists
-            if (nextInput) {
-                nextInput.focus();
-            }
-        });
-
-        // On focus (when clicking back into the input)
+        // On focus: hide the label
         input.addEventListener('focus', () => {
+            label.classList.add('hidden');
+
+            // If the field was previously flipped, flip it back
             if (wrapper.classList.contains('flipped')) {
                 wrapper.classList.remove('flipped');
                 filledFields.delete(fieldName);
@@ -316,6 +301,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+
+        // On blur: flip the card if the field has a value
+        input.addEventListener('blur', () => {
+            if (input.value.trim() && !wrapper.classList.contains('flipped')) {
+                wrapper.classList.add('flipped');
+                filledFields.add(fieldName);
+
+                // Check if all required fields are filled
+                if (checkAllFieldsFilled()) {
+                    showFinalSubmitButton();
+                }
+            } else if (!input.value.trim()) {
+                label.classList.remove('hidden');
+            }
+        });
+
+        // For select elements, handle change to flip the card
+        if (input.tagName === 'SELECT') {
+            input.addEventListener('change', () => {
+                if (input.value && !wrapper.classList.contains('flipped')) {
+                    wrapper.classList.add('flipped');
+                    filledFields.add(fieldName);
+
+                    // Check if all required fields are filled
+                    if (checkAllFieldsFilled()) {
+                        showFinalSubmitButton();
+                    }
+                }
+            });
+        }
 
         // Ensure the input is focused when clicking the back side
         wrapper.querySelector('.input-back').addEventListener('click', () => {
