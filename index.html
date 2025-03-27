@@ -120,54 +120,79 @@
         <h2 class="section-title">Book Me</h2>
         <form id="booking-form" class="booking-form" action="https://formspree.io/f/xrbplnap" method="POST">
             <div class="form-group" data-field="name">
-                <label for="name">Name</label>
                 <div class="input-wrapper">
-                    <input type="text" id="name" name="name" placeholder="Your Name" required>
+                    <input type="text" id="name" name="name" required>
+                    <label for="name" class="input-label">Name</label>
                     <div class="input-back">
                         <span class="checkmark">✔</span>
                     </div>
                 </div>
             </div>
             <div class="form-group" data-field="email">
-                <label for="email">Email</label>
                 <div class="input-wrapper">
-                    <input type="email" id="email" name="email" placeholder="Your Email" required>
+                    <input type="email" id="email" name="email" required>
+                    <label for="email" class="input-label">Email</label>
                     <div class="input-back">
                         <span class="checkmark">✔</span>
                     </div>
                 </div>
             </div>
             <div class="form-group" data-field="phone">
-                <label for="phone">Phone</label>
                 <div class="input-wrapper">
-                    <input type="tel" id="phone" name="phone" placeholder="Your Phone Number">
+                    <input type="tel" id="phone" name="phone">
+                    <label for="phone" class="input-label">Phone</label>
                     <div class="input-back">
                         <span class="checkmark">✔</span>
                     </div>
                 </div>
             </div>
             <div class="form-group" data-field="date">
-                <label for="date">Preferred Date</label>
                 <div class="input-wrapper">
                     <input type="date" id="date" name="date" required>
+                    <label for="date" class="input-label">Preferred Date</label>
                     <div class="input-back">
                         <span class="checkmark">✔</span>
                     </div>
                 </div>
             </div>
             <div class="form-group" data-field="time">
-                <label for="time">Preferred Time</label>
                 <div class="input-wrapper">
                     <input type="time" id="time" name="time" required>
+                    <label for="time" class="input-label">Preferred Time</label>
+                    <div class="input-back">
+                        <span class="checkmark">✔</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" data-field="genre">
+                <div class="input-wrapper">
+                    <input type="text" id="genre" name="genre">
+                    <label for="genre" class="input-label">Genre</label>
+                    <div class="input-back">
+                        <span class="checkmark">✔</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" data-field="engagement">
+                <div class="input-wrapper">
+                    <select id="engagement" name="engagement">
+                        <option value="" disabled selected></option>
+                        <option value="zoom">Zoom</option>
+                        <option value="discord">Discord</option>
+                        <option value="call">Phone Call</option>
+                        <option value="email">Email</option>
+                        <option value="in-person">In-Person</option>
+                    </select>
+                    <label for="engagement" class="input-label">Choice of Engagement</label>
                     <div class="input-back">
                         <span class="checkmark">✔</span>
                     </div>
                 </div>
             </div>
             <div class="form-group" data-field="details">
-                <label for="details">Details</label>
                 <div class="input-wrapper">
-                    <textarea id="details" name="details" placeholder="Tell me about your project..." rows="5"></textarea>
+                    <textarea id="details" name="details" rows="5"></textarea>
+                    <label for="details" class="input-label">Details</label>
                     <div class="input-back">
                         <span class="checkmark">✔</span>
                     </div>
