@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUKA - Mix Engineer & Artist</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>SomewhatSmiley - Retro Music Experience</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VCR+OSD+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
 </head>
 <body>
     <!-- Preloader -->
@@ -28,11 +31,15 @@
         </div>
     </div>
 
-    <!-- Navigation -->
+    <!-- Section Transition Particles -->
+    <div class="section-particles"></div>
+
+    <!-- Retro Navigation -->
     <nav class="retro-nav">
         <ul>
             <li><a href="#hero">Home</a></li>
             <li><a href="#mixes">Mixes</a></li>
+            <li><a href="#portfolio">Portfolio</a></li>
             <li><a href="#artist">Artist</a></li>
             <li><a href="#booking">Book a Mix</a></li>
         </ul>
@@ -40,21 +47,24 @@
 
     <!-- Hero Section -->
     <section id="hero" class="hero">
-        <h1 class="glitch" data-text="LUKA">LUKA</h1>
-        <h2>Mix Engineer</h2>
-        <div class="sound-wave-container">
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
+        <h1 class="glitch" data-text="SomewhatSmiley">SomewhatSmiley</h1>
+        <h2>Retro Music Experience</h2>
+        <div class="visualizer-container">
+            <div id="visualizer"></div>
+            <div class="visualizer-controls">
+                <button id="toggle-audio" class="neon-button">Play Audio</button>
+                <select id="mood-selector">
+                    <option value="chill">Chill</option>
+                    <option value="hype">Hype</option>
+                    <option value="retro">Retro</option>
+                </select>
+            </div>
         </div>
-        <a href="#booking"><button class="neon-button">Book a Mix</button></a>
+        <audio id="background-audio" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+        <a href="#booking" class="neon-button">Book a Mix</a>
     </section>
 
     <!-- Mixes Section -->
@@ -62,46 +72,46 @@
         <h2 class="section-title">Featured Mixes</h2>
         <div class="mix-container">
             <div class="mix-grid">
-                <div class="mix-card" data-mix-id="1">
+                <div class="mix-card">
                     <div class="mix-card-inner">
                         <div class="mix-card-front">
-                            <img src="https://i.imgur.com/SwdmNiV.jpeg" alt="Hip-Hop">
-                            <h3>Hip-Hop</h3>
-                            <p>BBBH | SomewhatSmiley</p>
+                            <img src="https://images.unsplash.com/photo-1511379936541-1b7e715231b0?q=80&w=1974&auto=format&fit=crop" alt="Mix 1">
+                            <h3>Hip-Hop BBBH SomewhatSmiley</h3>
+                            <p>2023</p>
                         </div>
                         <div class="mix-card-back">
-                            <audio controls class="mix-audio">
-                                <source src="https://raw.githubusercontent.com/soLoveLuka/soLoveLuka.github.io/main/audio/SomewhatSmiley%20~%20BBBH%20(LeveledByLuka)%20-%20Draft%202.mp3" type="audio/mpeg">
+                            <audio class="mix-audio" controls>
+                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
                                 Your browser does not support the audio element.
                             </audio>
                         </div>
                     </div>
                 </div>
-                <div class="mix-card" data-mix-id="2">
+                <div class="mix-card">
                     <div class="mix-card-inner">
                         <div class="mix-card-front">
-                            <img src="https://i.imgur.com/H9DSehi.jpeg" alt="Indie Pop">
-                            <h3>Indie Pop</h3>
-                            <p>Interesting Stranger | Hunter Tremblay</p>
+                            <img src="https://images.unsplash.com/photo-1511379936541-1b7e715231b0?q=80&w=1974&auto=format&fit=crop" alt="Mix 2">
+                            <h3>Techno BBBH SomewhatSmiley</h3>
+                            <p>2023</p>
                         </div>
                         <div class="mix-card-back">
-                            <audio controls class="mix-audio">
-                                <source src="https://raw.githubusercontent.com/soLoveLuka/soLoveLuka.github.io/main/audio/Stranger%20Hunter.mp3" type="audio/mpeg">
+                            <audio class="mix-audio" controls>
+                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mp3">
                                 Your browser does not support the audio element.
                             </audio>
                         </div>
                     </div>
                 </div>
-                <div class="mix-card" data-mix-id="3">
+                <div class="mix-card">
                     <div class="mix-card-inner">
                         <div class="mix-card-front">
-                            <img src="https://i.imgur.com/leHWLwZ.jpeg" alt="Alternative">
-                            <h3>Alternative</h3>
-                            <p>PrayNoTripleSix | Zoulex</p>
+                            <img src="https://images.unsplash.com/photo-1511379936541-1b7e715231b0?q=80&w=1974&auto=format&fit=crop" alt="Mix 3">
+                            <h3>House BBBH SomewhatSmiley</h3>
+                            <p>2023</p>
                         </div>
                         <div class="mix-card-back">
-                            <audio controls class="mix-audio">
-                                <source src="https://raw.githubusercontent.com/soLoveLuka/soLoveLuka.github.io/main/audio/PrayNoTripleSix%20~%20Zoulex%20mp3.mp3" type="audio/mpeg">
+                            <audio class="mix-audio" controls>
+                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mp3">
                                 Your browser does not support the audio element.
                             </audio>
                         </div>
@@ -109,21 +119,88 @@
                 </div>
             </div>
             <div class="mix-description">
-                <h3>Explore the Mixes</h3>
-                <p>These featured mixes showcase a blend of genres, from the hard-hitting beats of Hip-Hop to the dreamy melodies of Indie Pop and the raw energy of Alternative. Each mix is crafted to bring out the artist’s unique sound, with a focus on clarity, depth, and vibe. Whether you’re looking for something to hype up a party or set a chill mood, there’s a mix here for you. Want to hear more? Book a session with me to create your own custom mix!</p>
+                <h3>Explore the Beats</h3>
+                <p>Hover or tap on a mix to preview a 5-second snippet. Click or long-press to flip the card and listen to the full track. Each mix is a unique blend of retro and modern sounds, crafted to take you on a nostalgic journey.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio">
+        <h2 class="section-title">My Portfolio</h2>
+        <div class="timeline-container">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2021</div>
+                    <div class="timeline-content">
+                        <h3>Mixed a Hip-Hop Single for Artist X</h3>
+                        <div class="before-after">
+                            <p>Before:</p>
+                            <audio controls>
+                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <p>After:</p>
+                            <audio controls>
+                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mp3">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                        <button class="neon-button timeline-details">See Details</button>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2022</div>
+                    <div class="timeline-content">
+                        <h3>Mastered a Techno EP for Artist Y</h3>
+                        <div class="before-after">
+                            <p>Before:</p>
+                            <audio controls>
+                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mp3">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <p>After:</p>
+                            <audio controls>
+                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mp3">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                        <button class="neon-button timeline-details">See Details</button>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2023</div>
+                    <div class="timeline-content">
+                        <h3>Engineered a Live Recording for Artist Z</h3>
+                        <div class="before-after">
+                            <p>Before:</p>
+                            <audio controls>
+                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" type="audio/mp3">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <p>After:</p>
+                            <audio controls>
+                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" type="audio/mp3">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                        <button class="neon-button timeline-details">See Details</button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Artist Section -->
     <section id="artist" class="artist">
-        <h2 class="section-title">My Work</h2>
+        <h2 class="section-title">Meet the Artist</h2>
         <div class="artist-content">
-            <img src="https://i.imgur.com/as6TYAz.jpeg" alt="Your Photo">
+            <img src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?q=80&w=1974&auto=format&fit=crop" alt="Artist">
             <div class="artist-bio">
-                <p>Yo, it's Luka. I'm an engineer based in the U.S. I work with artists all over the world helping them find their sound and pave their way forward in the industry. Like what you hear? Book me here or add me on Discord |soloveluka| for more info!</p>
-                <audio controls class="artist-audio">
-                    <source src="https://raw.githubusercontent.com/soLoveLuka/soLoveLuka.github.io/main/audio/Obvious%20master%20mp3.mp3" type="audio/mpeg">
+                <p>SomewhatSmiley is a retro-futuristic DJ and producer with a passion for blending 80s synthwave with modern electronic beats. With over a decade of experience, they’ve performed at underground clubs and major festivals alike.</p>
+                <p>Listen to a sample of their latest work below, and book them for your next event!</p>
+                <audio class="artist-audio" controls>
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mp3">
                     Your browser does not support the audio element.
                 </audio>
             </div>
@@ -132,104 +209,59 @@
 
     <!-- Booking Section -->
     <section id="booking" class="booking">
-        <h2 class="section-title">Book Me</h2>
-        <form id="booking-form" class="booking-form" action="https://formspree.io/f/xrbplnap" method="POST">
+        <h2 class="section-title">Book a Mix</h2>
+        <form id="booking-form" class="booking-form">
+            <div class="neon-grid"></div>
             <div class="form-group" data-field="name">
                 <div class="input-wrapper">
                     <input type="text" id="name" name="name" required>
-                    <label for="name" class="input-label">Name</label>
-                    <div class="input-back">
-                        <span class="checkmark">✔</span>
-                    </div>
+                    <label class="input-label" for="name">Name</label>
+                    <div class="input-back"></div>
+                    <span class="checkmark">✔</span>
                 </div>
             </div>
             <div class="form-group" data-field="email">
                 <div class="input-wrapper">
                     <input type="email" id="email" name="email" required>
-                    <label for="email" class="input-label">Email</label>
-                    <div class="input-back">
-                        <span class="checkmark">✔</span>
-                    </div>
+                    <label class="input-label" for="email">Email</label>
+                    <div class="input-back"></div>
+                    <span class="checkmark">✔</span>
                 </div>
             </div>
-            <div class="form-group" data-field="phone">
+            <div class="form-group" data-field="event-type">
                 <div class="input-wrapper">
-                    <input type="tel" id="phone" name="phone">
-                    <label for="phone" class="input-label">Phone</label>
-                    <div class="input-back">
-                        <span class="checkmark">✔</span>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group" data-field="date">
-                <div class="input-wrapper">
-                    <input type="date" id="date" name="date" required>
-                    <label for="date" class="input-label">Preferred Date</label>
-                    <div class="input-back">
-                        <span class="checkmark">✔</span>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group" data-field="time">
-                <div class="input-wrapper">
-                    <input type="time" id="time" name="time" required>
-                    <label for="time" class="input-label">Preferred Time</label>
-                    <div class="input-back">
-                        <span class="checkmark">✔</span>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group" data-field="genre">
-                <div class="input-wrapper">
-                    <input type="text" id="genre" name="genre">
-                    <label for="genre" class="input-label">Genre</label>
-                    <div class="input-back">
-                        <span class="checkmark">✔</span>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group" data-field="engagement">
-                <div class="input-wrapper">
-                    <select id="engagement" name="engagement">
-                        <option value="" disabled selected></option>
-                        <option value="zoom">Zoom</option>
-                        <option value="discord">Discord</option>
-                        <option value="call">Phone Call</option>
-                        <option value="email">Email</option>
-                        <option value="in-person">In-Person</option>
+                    <select id="event-type" name="event-type" required>
+                        <option value="" disabled selected>Select Event Type</option>
+                        <option value="club">Club Night</option>
+                        <option value="festival">Festival</option>
+                        <option value="private">Private Event</option>
                     </select>
-                    <label for="engagement" class="input-label">Choice of Engagement</label>
-                    <div class="input-back">
-                        <span class="checkmark">✔</span>
-                    </div>
+                    <label class="input-label" for="event-type">Event Type</label>
+                    <div class="input-back"></div>
+                    <span class="checkmark">✔</span>
                 </div>
             </div>
             <div class="form-group details-group" data-field="details">
-                <div class="back-arrow">←</div>
+                <span class="back-arrow">← Back</span>
                 <div class="input-wrapper">
-                    <textarea id="details" name="details" rows="5"></textarea>
-                    <label for="details" class="input-label">Details</label>
-                    <div class="input-back">
-                        <span class="checkmark">✔</span>
-                    </div>
+                    <textarea id="details" name="details" rows="4"></textarea>
+                    <label class="input-label" for="details">Event Details</label>
+                    <div class="input-back"></div>
+                    <span class="checkmark">✔</span>
                 </div>
                 <div class="finish-button-wrapper">
                     <div class="finish-button-inner">
-                        <button type="button" class="finish-button-front">Finish</button>
-                        <button type="submit" class="finish-button-back">Book Now!</button>
+                        <div class="finish-button-front">Finish</div>
+                        <div class="finish-button-back">Done!</div>
                     </div>
                 </div>
             </div>
+            <div id="retro-message" class="retro-message">All fields complete! Add details.</div>
         </form>
-        <div class="neon-grid"></div>
-        <div class="retro-message" id="retro-message">The more information the better!</div>
     </section>
 
     <!-- Back to Top Button -->
     <a href="#hero" class="back-to-top">Back to Top</a>
-
-    <!-- Section Transition Particles -->
-    <div class="section-particles"></div>
 
     <script src="script.js"></script>
 </body>
