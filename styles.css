@@ -206,13 +206,14 @@ body::after {
     position: absolute;
     top: 0;
     left: 0;
-    width: 0;
+    width: 0; /* Updated by JS */
     height: 100%;
     background: #00f7ff;
     box-shadow: 0 0 10px #00f7ff;
     transition: width 4s linear; /* Matched JS duration */
 }
 
+/* This class triggers the transition */
 .progress-bar.active::after {
     width: 100%;
 }
@@ -335,8 +336,6 @@ section {
     pointer-events: auto; /* Allow interaction */
 }
 
-/* Removed .zoom-down as it wasn't being used consistently and simplifies logic */
-
 /* Hero Section */
 .hero {
     text-align: center;
@@ -418,7 +417,7 @@ section {
 
 .sound-bar {
     width: 10px;
-    height: 10px; /* Initial height */
+    height: 5px; /* Consistent initial height */
     background: #00f7ff;
     box-shadow: 0 0 10px #00f7ff;
     transition: height 0.15s ease-out; /* Slightly faster, ease-out */
@@ -858,10 +857,27 @@ section {
     animation: pulseCheck 1.5s infinite ease-in-out, floatTilt 3s infinite ease-in-out;
 }
 
-/* Checkmark animations remain the same */
-@keyframes pulseCheck { ... }
-@keyframes floatTilt { ... }
-@keyframes fogPulse { ... }
+/* --- Start Fixed Keyframes --- */
+@keyframes pulseCheck {
+    0% { transform: scale(1); text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
+    50% { transform: scale(1.2); text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; }
+    100% { transform: scale(1); text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
+}
+
+@keyframes floatTilt {
+    0% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
+    25% { transform: translateY(-5px) rotateX(10deg) rotateY(10deg); }
+    50% { transform: translateY(0) rotateX(0deg) rotateY(20deg); }
+    75% { transform: translateY(5px) rotateX(-10deg) rotateY(10deg); }
+    100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
+}
+
+@keyframes fogPulse {
+    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
+    100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+}
+/* --- End Fixed Keyframes --- */
 
 .finish-button-wrapper {
     margin-top: 1rem;
@@ -1081,8 +1097,8 @@ section {
 }
 
 @keyframes shake {
-    0%, 100% { transform: rotateX(0deg) rotateY(0deg); } /* Use existing rotation */
-    25% { transform: rotateX(10deg) rotateY(-10deg); }
+    0%, 100% { /* Transform should be based on current rotation, which JS handles */ }
+    25% { transform: rotateX(10deg) rotateY(-10deg); } /* These might conflict with JS rotation */
     75% { transform: rotateX(-10deg) rotateY(10deg); }
 }
 
@@ -1128,53 +1144,60 @@ section {
     height: 30px;
     background: rgba(0, 0, 10, 0.9); /* Darker digit background */
     border: 1px solid #00f7ff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: flex; /* Use flex for potential future content alignment */
+    justify-content: center; /* Center content (number) horizontally */
+    align-items: center; /* Center content (number) vertically */
     position: relative;
     overflow: hidden;
     font-size: 1rem; /* Ensure text fits */
-    line-height: 30px; /* Center text vertically */
+    /* line-height: 30px; -- Removed, flex handles alignment */
     text-align: center;
     border-radius: 2px;
+    /* Add text content directly for accessibility if ::before/::after aren't read */
+    color: #00f7ff;
 }
 
-/* Flip animation - simplified using pseudo-elements */
+/* Flip animation - using pseudo-elements for visual flip */
 .timer-digit::before,
 .timer-digit::after {
-    content: attr(data-value);
+    content: attr(data-value); /* Get value from data attribute */
     position: absolute;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 10, 0.9);
+    background: rgba(0, 0, 10, 0.9); /* Match digit background */
+    color: #00f7ff; /* Match digit color */
     perspective: 300px;
     transition: transform 0.5s ease-in-out;
+    overflow: hidden; /* Ensure content clipped */
+    text-align: center;
 }
 
-.timer-digit::before { /* Top half */
+.timer-digit::before { /* Top half - shows OLD value falling down */
     top: 0;
     height: 50%;
-    line-height: 30px;
+    line-height: 30px; /* Align text to top of element */
     transform-origin: bottom;
     transform: rotateX(0);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* Show top */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
 }
 
-.timer-digit::after { /* Bottom half */
+.timer-digit::after { /* Bottom half - shows NEW value flipping up */
     bottom: 0;
     height: 50%;
-    line-height: 0; /* Align text to top for bottom half */
+    line-height: 0; /* Align text to top of this half */
     transform-origin: top;
-    transform: rotateX(180deg); /* Start flipped */
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* Show bottom */
-    color: #00d9e6; /* Slightly different shade for flip */
+    transform: rotateX(180deg); /* Start flipped back */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    /* color: #00d9e6; /* Slightly different shade for flip (optional) */
 }
 
+/* When .flip class is added */
 .timer-digit.flip::before {
-    transform: rotateX(-180deg); /* Flip top half up */
+    transform: rotateX(-180deg); /* Flip top half up and away */
 }
 .timer-digit.flip::after {
-    transform: rotateX(0); /* Flip bottom half down */
+    transform: rotateX(0deg); /* Flip bottom half down into view */
+    transition-delay: 0.05s; /* Slight delay for effect */
 }
 
 
@@ -1200,6 +1223,12 @@ section {
     color: #ff00ff;
     border-color: #ff00ff;
     text-shadow: 0 0 10px #ff00ff;
+}
+/* Ensure pseudo-elements also change color on expiry */
+.countdown-timer.expired .timer-digit::before,
+.countdown-timer.expired .timer-digit::after {
+    color: #ff00ff;
+    background: rgba(30, 0, 10, 0.9); /* Darker pink background */
 }
 
 
@@ -1363,9 +1392,8 @@ section {
 
 .stickman.jumping { animation: jump 0.6s ease-out; }
 @keyframes jump {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(-40px); } /* Jump height */
-    100% { transform: translateY(0); }
+    0%, 100% { /* Use transform set by JS for position */ }
+    50% { transform: translateY(-40px); } /* Adjust jump height relative to current Y */
 }
 .stickman.jumping .stickman-leg-left { transform: rotate(-30deg) translateX(-2px); } /* Legs tuck */
 .stickman.jumping .stickman-leg-right { transform: rotate(30deg) translateX(2px); }
@@ -1373,7 +1401,8 @@ section {
 /* Refined Laying */
 .stickman.laying { animation: lay-down 0.5s ease forwards; }
 @keyframes lay-down {
-    to { transform: translateY(30px) rotate(90deg); } /* Move down slightly and rotate */
+    /* JS handles position, animation handles rotation */
+    to { transform: rotate(90deg); }
 }
 .stickman.laying .stickman-head { transform: rotate(-90deg); top: 15px; left: -10px; } /* Keep head upright relative to ground */
 .stickman.laying .stickman-arm-left { transform: rotate(110deg) translateX(-4px); } /* Arm resting */
@@ -1403,7 +1432,10 @@ section {
 .stickman.dancing .stickman-arm-right { animation: dance-arm-r 1s infinite ease-in-out; }
 .stickman.dancing .stickman-leg-left { animation: dance-leg-l 0.5s infinite ease-in-out; }
 .stickman.dancing .stickman-leg-right { animation: dance-leg-r 0.5s infinite ease-in-out; }
-@keyframes dance-bounce { 50% { transform: translateY(-8px); } }
+@keyframes dance-bounce {
+     /* JS handles Y position, this adds bounce relative to it */
+     50% { transform: translateY(-8px); }
+}
 @keyframes dance-arm-l { 50% { transform: rotate(90deg) translateX(-4px); } }
 @keyframes dance-arm-r { 50% { transform: rotate(-90deg) translateX(4px); } }
 @keyframes dance-leg-l { 50% { transform: rotate(40deg) translateX(-2px); } }
@@ -1427,20 +1459,20 @@ section {
 
 .stickman.sleeping { animation: sleep-pose 0.5s ease forwards; }
 @keyframes sleep-pose {
-    to { transform: translateY(30px) rotate(90deg); }
+     /* JS handles position, animation handles rotation */
+    to { transform: rotate(90deg); }
 }
 .stickman.sleeping .stickman-head { transform: rotate(-90deg); top: 15px; left: -10px; }
-/* Zzz animation can be added via JS/pseudo-elements if desired */
 .stickman.sleeping::after {
     content: 'Zzz';
     position: absolute;
-    top: -10px;
+    top: -10px; /* Position relative to rotated stickman */
     left: -10px;
     font-family: 'Press Start 2P', cursive;
     font-size: 0.8rem;
     color: #fff;
     opacity: 0;
-    animation: sleep-zzz 2s infinite ease-out;
+    animation: sleep-zzz 2s infinite ease-out 0.5s; /* Start after pose animation */
 }
 @keyframes sleep-zzz {
     0%, 100% { opacity: 0; transform: translate(0, 0); }
@@ -1450,11 +1482,11 @@ section {
 
 /* New Activity Styles */
 .stickman.tripping { animation: trip 0.7s ease-out forwards; }
-@keyframes trip { /* Stumble and fall */
-    0% { transform: translateY(0) rotate(0deg); }
+@keyframes trip { /* Stumble and fall relative to current position */
+    0% { transform: rotate(0deg); }
     30% { transform: translateY(-5px) rotate(15deg); } /* Stumble */
     60% { transform: translateY(10px) rotate(-20deg); } /* Losing balance */
-    100% { transform: translateY(40px) rotate(80deg); } /* Fallen */
+    100% { transform: translateY(30px) rotate(80deg); } /* Fallen - adjust Y relative to ground */
 }
 .stickman.tripping .stickman-arm-left { transform: rotate(120deg); } /* Arms flail */
 .stickman.tripping .stickman-arm-right { transform: rotate(-50deg); }
@@ -1546,11 +1578,17 @@ section {
     section {
         padding: 5rem 1rem 2rem 1rem; /* Adjusted padding for mobile */
         min-height: auto; /* Allow sections to be shorter than viewport */
-        /* Ensure content doesn't get cut off if screen is very short */
-         height: auto;
+         height: auto; /* Ensure content dictates height */
+         justify-content: flex-start; /* Align content to top on mobile */
+         padding-top: 80px; /* More space for nav */
     }
      section:last-child {
          padding-bottom: 4rem; /* Extra padding at the bottom */
+     }
+     /* Special padding for hero to better center content */
+     section#hero {
+        justify-content: center;
+        min-height: 90vh; /* Try to keep hero mostly full height */
      }
 
 
@@ -1563,25 +1601,31 @@ section {
     .section-title { font-size: 1.8rem; margin-bottom: 2rem; }
 
     .mix-container { flex-direction: column; align-items: center; gap: 2rem;}
-    .mix-grid { grid-template-columns: 1fr; flex: auto; width: 100%; max-width: 350px; /* Limit width on mobile */}
-    .mix-description { text-align: center; flex: auto; max-width: 90%; } /* Center text */
+    .mix-grid { grid-template-columns: 1fr; flex: auto; width: 100%; max-width: 350px; }
+    .mix-description { text-align: center; flex: auto; max-width: 90%; }
 
     .artist-content { flex-direction: column; text-align: center; gap: 1.5rem; }
     .artist-bio { text-align: center; max-width: 90%; }
     .artist-content img { width: 200px; height: 200px; }
 
     .booking-form { padding: 0 1rem; max-width: 100%; }
-    .form-flipper { min-height: auto; } /* Auto height */
+    .form-flipper { min-height: auto; padding-bottom: 2rem; } /* Ensure space below */
     .form-front {
         grid-template-columns: 1fr; /* Single column on mobile */
         padding: 1.5rem;
+        height: auto; /* Auto height for content */
+        position: relative; /* Ensure static positioning relative to flipper */
+    }
+    .form-back {
+        position: absolute; /* Keep absolute for flip */
+        height: 100%; /* Match flipper height */
     }
     .form-group { grid-column: 1 / -1 !important; } /* Force all to full width */
     .input-wrapper { height: 45px; } /* Slightly smaller inputs */
     .input-label { font-size: 0.9rem; }
 
 
-    .retro-cube-container { bottom: 10px; left: 10px; transform: scale(0.9); /* Slightly smaller */}
+    .retro-cube-container { bottom: 10px; left: 10px; transform: scale(0.9); }
     .retro-cube { width: 100px; height: 100px; }
     .cube-face { width: 100px; height: 100px; }
     .face-front { transform: translateZ(50px); }
@@ -1592,12 +1636,13 @@ section {
     .face-bottom { transform: translateY(50px) rotateX(-90deg); }
     .cube-text { font-size: 0.5rem; }
     .countdown-timer { font-size: 1rem; padding: 0.4rem 0.8rem; }
-    .timer-digit { width: 15px; height: 25px; font-size: 0.8rem; line-height: 25px;}
+    .timer-digit { width: 15px; height: 25px; font-size: 0.8rem; line-height: normal; } /* Use normal line-height with flex */
 
 
     .stickman {
         width: 40px; height: 64px; /* Adjusted proportions */
         transform: scale(0.9); /* Make slightly smaller overall */
+        /* JS handles positioning */
     }
     .stickman-head { width: 16px; height: 16px; left: 12px; }
     .stickman-body { height: 24px; top: 16px; left: 18px; }
@@ -1607,11 +1652,14 @@ section {
     .stickman-arm-right { top: 20px; left: 18px; transform: rotate(-30deg) translateX(3px); }
     .stickman-leg-left { top: 40px; left: 18px; transform: rotate(15deg) translateX(-1px); }
     .stickman-leg-right { top: 40px; left: 18px; transform: rotate(-15deg) translateX(1px); }
-    .stickman-speech-bubble { top: -35px; padding: 6px 10px; }
+    .stickman-speech-bubble { top: -35px; padding: 6px 10px; max-width: 120px; }
     .stickman-speech-text { font-size: 0.5rem; }
-    /* Adjust laying position for mobile scale if needed */
-    .stickman.laying { transform: translateY(20px) rotate(90deg) scale(0.9); }
+    /* Adjust laying transform for mobile */
+    .stickman.laying { animation: lay-down-mobile 0.5s ease forwards; }
+    @keyframes lay-down-mobile {
+         to { transform: translateY(20px) rotate(90deg) scale(0.9); } /* Maintain scale */
+    }
 
 
-    .error-notification { top: 65px; right: 10px; left: 10px; /* Span more width */ width: auto; }
+    .error-notification { top: 65px; right: 10px; left: 10px; width: auto; }
 }
