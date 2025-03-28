@@ -1,3 +1,4 @@
+```javascript
 // Function to handle image loading errors (Define globally or within DOMContentLoaded)
 function handleImageError(imageElement) {
     console.warn(`Image failed to load: ${imageElement.src}. Hiding element.`);
@@ -893,3 +894,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }, () => console.error("Critical error during DOMContentLoaded event processing.")); // Fallback for DOMContentLoaded failure
 }); // End of DOMContentLoaded listener
+
+```
