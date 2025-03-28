@@ -1,3 +1,4 @@
+```css
 html {
     scroll-behavior: smooth;
 }
@@ -23,20 +24,25 @@ body {
 
 body.hero-bg {
     background: linear-gradient(rgba(0, 0, 20, 0.8), rgba(0, 0, 20, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover; /* Ensure background covers */
 }
 
 body.mixes-bg {
     background: linear-gradient(rgba(50, 0, 50, 0.8), rgba(50, 0, 50, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+     background-size: cover;
 }
 
 body.artist-bg {
     background: linear-gradient(rgba(0, 50, 50, 0.8), rgba(0, 50, 50, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+     background-size: cover;
 }
 
 body.booking-bg {
     background: linear-gradient(rgba(50, 50, 0, 0.8), rgba(50, 50, 0, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+     background-size: cover;
 }
 
+/* Background Grid Overlay */
 body::before {
     content: '';
     position: fixed;
@@ -44,13 +50,13 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: 
+    background:
         repeating-linear-gradient(
             90deg,
             transparent 0px,
             transparent 40px,
-            rgba(0, 247, 255, 0.3) 40px,
-            rgba(0, 247, 255, 0.3) 41px,
+            rgba(0, 247, 255, 0.15) 40px, /* Slightly fainter */
+            rgba(0, 247, 255, 0.15) 41px,
             transparent 41px,
             transparent 80px
         ),
@@ -58,34 +64,16 @@ body::before {
             0deg,
             transparent 0px,
             transparent 40px,
-            rgba(0, 247, 255, 0.3) 40px,
-            rgba(0, 247, 255, 0.3) 41px,
+            rgba(0, 247, 255, 0.15) 40px,
+            rgba(0, 247, 255, 0.15) 41px,
             transparent 41px,
             transparent 80px
-        ),
-        repeating-linear-gradient(
-            90deg,
-            transparent 0px,
-            transparent 20px,
-            rgba(0, 247, 255, 0.2) 20px,
-            rgba(0, 247, 255, 0.2) 21px,
-            transparent 21px,
-            transparent 60px
-        ),
-        repeating-linear-gradient(
-            0deg,
-            transparent 0px,
-            transparent 20px,
-            rgba(0, 247, 255, 0.2) 20px,
-            rgba(0, 247, 255, 0.2) 21px,
-            transparent 21px,
-            transparent 60px
         );
     background-size: 80px 80px;
-    background-position: 0 0, 0 0, 20px 20px, 20px 20px;
+    background-position: 0 0;
     z-index: -1;
     pointer-events: none;
-    animation: float 10s infinite ease-in-out;
+    animation: float 10s infinite ease-in-out alternate; /* Added alternate */
 }
 
 body::after {
@@ -95,13 +83,13 @@ body::after {
     left: 0;
     width: 100%;
     height: 100%;
-    background: 
+    background:
         repeating-linear-gradient(
             45deg,
             transparent 0px,
             transparent 28px,
-            rgba(0, 247, 255, 0.3) 28px,
-            rgba(0, 247, 255, 0.3) 29px,
+            rgba(255, 0, 255, 0.1) 28px, /* Changed color slightly */
+            rgba(255, 0, 255, 0.1) 29px,
             transparent 29px,
             transparent 57px
         ),
@@ -109,23 +97,23 @@ body::after {
             -45deg,
             transparent 0px,
             transparent 28px,
-            rgba(0, 247, 255, 0.3) 28px,
-            rgba(0, 247, 255, 0.3) 29px,
+            rgba(255, 0, 255, 0.1) 28px,
+            rgba(255, 0, 255, 0.1) 29px,
             transparent 29px,
             transparent 57px
         );
-    background-size: 80px 80px;
-    background-position: 0 0;
+    background-size: 57px 57px; /* Adjusted size */
+    background-position: 10px 10px; /* Offset */
     z-index: -1;
     pointer-events: none;
-    filter: drop-shadow(0 0 5px rgba(0, 247, 255, 0.5)) drop-shadow(0 0 10px rgba(0, 247, 255, 0.3));
-    animation: float 10s infinite ease-in-out reverse;
+    filter: drop-shadow(0 0 3px rgba(0, 247, 255, 0.3)) drop-shadow(0 0 5px rgba(255, 0, 255, 0.2));
+    animation: float 12s infinite ease-in-out reverse alternate; /* Adjusted timing */
 }
 
 /* Subtle floating animation */
 @keyframes float {
     0% { transform: translate(0, 0); }
-    50% { transform: translate(5px, 5px); }
+    50% { transform: translate(3px, 4px); } /* Reduced movement */
     100% { transform: translate(0, 0); }
 }
 
@@ -142,7 +130,7 @@ body::after {
     justify-content: center;
     align-items: center;
     z-index: 2000;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.6s ease-out; /* Slightly slower fade */
     overflow: hidden;
 }
 
@@ -157,65 +145,72 @@ body::after {
     color: #00f7ff;
     text-shadow: 0 0 10px #00f7ff;
     display: flex;
-    gap: 2px;
-    transition: opacity 0.3s ease;
+    gap: 2px; /* Adjust gap if needed */
 }
 
 .preloader-char {
     display: inline-block;
     opacity: 1;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Added transform transition */
 }
 
+/* Wave animation for preloader text */
 .preloader-char.wave {
     animation: waveform 1s infinite ease-in-out;
-    animation-delay: calc(var(--char-index) * 0.1s);
+    animation-delay: calc(var(--char-index) * 0.08s); /* Faster delay */
 }
 
 @keyframes waveform {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
+    50% { transform: translateY(-10px); } /* Slightly less movement */
 }
 
 /* Preloader Progress */
 .preloader-progress {
-    margin-top: 1rem;
+    margin-top: 1.5rem; /* More space */
     text-align: center;
 }
 
+/* Style the parent container */
 .progress-bar {
-    width: 100px;
-    height: 5px;
+    width: 150px; /* Wider bar */
+    height: 6px;
     background: rgba(0, 247, 255, 0.2);
     border: 1px solid #00f7ff;
     border-radius: 3px;
-    overflow: hidden;
+    overflow: hidden; /* Keep overflow hidden */
+    position: relative; /* Needed for pseudo-element positioning */
 }
 
+/* Style the pseudo-element for the actual progress */
 .progress-bar::after {
     content: '';
     display: block;
-    width: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0; /* Initial width */
     height: 100%;
     background: #00f7ff;
     box-shadow: 0 0 10px #00f7ff;
-    transition: width 6s linear;
+    transition: width 4s linear; /* Match JS duration (40ms * 100 = 4000ms) */
 }
 
+/* Animate the width of the pseudo-element when parent has 'active' */
 .progress-bar.active::after {
     width: 100%;
 }
 
 .progress-text {
     display: block;
-    margin-top: 0.5rem;
+    margin-top: 0.8rem; /* More space */
     font-family: 'Press Start 2P', cursive;
     font-size: 0.8rem;
     color: #00f7ff;
     text-shadow: 0 0 5px #00f7ff;
 }
 
-/* Section Transition Particles */
+/* Section Transition Particles (kept simple as per new JS) */
 .section-particles {
     position: fixed;
     top: 0;
@@ -224,31 +219,45 @@ body::after {
     height: 100%;
     pointer-events: none;
     z-index: 100;
+    overflow: hidden; /* Prevent scrollbars from particles */
 }
 
 .section-particle {
     position: absolute;
-    width: 5px;
-    height: 5px;
+    width: 3px; /* Smaller particles */
+    height: 3px;
     background: #00f7ff;
-    box-shadow: 0 0 5px #00f7ff;
+    border-radius: 50%; /* Round particles */
+    box-shadow: 0 0 6px #00f7ff, 0 0 10px #00f7ff;
     opacity: 0;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition: opacity 0.5s ease, transform 1s ease; /* Slower transform */
+    /* Animation will be controlled by JS adding/removing 'active' class or direct style */
 }
 
 .section-particle.active {
-    opacity: 1;
+    opacity: 0.8; /* Slight transparency */
+    /* Example movement - JS might set transform directly */
+    /* transform: translate(calc(var(--dx, 0) * 1px), calc(var(--dy, 0) * 1px)); */
 }
+
 
 /* Retro Nav Bar */
 .retro-nav {
     position: fixed;
     top: 0;
     width: 100%;
-    background: rgba(0, 0, 20, 0.8);
+    background: rgba(0, 0, 20, 0.85); /* Slightly less transparent */
+    backdrop-filter: blur(5px); /* Add blur effect */
     z-index: 1000;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, opacity 0.3s ease; /* Added opacity transition */
+    opacity: 0.8; /* Start slightly faded */
 }
+
+.retro-nav.scrolled {
+    opacity: 1; /* Fully visible when scrolled */
+    background: rgba(0, 0, 20, 0.9);
+}
+
 
 .retro-nav ul {
     display: flex;
@@ -261,7 +270,7 @@ body::after {
 }
 
 .retro-nav li {
-    margin: 0 1.5rem;
+    margin: 0 1.5rem; /* Adjust spacing as needed */
 }
 
 .retro-nav a {
@@ -269,83 +278,84 @@ body::after {
     font-size: 1rem;
     color: #00f7ff;
     text-decoration: none;
-    text-shadow: 0 0 10px #00f7ff;
-    opacity: 0.7;
-    transition: opacity 0.3s ease, color 0.3s ease;
+    text-shadow: 0 0 8px #00f7ff; /* Slightly reduced shadow */
+    padding: 0.5rem 0; /* Add padding for easier clicking */
+    position: relative;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* Underline effect on hover */
+.retro-nav a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #ff00ff;
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.3s ease-out;
 }
 
 .retro-nav a:hover {
     color: #ff00ff;
     text-shadow: 0 0 10px #ff00ff;
-    opacity: 1;
 }
 
-.retro-nav.scrolled a {
-    opacity: 1;
+.retro-nav a:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
 }
 
-/* General Section Styles for Smooth Scrolling */
+
+/* General Section Styles */
 section {
     min-height: 100vh;
     width: 100%;
+    padding: 6rem 2rem 2rem 2rem; /* Add padding top for fixed nav */
     position: relative;
-    transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1), opacity 1s cubic-bezier(0.23, 1, 0.32, 1);
-    opacity: 1;
-    transform: translateY(0);
+    display: flex; /* Use flex for alignment */
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+    opacity: 0; /* Start hidden for observer */
+    transition: opacity 1s cubic-bezier(0.23, 1, 0.32, 1); /* Fade-in transition */
+    /* Removed complex transform transitions from old version */
 }
 
-/* Class for sections that are out of view (above) */
-.out-of-view-up {
-    transform: translateY(-100%) scale(0.98);
-    opacity: 0;
-}
-
-/* Class for sections that are out of view (below) */
-.out-of-view-down {
-    transform: translateY(100%) scale(0.98);
-    opacity: 0;
-}
-
-/* Class for sections that are in view */
-.in-view {
-    transform: translateY(0) scale(1);
+section.in-view, section.active { /* Use .in-view or .active from observer */
     opacity: 1;
 }
 
-/* Class for zooming down effect when scrolling up */
-.zoom-down {
-    transform: translateY(100%) scale(0.95);
-    opacity: 0;
-}
 
 /* Hero Section */
 .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     text-align: center;
-    position: relative;
 }
 
 .hero h1 {
     font-family: 'Press Start 2P', cursive;
     font-size: 4rem;
     margin-bottom: 1rem;
+    /* Glitch effect styles below */
 }
 
 .hero h2 {
     font-size: 2rem;
     color: #00f7ff;
     margin-bottom: 2rem;
+    text-shadow: 0 0 8px #00f7ff;
 }
 
 /* Glitch Effect for Title */
 .glitch {
     position: relative;
     color: #fff;
-    animation: glitch 1s linear infinite;
+    text-shadow:
+       -1px -1px 0 #ff00ff,
+        1px  1px 0 #00f7ff;
+    animation: glitch-anim 2s infinite linear alternate-reverse;
 }
 
 .glitch::before,
@@ -356,37 +366,47 @@ section {
     left: 0;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 .glitch::before {
-    color: #ff00ff;
-    animation: glitch-top 0.5s linear infinite;
-    clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+    color: #ff00ff; /* Magenta */
+    left: 2px;
+    text-shadow: -2px 0 #ff00ff;
+    animation: glitch-anim-before 1.5s infinite linear alternate-reverse;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%); /* Adjust clipping */
 }
 
 .glitch::after {
-    color: #00f7ff;
-    animation: glitch-bottom 0.7s linear infinite;
-    clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+    color: #00f7ff; /* Cyan */
+    left: -2px;
+    text-shadow: 2px 0 #00f7ff; /* Use main color for shadow */
+    animation: glitch-anim-after 2.5s infinite linear alternate-reverse;
+     clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%); /* Adjust clipping */
 }
 
-@keyframes glitch {
-    2%, 64% { transform: translate(2px, 0) skew(0deg); }
-    4%, 60% { transform: translate(-2px, 0) skew(0deg); }
-    62% { transform: translate(0, 0) skew(5deg); }
+@keyframes glitch-anim {
+  0% { text-shadow: -1px -1px 0 #ff00ff, 1px 1px 0 #00f7ff; }
+  25% { text-shadow: 1px 1px 0 #ff00ff, -1px -1px 0 #00f7ff; }
+  50% { text-shadow: -1px 1px 0 #ff00ff, 1px -1px 0 #00f7ff; }
+  75% { text-shadow: 1px -1px 0 #ff00ff, -1px 1px 0 #00f7ff; }
+  100% { text-shadow: -1px -1px 0 #ff00ff, 1px 1px 0 #00f7ff; }
+}
+@keyframes glitch-anim-before {
+  0% { transform: translate(0, 0); clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%); }
+  5% { transform: translate(2px, -1px); }
+  10% { transform: translate(-2px, 1px); }
+  /* ... more steps for complex glitch */
+  100% { transform: translate(0, 0); clip-path: polygon(0 20%, 100% 20%, 100% 65%, 0 65%); }
+}
+@keyframes glitch-anim-after {
+ 0% { transform: translate(0, 0); clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%); }
+  3% { transform: translate(-3px, 2px); }
+  6% { transform: translate(3px, -2px); }
+  /* ... more steps */
+  100% { transform: translate(0, 0); clip-path: polygon(0 35%, 100% 35%, 100% 80%, 0 80%); }
 }
 
-@keyframes glitch-top {
-    2%, 64% { transform: translate(2px, -2px); }
-    4%, 60% { transform: translate(-2px, 2px); }
-    62% { transform: translate(13px, -1px) skew(-13deg); }
-}
-
-@keyframes glitch-bottom {
-    2%, 64% { transform: translate(-2px, 0); }
-    4%, 60% { transform: translate(2px, 0); }
-    62% { transform: translate(-10px, 1px) skew(10deg); }
-}
 
 /* Sound Wave Visualizer */
 .sound-wave-container {
@@ -394,18 +414,21 @@ section {
     justify-content: center;
     align-items: flex-end;
     gap: 5px;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem; /* More space */
     width: 300px;
     height: 100px;
-    touch-action: none;
+    touch-action: none; /* Keep for mobile interaction */
+    padding: 10px 0; /* Add padding to allow bars to reach min height */
 }
 
 .sound-bar {
     width: 10px;
-    height: 10px;
+    min-height: 10px; /* Ensure min height */
+    height: 10px; /* Initial height */
     background: #00f7ff;
     box-shadow: 0 0 10px #00f7ff;
-    transition: height 0.2s ease;
+    transition: height 0.15s ease-out; /* Faster, smoother transition */
+    border-radius: 2px 2px 0 0; /* Slightly rounded top */
 }
 
 /* Neon Button */
@@ -416,19 +439,38 @@ section {
     background: transparent;
     border: 2px solid #ff00ff;
     color: #ff00ff;
-    text-shadow: 0 0 10px #ff00ff;
+    text-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff; /* Enhanced glow */
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.neon-button:hover {
-    background: rgba(255, 0, 255, 0.2);
-    box-shadow: 0 0 20px #ff00ff;
+.neon-button::before { /* Add shine effect */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
 }
+
+
+.neon-button:hover {
+    background: rgba(255, 0, 255, 0.15); /* Slightly subtler hover */
+    box-shadow: 0 0 20px #ff00ff, 0 0 30px #ff00ff; /* Enhanced hover glow */
+    color: #fff; /* Brighter text on hover */
+}
+
+.neon-button:hover::before {
+    left: 100%; /* Move shine across */
+}
+
 
 /* Mixes Section */
 .mixes {
-    padding: 2rem;
     text-align: center;
 }
 
@@ -436,26 +478,30 @@ section {
     font-family: 'Press Start 2P', cursive;
     font-size: 2.5rem;
     color: #00f7ff;
-    text-shadow: 0 0 10px #00f7ff;
-    margin-bottom: 2rem;
+    text-shadow: 0 0 10px #00f7ff, 0 0 15px #00f7ff;
+    margin-bottom: 3rem; /* More space */
 }
 
 .mix-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: flex-start; /* Align items top */
     gap: 2rem;
     padding: 0 1rem;
+    max-width: 1200px; /* Allow wider container */
+    margin: 0 auto; /* Center container */
 }
 
 .mix-grid {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: grid !important; /* Ensure grid display */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Slightly larger min size */
     gap: 2rem;
+    flex: 2; /* Grid takes more space */
     max-width: 900px;
     opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 1.2s cubic-bezier(0.23, 1, 0.32, 1), transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.2s, transform 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.2s; /* Added delay */
 }
 
 .mix-grid.active {
@@ -464,11 +510,16 @@ section {
 }
 
 .mix-description {
-    max-width: 500px;
+    flex: 1; /* Description takes less space */
+    max-width: 400px; /* Constrain width */
     text-align: left;
     opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 1.2s cubic-bezier(0.23, 1, 0.32, 1), transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.4s, transform 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.4s; /* Added delay */
+    padding: 1rem;
+    background: rgba(0, 0, 20, 0.5); /* Subtle background */
+    border: 1px solid rgba(0, 247, 255, 0.3);
+    border-radius: 8px;
 }
 
 .mix-description.active {
@@ -486,21 +537,23 @@ section {
 
 .mix-description p {
     font-size: 1rem;
-    line-height: 1.6;
+    line-height: 1.7; /* Increased line height */
+    color: #eee; /* Lighter text */
 }
 
 /* Mix Card */
 .mix-card {
     perspective: 1000px;
     width: 100%;
-    min-width: 250px;
     min-height: 300px;
     position: relative;
-    animation: float 6s infinite ease-in-out;
+    /* Removed float animation, can be added back if desired */
+    /* animation: float 6s infinite ease-in-out; */
+    transition: box-shadow 0.4s ease; /* Add transition for hover glow */
 }
 
 .mix-card:hover {
-    box-shadow: 0 0 30px rgba(0, 247, 255, 0.8);
+    box-shadow: 0 0 25px rgba(0, 247, 255, 0.7); /* Adjusted hover glow */
 }
 
 .mix-card-inner {
@@ -508,7 +561,7 @@ section {
     width: 100%;
     height: 100%;
     min-height: 300px;
-    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Adjusted speed */
     transform-style: preserve-3d;
 }
 
@@ -527,25 +580,26 @@ section {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: rgba(0, 0, 20, 0.8);
+    background: rgba(10, 10, 35, 0.85); /* Slightly different bg */
     border: 2px solid #00f7ff;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 247, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 247, 255, 0.4); /* Adjusted static glow */
+    padding: 1rem; /* Ensure padding */
+    overflow: hidden; /* Prevent content overflow */
 }
 
 .mix-card-front {
-    padding: 1rem;
-    background: rgba(0, 0, 20, 0.8) url('https://via.placeholder.com/250x150/333/fff?text=Image+Not+Loaded') no-repeat center center;
-    background-size: cover;
+    /* background image set via inline style or img tag now */
 }
 
 .mix-card-front img {
     width: 100%;
-    max-height: 150px;
+    height: 150px; /* Fixed height for consistency */
     object-fit: cover;
     border-radius: 5px;
     margin-bottom: 1rem;
     display: block;
+    border: 1px solid rgba(0, 247, 255, 0.5); /* Subtle border */
 }
 
 .mix-card-front h3 {
@@ -554,34 +608,44 @@ section {
     color: #00f7ff;
     text-shadow: 0 0 10px #00f7ff;
     margin-bottom: 0.5rem;
+    text-align: center;
 }
 
 .mix-card-front p {
     font-size: 0.9rem;
-    color: #fff;
+    color: #ccc; /* Lighter gray */
+    text-align: center;
 }
 
 .mix-card-back {
     transform: rotateY(180deg);
-    padding: 1rem;
+    justify-content: center; /* Center audio player */
 }
 
 .mix-audio {
-    width: 100%;
+    width: 90%; /* Slightly smaller width */
+    max-width: 250px; /* Max width */
+    margin-top: 1rem; /* Space above audio */
 }
+
+/* Custom Audio Player Styles (Optional) */
+audio::-webkit-media-controls-panel {
+  background-color: rgba(0, 247, 255, 0.2);
+  border-radius: 5px;
+}
+audio::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-timeline,
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display,
+audio::-webkit-media-controls-mute-button,
+audio::-webkit-media-controls-volume-slider {
+  filter: invert(1) hue-rotate(180deg) brightness(1.5); /* Adjust colors */
+}
+
 
 /* Artist Section */
 .artist {
-    padding: 2rem;
-    text-align: center;
-    opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 1.2s cubic-bezier(0.23, 1, 0.32, 1), transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.artist.active {
-    opacity: 1;
-    transform: translateY(0);
+    /* Uses general section styles for fade-in */
 }
 
 .artist-content {
@@ -589,60 +653,63 @@ section {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 3rem; /* Increased gap */
     max-width: 900px;
     margin: 0 auto;
+    text-align: center; /* Center align items if wrapping */
 }
 
 .artist-content img {
-    width: 300px;
-    height: 300px;
+    width: 250px; /* Slightly smaller */
+    height: 250px;
     object-fit: cover;
-    border-radius: 10px;
-    border: 2px solid #ff00ff;
-    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+    border-radius: 50%; /* Circular image */
+    border: 3px solid #ff00ff;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.6), 0 0 30px rgba(255, 0, 255, 0.3); /* Enhanced glow */
+    transition: transform 0.4s ease;
 }
+
+.artist-content img:hover {
+    transform: scale(1.05); /* Slight scale on hover */
+}
+
 
 .artist-bio {
     max-width: 500px;
-    text-align: left;
+    text-align: left; /* Keep bio text left-aligned */
 }
 
 .artist-bio p {
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: 1rem;
+    font-size: 1.05rem; /* Slightly larger */
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    color: #eee;
 }
 
 .artist-audio {
     width: 100%;
+    margin-top: 1rem; /* Space below bio */
 }
 
 /* Booking Section */
 .booking {
-    padding: 2rem;
-    text-align: center;
-    opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 1.2s cubic-bezier(0.23, 1, 0.32, 1), transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.booking.active {
-    opacity: 1;
-    transform: translateY(0);
+   /* Uses general section styles for fade-in */
 }
 
 .booking-form {
     max-width: 600px;
+    width: 90%; /* Responsive width */
     margin: 0 auto;
     position: relative;
 }
 
+/* Form Flipper */
 .form-flipper {
     position: relative;
-    perspective: 1000px;
+    perspective: 1200px; /* Increased perspective */
     width: 100%;
-    min-height: 400px;
+    min-height: 500px; /* Increased height */
+    margin-bottom: 2rem; /* Space below form */
 }
 
 .form-front,
@@ -653,11 +720,17 @@ section {
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
-    transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transition: transform 1.2s cubic-bezier(0.68, -0.6, 0.27, 1.55); /* Adjusted timing */
+    background: rgba(10, 10, 35, 0.8); /* Consistent background */
+    border: 2px solid #00f7ff;
+    border-radius: 10px;
+    padding: 2rem; /* Add padding */
+    box-shadow: 0 0 15px rgba(0, 247, 255, 0.4);
 }
 
 .form-front {
     transform: rotateY(0deg);
+    z-index: 2; /* Front is initially on top */
 }
 
 .form-back {
@@ -665,103 +738,30 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column; /* Align button vertically */
+    z-index: 1;
 }
 
 .form-flipper.flipped .form-front {
     transform: rotateY(-180deg);
+    z-index: 1;
 }
 
 .form-flipper.flipped .form-back {
     transform: rotateY(0deg);
+    z-index: 2; /* Back comes to top when flipped */
 }
 
 .form-group {
     margin-bottom: 1.5rem;
+    position: relative; /* Needed for label positioning */
 }
 
-.form-group.finish-group {
-    display: none;
-    margin-top: 2rem;
-}
-
-.form-group.finish-group.active {
-    display: block;
-}
-
+/* Input Wrapper for Flip */
 .input-wrapper {
     position: relative;
     perspective: 1000px;
-}
-
-.input-wrapper input,
-.input-wrapper select {
-    width: 100%;
-    padding: 0.8rem;
-    background: rgba(0, 0, 20, 0.8);
-    border: 2px solid #00f7ff;
-    border-radius: 5px;
-    color: #fff;
-    font-family: 'VCR OSD Mono', monospace;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-    backface-visibility: hidden;
-}
-
-.input-wrapper input:focus,
-.input-wrapper select:focus {
-    outline: none;
-    border-color: #ff00ff;
-    box-shadow: 0 0 10px #ff00ff;
-}
-
-.input-wrapper select {
-    appearance: none;
-    background: rgba(0, 0, 20, 0.8) url('data:image/svg+xml;utf8,<svg fill="%2300f7ff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 0.75rem center;
-    background-size: 1rem;
-}
-
-.input-label {
-    position: absolute;
-    top: 50%;
-    left: 0.8rem;
-    transform: translateY(-50%);
-    color: #00f7ff;
-    text-shadow: 0 0 5px #00f7ff;
-    font-size: 1rem;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-}
-
-.input-label.hidden {
-    opacity: 0;
-}
-
-.input-back {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 20, 0.8);
-    border: 2px solid #00f7ff;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    backface-visibility: hidden;
-    transform: rotateY(180deg);
-}
-
-.input-wrapper.flipped .input-back {
-    transform: rotateY(0deg);
-}
-
-.input-wrapper:not(.flipped) .input-back {
-    transform: rotateY(180deg);
-}
-
-.input-wrapper {
-    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Smooth flip */
     transform-style: preserve-3d;
 }
 
@@ -769,70 +769,167 @@ section {
     transform: rotateY(180deg);
 }
 
-.input-wrapper.flipped .input-label {
-    display: none;
+/* Input & Select Styling */
+.input-wrapper input,
+.input-wrapper select {
+    width: 100%;
+    padding: 0.8rem 1rem; /* Adjust padding */
+    background: rgba(0, 0, 20, 0.9); /* Darker background */
+    border: 2px solid #00f7ff;
+    border-radius: 5px;
+    color: #fff;
+    font-family: 'VCR OSD Mono', monospace;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative; /* Ensure input is layer above label initially */
+    z-index: 2;
+    backface-visibility: hidden; /* Hide back during flip */
 }
+
+.input-wrapper input:focus,
+.input-wrapper select:focus {
+    outline: none;
+    border-color: #ff00ff;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
+}
+
+/* Placeholder Styling Trick (requires placeholder=" ") in HTML */
+.input-wrapper input:not(:placeholder-shown) + .input-label,
+.input-wrapper input:focus + .input-label,
+.input-wrapper select:valid + .input-label, /* Show label for select when valid */
+.input-wrapper select:focus + .input-label {
+   /* Styles for label when input has content or focus */
+    top: -0.7rem; /* Move label up */
+    left: 0.8rem;
+    font-size: 0.75rem;
+    color: #ff00ff; /* Change color */
+    background: rgba(10, 10, 35, 0.8); /* Match form bg */
+    padding: 0 0.3rem;
+    z-index: 3; /* Ensure label is above input border */
+}
+
+.input-wrapper select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%2300f7ff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem; /* Make space for arrow */
+}
+
+/* Select with no value selected */
+.input-wrapper select:invalid {
+    color: #aaa; /* Dim color for placeholder state */
+}
+
+
+.input-label {
+    position: absolute;
+    top: 0.9rem; /* Aligned with input padding */
+    left: 1rem;
+    color: #00f7ff;
+    text-shadow: 0 0 5px #00f7ff;
+    font-size: 1rem;
+    pointer-events: none;
+    transition: all 0.3s ease; /* Smooth transition for top, left, font-size, color */
+    z-index: 1; /* Below input initially */
+    white-space: nowrap; /* Prevent label wrapping */
+}
+
+.input-wrapper.flipped .input-label {
+    display: none; /* Hide label when wrapper is flipped */
+}
+
+
+/* Input Back (Checkmark side) */
+.input-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 20, 0.9); /* Match input bg */
+    border: 2px solid #00f7ff; /* Match input border */
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backface-visibility: hidden;
+    transform: rotateY(180deg); /* Initially hidden */
+    z-index: 1; /* Behind input */
+}
+
+.input-wrapper.flipped .input-back {
+     /* transform: rotateY(0deg); No rotation needed, wrapper handles it */
+}
+
 
 .checkmark {
     position: relative;
     display: inline-block;
     font-size: 2rem;
-    color: #00ff00;
-    text-shadow: 0 0 10px #00ff00;
+    color: #00dd00; /* Greener shade */
+    text-shadow: 0 0 10px #00dd00;
     cursor: pointer;
     transition: all 0.3s ease;
+    transform: scale(0.8); /* Start slightly smaller */
+    opacity: 0; /* Start hidden */
 }
+
+.input-wrapper.flipped .checkmark {
+    transform: scale(1);
+    opacity: 1;
+    transition: all 0.3s ease 0.5s; /* Delay appearance */
+}
+
 
 .checkmark.glowing {
-    color: #00ff00;
+    color: #00ff00; /* Bright green when glowing */
     text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
-    animation: pulseCheck 1.5s infinite ease-in-out, floatTilt 3s infinite ease-in-out;
+    animation: pulseCheck 1.5s infinite ease-in-out, floatTilt 4s infinite ease-in-out alternate; /* Slower float */
 }
 
-.checkmark.glowing::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 40px;
-    height: 40px;
-    background: radial-gradient(circle, rgba(0, 255, 0, 0.3) 0%, rgba(0, 255, 0, 0) 70%);
-    transform: translate(-50%, -50%);
-    z-index: -1;
-    animation: fogPulse 2s infinite ease-in-out;
-}
-
+/* Keep pulseCheck, floatTilt, fogPulse keyframes as they were */
 @keyframes pulseCheck {
-    0% { transform: scale(1); text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
-    50% { transform: scale(1.2); text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; }
-    100% { transform: scale(1); text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
+    0%, 100% { transform: scale(1); text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
+    50% { transform: scale(1.1); text-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00; } /* Slightly subtler pulse */
 }
 
 @keyframes floatTilt {
     0% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
-    25% { transform: translateY(-5px) rotateX(10deg) rotateY(10deg); }
-    50% { transform: translateY(0) rotateX(0deg) rotateY(20deg); }
-    75% { transform: translateY(5px) rotateX(-10deg) rotateY(10deg); }
+    25% { transform: translateY(-4px) rotateX(8deg) rotateY(8deg); }
+    50% { transform: translateY(0) rotateX(0deg) rotateY(-15deg); } /* Changed rotation */
+    75% { transform: translateY(4px) rotateX(-8deg) rotateY(8deg); }
     100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
 }
 
 @keyframes fogPulse {
-    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
-    100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.15); }
+}
+
+
+/* Finish Button Group */
+.form-group.finish-group {
+    display: none; /* Hidden by default */
+    margin-top: 2rem;
+    text-align: center; /* Center the button */
+}
+
+.form-group.finish-group.active {
+    display: block; /* Show when JS adds 'active' */
 }
 
 .finish-button-wrapper {
-    margin-top: 1rem;
     perspective: 1000px;
+    display: inline-block; /* Allow centering */
 }
 
 .finish-button-inner {
     position: relative;
-    width: 200px;
+    width: 180px; /* Slightly smaller */
     height: 50px;
-    margin: 0 auto;
-    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     transform-style: preserve-3d;
 }
 
@@ -854,19 +951,19 @@ section {
     border-color: #00f7ff;
     color: #00f7ff;
     text-shadow: 0 0 10px #00f7ff;
+    transition: all 0.3s ease;
 }
 
 .finish-button-front:hover {
     background: rgba(0, 247, 255, 0.2);
-    box-shadow: 0 0 20px #00f7ff;
+    box-shadow: 0 0 15px #00f7ff;
+    transform: translateY(-2px); /* Slight lift on hover */
 }
 
+
+/* Book Now Button (on back of form) */
 .book-now-wrapper {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    /* Wrapper takes full space */
 }
 
 .book-now-button {
@@ -876,120 +973,162 @@ section {
     background: transparent;
     border: 2px solid #ff00ff;
     color: #ff00ff;
-    text-shadow: 0 0 10px #ff00ff;
+    text-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff; /* Match neon button style */
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.book-now-button::before { /* Add shine effect */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
 }
 
 .book-now-button:hover {
-    background: rgba(255, 0, 255, 0.2);
-    box-shadow: 0 0 20px #ff00ff;
+    background: rgba(255, 0, 255, 0.15);
+    box-shadow: 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+    color: #fff;
+}
+.book-now-button:hover::before {
+    left: 100%;
 }
 
-/* Neon Grid Background */
+
+/* Neon Grid Background (for booking section) */
 .neon-grid {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: 
+    background:
         repeating-linear-gradient(
             90deg,
             transparent 0px,
-            transparent 20px,
-            rgba(0, 247, 255, 0.3) 20px,
-            rgba(0, 247, 255, 0.3) 21px,
-            transparent 21px,
-            transparent 40px
+            transparent 25px, /* Adjusted spacing */
+            rgba(0, 247, 255, 0.2) 25px,
+            rgba(0, 247, 255, 0.2) 26px,
+            transparent 26px,
+            transparent 50px
         ),
         repeating-linear-gradient(
             0deg,
             transparent 0px,
-            transparent 20px,
-            rgba(0, 247, 255, 0.3) 20px,
-            rgba(0, 247, 255, 0.3) 21px,
-            transparent 21px,
-            transparent 40px
+            transparent 25px,
+            rgba(0, 247, 255, 0.2) 25px,
+            rgba(0, 247, 255, 0.2) 26px,
+            transparent 26px,
+            transparent 50px
         );
-    background-size: 40px 40px;
+    background-size: 50px 50px;
     opacity: 0;
-    transition: opacity 0.5s ease;
-    z-index: -1;
+    transition: opacity 0.8s ease;
+    z-index: -1; /* Behind form content */
+    border-radius: 10px; /* Match form border radius */
+    pointer-events: none;
 }
 
 .neon-grid.active {
-    opacity: 1;
+    opacity: 0.6; /* Visible but not too strong */
+     animation: pulseGrid 2.5s infinite ease-in-out alternate;
 }
+
+@keyframes pulseGrid {
+    0% { opacity: 0.3; }
+    100% { opacity: 0.7; }
+}
+
 
 /* Back to Top Button */
 .back-to-top {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 25px;
+    right: 25px;
     font-family: 'Press Start 2P', cursive;
-    font-size: 0.8rem;
-    padding: 0.5rem 1rem;
+    font-size: 0.75rem; /* Slightly smaller */
+    padding: 0.6rem 1.1rem;
     background: rgba(0, 0, 20, 0.8);
     border: 2px solid #00f7ff;
     color: #00f7ff;
     text-decoration: none;
-    text-shadow: 0 0 10px #00f7ff;
+    text-shadow: 0 0 8px #00f7ff;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transform: translateY(20px); /* Start offscreen */
+    transition: opacity 0.4s ease, transform 0.4s ease;
     z-index: 1000;
+    border-radius: 5px;
 }
 
 .back-to-top.visible {
     opacity: 1;
+    transform: translateY(0); /* Slide in */
 }
 
 .back-to-top:hover {
     background: rgba(0, 247, 255, 0.2);
-    box-shadow: 0 0 20px #00f7ff;
+    box-shadow: 0 0 15px #00f7ff;
+    color: #fff;
 }
 
 /* 3D Retro Cube and Countdown Timer */
 .retro-cube-container {
     position: fixed;
-    bottom: 20px;
+    bottom: 20px; /* Position bottom-left */
     left: 20px;
-    z-index: 1000;
+    z-index: 999; /* Below nav/back-to-top */
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.8s ease 1s; /* Fade in after delay */
+    transform: scale(0.9); /* Start slightly small */
 }
 
 .retro-cube-container.visible {
     opacity: 1;
+    transform: scale(1);
 }
 
 .retro-cube {
-    width: 150px;
-    height: 150px;
+    width: 120px; /* Smaller cube */
+    height: 120px;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 1s ease;
+    transition: transform 0.8s ease; /* Smooth transition for interactions */
+    cursor: pointer;
+    animation: floatCube 8s infinite ease-in-out alternate;
 }
+
+@keyframes floatCube {
+    0% { transform: translate(0, 0) rotateY(0deg); }
+    50% { transform: translate(5px, -5px) rotateY(15deg); }
+    100% { transform: translate(0, 0) rotateY(-15deg); }
+}
+
 
 .cube-face {
     position: absolute;
-    width: 150px;
-    height: 150px;
-    background: rgba(0, 0, 20, 0.8);
+    width: 120px;
+    height: 120px;
+    background: rgba(10, 0, 30, 0.85); /* Darker magenta tint */
     border: 2px solid #ff00ff;
-    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.5), inset 0 0 10px rgba(255,0,255,0.3); /* Inner shadow */
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 1rem;
+    padding: 0.8rem;
+    backface-visibility: hidden; /* Important for clean rotation */
 }
 
 .cube-text {
     font-family: 'Press Start 2P', cursive;
-    font-size: 0.6rem;
+    font-size: 0.6rem; /* Adjust size */
     color: #ff00ff;
-    text-shadow: 0 0 10px #ff00ff;
+    text-shadow: 0 0 8px #ff00ff;
 }
 
 .cube-close {
@@ -1000,136 +1139,134 @@ section {
     color: #ff00ff;
     cursor: pointer;
     text-shadow: 0 0 5px #ff00ff;
+    transition: transform 0.3s ease, color 0.3s ease;
+    padding: 2px; /* Easier to click */
 }
 
 .cube-close:hover {
-    color: #00f7ff;
-    text-shadow: 0 0 5px #00f7ff;
+    color: #fff;
+    transform: scale(1.2);
 }
 
-.face-front { transform: translateZ(75px); }
-.face-back { transform: translateZ(-75px) rotateY(180deg); }
-.face-left { transform: translateX(-75px) rotateY(-90deg); }
-.face-right { transform: translateX(75px) rotateY(90deg); }
-.face-top { transform: translateY(-75px) rotateX(90deg); }
-.face-bottom { transform: translateY(75px) rotateX(-90deg); }
+/* Cube face positioning (Adjust for 120px size -> translateZ(60px)) */
+.face-front { transform: translateZ(60px); }
+.face-back { transform: translateZ(-60px) rotateY(180deg); }
+.face-left { transform: translateX(-60px) rotateY(-90deg); }
+.face-right { transform: translateX(60px) rotateY(90deg); }
+.face-top { transform: translateY(-60px) rotateX(90deg); }
+.face-bottom { transform: translateY(60px) rotateX(-90deg); }
 
-.retro-cube.interacted {
-    animation: shake 0.5s ease;
+/* Cube interaction/animation */
+.retro-cube.interacted { /* Add class on interaction if needed */
+    /* Example: animation: shake 0.5s ease; */
 }
 
-@keyframes shake {
-    0%, 100% { transform: rotateX(0deg) rotateY(0deg); }
-    25% { transform: rotateX(10deg) rotateY(-10deg); }
-    75% { transform: rotateX(-10deg) rotateY(10deg); }
+.retro-cube.roll-to-timer { /* Animation for transitioning */
+    animation: shrinkAndFade 0.6s ease forwards;
 }
 
-.retro-cube.roll-to-timer {
-    animation: roll 1s ease forwards;
+@keyframes shrinkAndFade {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0); opacity: 0; }
 }
 
-@keyframes roll {
-    0% { transform: rotateX(0deg) rotateY(0deg); }
-    100% { transform: rotateX(720deg) rotateY(720deg); }
-}
-
+/* Countdown Timer Styling (Simplified) */
 .countdown-timer {
-    display: none;
+    display: none; /* Hidden until timer mode */
     font-family: 'Press Start 2P', cursive;
-    font-size: 1.2rem;
+    font-size: 1.1rem; /* Adjust size */
     color: #00f7ff;
-    text-shadow: 0 0 10px #00f7ff;
-    margin-top: 1rem;
+    text-shadow: 0 0 8px #00f7ff;
+    background: rgba(0, 0, 20, 0.8);
+    border: 1px solid #00f7ff;
+    padding: 0.5rem 0.8rem;
+    border-radius: 5px;
+    margin-top: 0.5rem; /* Space from where cube was */
+    box-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
 }
 
 .retro-cube-container.timer-mode .retro-cube {
-    display: none;
+    display: none; /* Hide cube */
 }
 
 .retro-cube-container.timer-mode .countdown-timer {
-    display: flex;
+    display: flex; /* Show timer */
     align-items: center;
-    gap: 2px;
+    gap: 3px; /* Gap between parts */
+}
+
+.timer-part {
+    display: flex; /* Digits side-by-side */
 }
 
 .timer-digit {
-    width: 20px;
-    height: 30px;
-    background: rgba(0, 0, 20, 0.8);
-    border: 1px solid #00f7ff;
+    width: 18px; /* Adjust width */
+    height: 28px; /* Adjust height */
+    background: rgba(0, 0, 20, 0.6); /* Slightly transparent digits */
+    border: 1px solid rgba(0, 247, 255, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.timer-digit::before {
-    content: attr(data-value);
-    position: absolute;
-    top: 100%;
-    transition: transform 0.5s ease;
-}
-
-.timer-digit.flip::before {
-    transform: translateY(-100%);
-}
-
-.timer-digit::after {
-    content: attr(data-value);
-    position: absolute;
-    top: 0;
-    transition: transform 0.5s ease;
-}
-
-.timer-digit.flip::after {
-    transform: translateY(-100%);
+    margin: 0 1px; /* Small gap between digits */
+    border-radius: 2px;
+    /* Removed complex flip animation styles */
 }
 
 .timer-colon {
     margin: 0 2px;
-    color: #00f7ff;
-    text-shadow: 0 0 5px #00f7ff;
+    color: #ff00ff; /* Colon color */
+    text-shadow: 0 0 5px #ff00ff;
+    animation: blinkColon 1s infinite steps(1, end);
 }
+
+@keyframes blinkColon {
+  50% { opacity: 0; }
+}
+
 
 .countdown-timer.expired {
-    color: #ff00ff;
-    text-shadow: 0 0 10px #ff00ff;
-    animation: blink 1s infinite;
+    color: #ff0000; /* Red when expired */
+    border-color: #ff0000;
+    text-shadow: 0 0 10px #ff0000;
+    box-shadow: 0 0 15px #ff0000;
+    animation: pulseExpired 1.5s infinite ease-in-out;
 }
 
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+@keyframes pulseExpired {
+    0%, 100% { box-shadow: 0 0 10px #ff0000; }
+    50% { box-shadow: 0 0 20px #ff0000; }
 }
 
-/* Stickman Styles */
+/* --- Stickman Styles --- */
 .stickman-container {
     position: fixed;
     bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    left: 0; /* Stickman controlled via transform: translateX */
+    width: 50px; /* Width of the stickman element */
+    height: 100px; /* Approx height including jump space */
     pointer-events: none;
     z-index: 500;
+    will-change: transform; /* Optimize animation */
 }
 
 .stickman {
     position: absolute;
+    bottom: 10px; /* Position relative to container bottom */
+    left: 0;
     width: 50px;
     height: 80px;
-    transform: translate(50px, calc(100vh - 100px));
-    transition: transform 0.1s linear;
+    /* transform: translateX(50px); /* Initial position set by JS */
+    /* transition: transform 0.1s linear; /* Smooth movement if needed */
 }
 
 .stickman-head {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     background: #fff;
     border-radius: 50%;
     position: absolute;
     top: 0;
-    left: 15px;
+    left: calc(50% - 9px); /* Center head */
     box-shadow: 0 0 5px #fff;
 }
 
@@ -1138,8 +1275,8 @@ section {
     height: 30px;
     background: #fff;
     position: absolute;
-    top: 20px;
-    left: 23px;
+    top: 18px; /* Connect to head */
+    left: calc(50% - 2px); /* Center body */
     box-shadow: 0 0 5px #fff;
 }
 
@@ -1148,60 +1285,70 @@ section {
 .stickman-leg-left,
 .stickman-leg-right {
     width: 4px;
-    height: 20px;
+    height: 22px; /* Slightly longer limbs */
     background: #fff;
     position: absolute;
+    transform-origin: center top; /* Rotate from shoulder/hip */
     box-shadow: 0 0 5px #fff;
+    border-radius: 2px; /* Rounded ends */
 }
 
 .stickman-arm-left {
-    top: 25px;
-    left: 10px;
-    transform-origin: top;
+    top: 22px; /* Shoulder position */
+    left: calc(50% - 6px); /* Adjust position */
+    transform: rotate(-30deg); /* Default angle */
 }
 
 .stickman-arm-right {
-    top: 25px;
-    right: 10px;
-    transform-origin: top;
+    top: 22px;
+    right: calc(50% - 6px);
+    transform: rotate(30deg);
 }
 
 .stickman-leg-left {
-    top: 50px;
-    left: 15px;
-    transform-origin: top;
+    top: 48px; /* Hip position */
+    left: calc(50% - 4px);
+    transform: rotate(-15deg);
 }
 
 .stickman-leg-right {
-    top: 50px;
-    right: 15px;
-    transform-origin: top;
+    top: 48px;
+    right: calc(50% - 4px);
+    transform: rotate(15deg);
 }
 
+/* Speech Bubble */
 .stickman-speech-bubble {
     position: absolute;
-    top: -40px;
-    left: 50px;
-    background: rgba(0, 0, 20, 0.8);
-    border: 2px solid #00f7ff;
-    border-radius: 10px;
-    padding: 5px 10px;
+    bottom: 85px; /* Position above head */
+    left: 50%;
+    transform: translateX(-50%); /* Center bubble */
+    background: rgba(0, 0, 20, 0.85);
+    border: 1px solid #00f7ff; /* Thinner border */
+    border-radius: 8px;
+    padding: 6px 10px;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+    z-index: 1;
 }
 
 .stickman-speech-bubble.visible {
     opacity: 1;
+    transform: translateX(-50%) translateY(-5px); /* Slight pop up */
 }
 
+/* Speech bubble tail */
 .stickman-speech-bubble::after {
     content: '';
     position: absolute;
-    bottom: -10px;
-    left: 10px;
-    border-width: 10px 10px 0;
-    border-style: solid;
-    border-color: #00f7ff transparent transparent;
+    bottom: -6px; /* Connect to bubble border */
+    left: calc(50% - 6px);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #00f7ff; /* Tail color */
 }
 
 .stickman-speech-text {
@@ -1211,415 +1358,208 @@ section {
     text-shadow: 0 0 5px #00f7ff;
 }
 
-/* Stickman Animations */
-.stickman.walking .stickman-arm-left {
-    animation: swing-arm 0.5s infinite alternate;
-}
 
-.stickman.walking .stickman-arm-right {
-    animation: swing-arm 0.5s infinite alternate reverse;
-}
+/* --- Stickman Animations --- */
 
-.stickman.walking .stickman-leg-left {
-    animation: swing-leg 0.5s infinite alternate;
-}
+/* Walking */
+.stickman.walking .stickman-arm-left { animation: swing-arm-left 0.5s infinite alternate ease-in-out; }
+.stickman.walking .stickman-arm-right { animation: swing-arm-right 0.5s infinite alternate ease-in-out; }
+.stickman.walking .stickman-leg-left { animation: swing-leg-left 0.5s infinite alternate ease-in-out; }
+.stickman.walking .stickman-leg-right { animation: swing-leg-right 0.5s infinite alternate ease-in-out; }
 
-.stickman.walking .stickman-leg-right {
-    animation: swing-leg 0.5s infinite alternate reverse;
-}
+@keyframes swing-arm-left { 0% { transform: rotate(-45deg); } 100% { transform: rotate(30deg); } }
+@keyframes swing-arm-right { 0% { transform: rotate(45deg); } 100% { transform: rotate(-30deg); } }
+@keyframes swing-leg-left { 0% { transform: rotate(-30deg); } 100% { transform: rotate(20deg); } }
+@keyframes swing-leg-right { 0% { transform: rotate(30deg); } 100% { transform: rotate(-20deg); } }
 
-@keyframes swing-arm {
-    0% { transform: rotate(-30deg); }
-    100% { transform: rotate(30deg); }
-}
-
-@keyframes swing-leg {
-    0% { transform: rotate(-20deg); }
-    100% { transform: rotate(20deg); }
-}
-
-.stickman.jumping {
-    animation: jump 0.5s ease-in-out;
-}
-
+/* Jumping */
+.stickman.jumping { animation: jump 0.6s ease-out; }
 @keyframes jump {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-50px); }
+    0% { transform: translateY(0) scaleY(1); }
+    25% { transform: translateY(-5px) scaleY(0.9); } /* Anticipation */
+    50% { transform: translateY(-40px) scaleY(1.1); } /* Apex */
+    75% { transform: translateY(-5px) scaleY(1); }
+    100% { transform: translateY(0) scaleY(1); }
 }
+.stickman.jumping .stickman-leg-left { transform: rotate(-45deg); } /* Legs during jump */
+.stickman.jumping .stickman-leg-right { transform: rotate(45deg); }
 
-.stickman.laying .stickman-body {
-    transform: rotate(90deg);
-    top: 40px;
-    left: 10px;
-}
+/* Laying */
+/* Add specific transforms for laying state if needed */
+.stickman.laying { transform: rotate(90deg) translateX(30px); /* Example */ }
 
-.stickman.laying .stickman-arm-left {
-    transform: rotate(45deg);
-    top: 35px;
-    left: 0;
-}
+/* Other animations (Keep adding keyframes as defined before or refine them) */
+.stickman.waving .stickman-arm-right { animation: wave 0.8s infinite ease-in-out; }
+@keyframes wave { 0%, 100% { transform: rotate(30deg); } 50% { transform: rotate(60deg); } }
 
-.stickman.laying .stickman-arm-right {
-    transform: rotate(-45deg);
-    top: 35px;
-    right: 0;
-}
-
-.stickman.laying .stickman-leg-left {
-    transform: rotate(30deg);
-    top: 55px;
-    left: 5px;
-}
-
-.stickman.laying .stickman-leg-right {
-    transform: rotate(-30deg);
-    top: 55px;
-    right: 5px;
-}
-
-.stickman.fighting .stickman-arm-left {
-    animation: punch-left 0.3s infinite alternate;
-}
-
-.stickman.fighting .stickman-arm-right {
-    animation: punch-right 0.3s infinite alternate;
-}
-
-@keyframes punch-left {
-    0% { transform: rotate(-90deg) translateX(-10px); }
-    100% { transform: rotate(-30deg) translateX(0); }
-}
-
-@keyframes punch-right {
-    0% { transform: rotate(90deg) translateX(10px); }
-    100% { transform: rotate(30deg) translateX(0); }
-}
-
-.stickman.waving .stickman-arm-right {
-    animation: wave 0.5s infinite;
-}
-
-@keyframes wave {
-    0% { transform: rotate(0deg); }
-    50% { transform: rotate(45deg); }
-    100% { transform: rotate(0deg); }
-}
-
-.stickman.dancing {
-    animation: dance 1s infinite;
-}
-
-.stickman.dancing .stickman-arm-left,
-.stickman.dancing .stickman-arm-right {
-    animation: dance-arms 1s infinite;
-}
-
-.stickman.dancing .stickman-leg-left,
-.stickman.dancing .stickman-leg-right {
-    animation: dance-legs 1s infinite;
-}
-
-@keyframes dance {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-@keyframes dance-arms {
-    0% { transform: rotate(-30deg); }
-    50% { transform: rotate(30deg); }
-    100% { transform: rotate(-30deg); }
-}
-
-@keyframes dance-legs {
-    0% { transform: rotate(-20deg); }
-    50% { transform: rotate(20deg); }
-    100% { transform: rotate(-20deg); }
-}
-
-.stickman.thinking .stickman-head::after {
-    content: '...';
-    position: absolute;
-    top: -20px;
-    right: -10px;
-    font-size: 1rem;
-    color: #00f7ff;
-    animation: think-dots 1s infinite;
-}
-
-@keyframes think-dots {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    100% { opacity: 0; }
-}
-
-.stickman.looking .stickman-head {
-    animation: look 1s infinite;
-}
-
-@keyframes look {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(-10deg); }
-    75% { transform: rotate(10deg); }
-    100% { transform: rotate(0deg); }
-}
-
-.stickman.sleeping .stickman-body {
-    transform: rotate(90deg);
-    top: 40px;
-    left: 10px;
-}
-
-.stickman.sleeping .stickman-head::after {
-    content: 'Z';
-    position: absolute;
-    top: -20px;
-    right: -10px;
-    font-size: 1rem;
-    color: #00f7ff;
-    animation: sleep-z 1s infinite;
-}
-
-@keyframes sleep-z {
-    0% { transform: translate(0, 0); opacity: 0; }
-    50% { transform: translate(5px, -5px); opacity: 1; }
-    100% { transform: translate(10px, -10px); opacity: 0; }
-}
-
-.stickman.tripping {
-    animation: trip 0.5s ease-in-out;
-}
-
-@keyframes trip {
-    0% { transform: rotate(0deg); }
-    20% { transform: rotate(10deg) translateY(-10px); }
-    40% { transform: rotate(-10deg) translateY(0); }
-    60% { transform: rotate(5deg) translateY(-5px); }
-    100% { transform: rotate(0deg) translateY(0); }
-}
-
-.stickman.pointing .stickman-arm-right {
-    animation: point 0.5s infinite;
-}
-
-@keyframes point {
-    0% { transform: rotate(0deg); }
-    50% { transform: rotate(90deg); }
-    100% { transform: rotate(0deg); }
-}
-
-.stickman.shrugging .stickman-arm-left,
-.stickman.shrugging .stickman-arm-right {
-    animation: shrug 0.5s infinite;
-}
-
-@keyframes shrug {
-    0% { transform: rotate(-30deg); }
-    50% { transform: rotate(30deg); }
-    100% { transform: rotate(-30deg); }
-}
-
-.stickman.facepalming .stickman-arm-right {
-    animation: facepalm 0.5s infinite;
-}
-
-@keyframes facepalm {
-    0% { transform: rotate(0deg); }
-    50% { transform: rotate(90deg) translateY(-20px) translateX(-10px); }
-    100% { transform: rotate(0deg); }
-}
-
-/* Error Notification */
+/* --- Error Notification --- */
 .error-notification {
     position: fixed;
-    top: 20px;
+    bottom: 20px; /* Changed position to bottom-right */
     right: 20px;
-    background: rgba(255, 0, 0, 0.8);
+    background: rgba(200, 0, 0, 0.9); /* Darker red */
     border: 2px solid #ff0000;
     border-radius: 5px;
-    padding: 1rem;
+    padding: 0.8rem 1.2rem; /* Adjusted padding */
     display: flex;
     align-items: center;
     gap: 1rem;
     opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 2000;
+    transform: translateY(100%); /* Start off bottom */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    z-index: 3000; /* Highest Z-index */
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
 }
 
 .error-notification.visible {
     opacity: 1;
+    transform: translateY(0); /* Slide in */
 }
 
 .error-message {
     font-family: 'Press Start 2P', cursive;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #fff;
-    text-shadow: 0 0 5px #ff0000;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Add subtle text shadow for readability */
 }
 
 .error-close {
     background: transparent;
     border: none;
     color: #fff;
-    font-size: 1rem;
+    font-size: 1.1rem;
     cursor: pointer;
+    padding: 0.2rem;
+    line-height: 1; /* Ensure tight fit */
     text-shadow: 0 0 5px #ff0000;
+    transition: transform 0.2s ease;
 }
 
 .error-close:hover {
-    color: #ff0000;
-    text-shadow: 0 0 10px #ff0000;
+    color: #ffdddd; /* Lighter red on hover */
+    transform: scale(1.1);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .retro-nav ul {
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-    }
 
-    .retro-nav li {
-        margin: 0.5rem 0;
-    }
+/* --- Responsive Design --- */
 
-    .hero h1 {
-        font-size: 2.5rem;
-    }
-
-    .hero h2 {
-        font-size: 1.5rem;
-    }
-
-    .sound-wave-container {
-        width: 200px;
-        height: 80px;
-    }
-
-    .sound-bar {
-        width: 8px;
-    }
-
-    .section-title {
-        font-size: 1.8rem;
-    }
-
+/* Medium Screens (Tablets) */
+@media (max-width: 992px) {
     .mix-container {
-        flex-direction: column;
+        flex-direction: column; /* Stack grid and description */
         align-items: center;
     }
-
     .mix-grid {
-        grid-template-columns: 1fr;
+        max-width: 100%; /* Grid takes full width */
+        flex: none;
+        order: 1; /* Grid first */
     }
-
     .mix-description {
+        max-width: 90%; /* Wider description */
         text-align: center;
+        flex: none;
+        order: 2; /* Description second */
+        margin-top: 2rem;
     }
+}
 
-    .artist-content {
-        flex-direction: column;
-        text-align: center;
-    }
 
-    .artist-bio {
-        text-align: center;
-    }
+/* Small Screens (Tablets/Large Phones) */
+@media (max-width: 768px) {
+    body::before, body::after { background-size: 60px 60px; } /* Adjust grid size */
 
-    .artist-content img {
-        width: 200px;
-        height: 200px;
-    }
+    section { padding: 5rem 1rem 2rem 1rem; } /* Adjust padding */
 
-    .booking-form {
-        padding: 0 1rem;
-    }
+    .retro-nav ul { flex-direction: column; gap: 0.5rem; padding: 0.5rem 0; }
+    .retro-nav li { margin: 0.3rem 0; }
+    .retro-nav a { font-size: 0.9rem; }
 
-    .retro-cube-container {
-        bottom: 10px;
-        left: 10px;
-    }
+    .hero h1 { font-size: 2.8rem; }
+    .hero h2 { font-size: 1.6rem; }
+    .sound-wave-container { width: 250px; height: 90px; }
+    .sound-bar { width: 8px; }
 
-    .retro-cube {
-        width: 100px;
-        height: 100px;
-    }
+    .section-title { font-size: 2rem; margin-bottom: 2rem; }
 
-    .cube-face {
-        width: 100px;
-        height: 100px;
-    }
+    .mix-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); } /* Adjust grid columns if needed */
 
+    .artist-content { flex-direction: column; gap: 2rem; }
+    .artist-content img { width: 200px; height: 200px; }
+    .artist-bio { text-align: center; max-width: 90%; }
+
+    .form-front, .form-back { padding: 1.5rem; }
+    .form-group { margin-bottom: 1.2rem; }
+
+    .retro-cube-container { bottom: 15px; left: 15px; }
+    .retro-cube { width: 100px; height: 100px; }
+    .cube-face { width: 100px; height: 100px; }
     .face-front { transform: translateZ(50px); }
     .face-back { transform: translateZ(-50px) rotateY(180deg); }
     .face-left { transform: translateX(-50px) rotateY(-90deg); }
     .face-right { transform: translateX(50px) rotateY(90deg); }
     .face-top { transform: translateY(-50px) rotateX(90deg); }
     .face-bottom { transform: translateY(50px) rotateX(-90deg); }
+    .cube-text { font-size: 0.5rem; }
 
-    .cube-text {
-        font-size: 0.5rem;
-    }
+    .countdown-timer { font-size: 1rem; padding: 0.4rem 0.6rem; }
+    .timer-digit { width: 16px; height: 26px; }
 
-    .countdown-timer {
-        font-size: 1rem;
-    }
+    /* Stickman adjustments */
+    .stickman-container { height: 80px; } /* Reduce height */
+    .stickman { width: 40px; height: 60px; bottom: 5px; }
+    .stickman-head { width: 15px; height: 15px; left: calc(50% - 7.5px); }
+    .stickman-body { height: 22px; top: 15px; left: calc(50% - 2px); }
+    .stickman-arm-left, .stickman-arm-right, .stickman-leg-left, .stickman-leg-right { height: 18px; }
+    .stickman-arm-left { top: 18px; left: calc(50% - 5px); }
+    .stickman-arm-right { top: 18px; right: calc(50% - 5px); }
+    .stickman-leg-left { top: 37px; left: calc(50% - 3px); }
+    .stickman-leg-right { top: 37px; right: calc(50% - 3px); }
+    .stickman-speech-bubble { bottom: 65px; padding: 4px 8px; }
+    .stickman-speech-text { font-size: 0.5rem; }
 
-    .timer-digit {
-        width: 15px;
-        height: 25px;
-    }
-
-    .stickman {
-        width: 40px;
-        height: 60px;
-    }
-
-    .stickman-head {
-        width: 15px;
-        height: 15px;
-        left: 12px;
-    }
-
-    .stickman-body {
-        height: 20px;
-        top: 15px;
-        left: 18px;
-    }
-
-    .stickman-arm-left,
-    .stickman-arm-right,
-    .stickman-leg-left,
-    .stickman-leg-right {
-        height: 15px;
-    }
-
-    .stickman-arm-left {
-        top: 20px;
-        left: 8px;
-    }
-
-    .stickman-arm-right {
-        top: 20px;
-        right: 8px;
-    }
-
-    .stickman-leg-left {
-        top: 35px;
-        left: 12px;
-    }
-
-    .stickman-leg-right {
-        top: 35px;
-        right: 12px;
-    }
-
-    .stickman-speech-bubble {
-        top: -30px;
-        left: 40px;
-        padding: 3px 8px;
-    }
-
-    .stickman-speech-text {
-        font-size: 0.5rem;
-    }
+     .error-notification { bottom: 15px; right: 15px; padding: 0.6rem 1rem; }
+     .error-message { font-size: 0.7rem; }
 }
+
+/* Extra Small Screens (Phones) */
+@media (max-width: 480px) {
+    body::before, body::after { background-size: 40px 40px; } /* Smaller grid */
+     section { padding: 4rem 0.8rem 1.5rem 0.8rem; }
+
+    .retro-nav a { font-size: 0.8rem; }
+
+    .hero h1 { font-size: 2.2rem; }
+    .hero h2 { font-size: 1.3rem; }
+    .sound-wave-container { width: 200px; height: 70px; }
+    .neon-button, .book-now-button { font-size: 0.9rem; padding: 0.7rem 1.3rem; }
+
+    .section-title { font-size: 1.8rem; }
+
+    .mix-card { min-height: 280px; }
+    .mix-card-inner { min-height: 280px; }
+    .mix-card-front, .mix-card-back { min-height: 280px; }
+    .mix-card-front img { height: 120px; }
+    .mix-card-front h3 { font-size: 1rem; }
+    .mix-card-front p { font-size: 0.8rem; }
+
+    .artist-content img { width: 150px; height: 150px; }
+    .artist-bio p { font-size: 0.9rem; }
+
+    .input-wrapper input, .input-wrapper select, .input-label { font-size: 0.9rem; }
+    .input-wrapper input:not(:placeholder-shown) + .input-label,
+    .input-wrapper input:focus + .input-label,
+    .input-wrapper select:valid + .input-label,
+    .input-wrapper select:focus + .input-label { font-size: 0.7rem; top: -0.6rem;}
+
+    .finish-button-front { font-size: 0.9rem; width: 160px; height: 45px; }
+
+    .retro-cube-container { display: none; } /* Hide cube/timer on very small screens */
+
+    .back-to-top { font-size: 0.7rem; padding: 0.5rem 0.9rem; bottom: 10px; right: 10px;}
+
+    /* Further reduce stickman size if needed */
+     .stickman-container { display: none; } /* Optionally hide stickman */
+
+     .error-notification { width: calc(100% - 20px); bottom: 10px; right: 10px; left: 10px; justify-content: space-between; }
+}
+```
