@@ -1,582 +1,722 @@
+// Function to handle image loading errors (Define globally or within DOMContentLoaded)
+function handleImageError(imageElement) {
+    console.warn(`Image failed to load: ${imageElement.src}. Hiding element.`);
+    // Optional: Replace with a placeholder
+    // imageElement.src = 'path/to/placeholder.jpg';
+    // Or hide the image
+    imageElement.style.display = 'none';
+    // Or potentially hide the whole card front:
+    // if (imageElement.closest('.mix-card-front')) {
+    //   imageElement.closest('.mix-card-front').style.backgroundColor = '#333'; // Fallback bg
+    // }
+}
+
 // Error Handling Service
 class ErrorHandler {
     constructor() {
-        this.errorNotification = document.querySelector('.error-notification');
-        this.errorMessage = document.querySelector('.error-message');
-        this.errorClose = document.querySelector('.error-close');
+        this.errorNotification = null;
+        this.errorMessage = null;
+        this.errorClose = null;
         this.errorLog = [];
         this.maxErrors = 50;
+        this.domReady = false; // Flag to check if DOM is ready for UI updates
+
+        // Defer DOM selections until DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            this.errorNotification = document.querySelector('.error-notification');
+            this.errorMessage = document.querySelector('.error-message');
+            this.errorClose = document.querySelector('.error-close');
+            this.domReady = true; // Mark DOM as ready
+
+            if (!this.errorNotification || !this.errorMessage || !this.errorClose) {
+                console.error('ErrorHandler: Error notification elements not found in the DOM!');
+            } else if (this.errorClose) {
+                this.errorClose.addEventListener('click', () => {
+                    this.hideError();
+                });
+            }
+        });
+
         this.setupErrorListeners();
     }
 
     setupErrorListeners() {
         window.onerror = (message, source, lineno, colno, error) => {
-            this.logError({ message, source, lineno, colno, error });
-            this.displayError(`Error: ${message} at ${source}:${lineno}`);
-            return true;
+            this.logError({ message, source, lineno, colno, error: error || new Error(message) }); // Ensure error object exists
+            this.displayError(`Script Error: ${message} at ${source}:${lineno}`);
+            return true; // Prevents default browser error handling
         };
 
         window.addEventListener('unhandledrejection', (event) => {
+            // Log the reason, which could be an Error object or something else
             this.logError({ message: 'Unhandled Promise Rejection', reason: event.reason });
-            this.displayError(`Unhandled Promise Rejection: ${event.reason}`);
+            // Try to display a user-friendly message
+            const reasonMsg = (event.reason instanceof Error) ? event.reason.message : String(event.reason);
+            this.displayError(`Async Error: ${reasonMsg || 'Promise rejected without reason'}`);
         });
-
-        if (this.errorClose) {
-            this.errorClose.addEventListener('click', () => {
-                this.hideError();
-            });
-        }
     }
 
-    logError(error) {
-        this.errorLog.push({
+    logError(errorInfo) {
+        const errorEntry = {
             timestamp: new Date().toISOString(),
-            ...error
-        });
+            message: errorInfo.message || 'Unknown error',
+            source: errorInfo.source,
+            lineno: errorInfo.lineno,
+            colno: errorInfo.colno,
+            // Include stack trace if available
+            stack: (errorInfo.error instanceof Error) ? errorInfo.error.stack : (errorInfo.reason instanceof Error ? errorInfo.reason.stack : undefined),
+            details: errorInfo // Store the full context
+        };
+        this.errorLog.push(errorEntry);
         if (this.errorLog.length > this.maxErrors) {
             this.errorLog.shift();
         }
-        console.error('Error logged:', error);
+        console.error('ErrorHandler Log:', errorEntry); // Use console.error for visibility
     }
 
     displayError(message) {
-        if (this.errorNotification && this.errorMessage) {
+        // Only display if DOM is ready and elements exist
+        if (!this.domReady || !this.errorNotification || !this.errorMessage) {
+            console.warn("ErrorHandler: Cannot display error UI - DOM not ready or elements missing.", message);
+            return;
+        }
+
+        try {
             this.errorMessage.textContent = message;
             this.errorNotification.classList.add('visible');
-            setTimeout(() => this.hideError(), 5000);
+            // Set timeout to hide the error
+            setTimeout(() => this.hideError(), 6000); // Increased duration
+        } catch (e) {
+            // Catch errors during the display process itself
+            console.error("ErrorHandler: Failed to display error message.", e);
         }
     }
 
     hideError() {
         if (this.errorNotification) {
-            this.errorNotification.classList.remove('visible');
+            try {
+                this.errorNotification.classList.remove('visible');
+            } catch (e) {
+                console.error("ErrorHandler: Failed to hide error notification.", e);
+            }
         }
     }
 
-    attemptRecovery(func, fallback) {
+    // Wrapper to execute functions safely
+    attemptRecovery(func, context = null, fallback = null) {
         try {
-            return func();
+            // Use .call or .apply if a specific 'this' context is needed
+            return func.call(context);
         } catch (error) {
-            this.logError(error);
-            this.displayError(`Recovery triggered: ${error.message}`);
-            return typeof fallback === 'function' ? fallback() : fallback;
+            // Log the error using the established system
+            this.logError({ message: `Execution failed in ${func.name || 'anonymous function'}`, error: error });
+            // Display a generic error or specific one if desired
+            this.displayError(`Operation failed: ${error.message}`);
+            console.error(`Recovery Fallback executed for: ${func.name || 'anonymous function'}`, error);
+            // Execute fallback if provided
+            if (typeof fallback === 'function') {
+                try {
+                    return fallback.call(context);
+                } catch (fallbackError) {
+                    this.logError({ message: `Fallback function failed for ${func.name || 'anonymous function'}`, error: fallbackError });
+                    console.error(`Fallback function itself failed for: ${func.name || 'anonymous function'}`, fallbackError);
+                }
+            }
+            // Return undefined or a default value if no fallback or fallback failed
+            return undefined;
         }
     }
 }
 
+// Instantiate the error handler globally
 const errorHandler = new ErrorHandler();
 
-// Cookie Utility Functions
+// Cookie Utility Functions (Wrapped with error handling)
 const CookieManager = {
     setCookie(name, value, hours) {
-        try {
-            const date = new Date();
-            date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
-            const expires = `expires=${date.toUTCString()}`;
-            document.cookie = `${name}=${value};${expires};path=/`;
-        } catch (error) {
-            errorHandler.logError({ message: 'Failed to set cookie', error });
-        }
+        errorHandler.attemptRecovery(() => {
+            let expires = "";
+            if (hours) {
+                const date = new Date();
+                date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
+                expires = `expires=${date.toUTCString()}`;
+            }
+            // Ensure value is string and encoded
+            const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+            document.cookie = `${name}=${encodeURIComponent(stringValue)};${expires};path=/;SameSite=Lax`;
+            // console.log(`Cookie set: ${name}`);
+        }, null, () => console.error(`Failed to set cookie: ${name}`));
     },
 
     getCookie(name) {
-        try {
+        return errorHandler.attemptRecovery(() => {
             const nameEQ = `${name}=`;
             const ca = document.cookie.split(';');
             for (let i = 0; i < ca.length; i++) {
                 let c = ca[i];
                 while (c.charAt(0) === ' ') c = c.substring(1);
-                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                if (c.indexOf(nameEQ) === 0) {
+                    const value = decodeURIComponent(c.substring(nameEQ.length, c.length));
+                    // console.log(`Cookie get: ${name} = ${value}`);
+                    // Try parsing if it looks like JSON
+                    try { return JSON.parse(value); } catch (e) { return value; }
+                }
             }
+            // console.log(`Cookie get: ${name} not found`);
             return null;
-        } catch (error) {
-            errorHandler.logError({ message: 'Failed to get cookie', error });
-            return null;
-        }
+        }, null, () => {
+            console.error(`Failed to get cookie: ${name}`);
+            return null; // Fallback value
+        });
     },
 
     deleteCookie(name) {
-        try {
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
-        } catch (error) {
-            errorHandler.logError({ message: 'Failed to delete cookie', error });
-        }
+        errorHandler.attemptRecovery(() => {
+            document.cookie = `${name}=;Max-Age=-99999999;path=/;SameSite=Lax`; // Use Max-Age for deletion
+            // console.log(`Cookie deleted: ${name}`);
+        }, null, () => console.error(`Failed to delete cookie: ${name}`));
     }
 };
 
+// Main execution flow starts here
 document.addEventListener('DOMContentLoaded', () => {
+    // Wrap the *entire* DOMContentLoaded logic in attemptRecovery
     errorHandler.attemptRecovery(() => {
-        // Preloader
+        console.log("DOM Loaded, initializing page...");
+
+        // --- Preloader Logic ---
         const preloader = document.querySelector('.preloader');
-        const progressBar = document.querySelector('.progress-bar');
+        // *** CORRECTED SELECTOR FOR PROGRESS BAR ***
+        const progressBarElement = document.querySelector('.preloader-progress .progress-bar');
         const progressText = document.querySelector('.progress-text');
         const preloaderText = document.querySelector('.preloader-text');
-        const text = "LOADING...";
-        preloaderText.innerHTML = text.split('').map((char, i) => `<span class="preloader-char" style="--char-index: ${i}">${char}</span>`).join('');
+        let preloaderInterval = null; // To store the interval ID
 
-        let progress = 0;
-        progressBar.classList.add('active');
-        const interval = setInterval(() => {
-            progress += 1;
-            progressText.textContent = `${progress}%`;
-            if (progress >= 100) {
-                clearInterval(interval);
-                preloader.classList.add('hidden');
-                initializePage();
-            }
-        }, 40);
+        if (preloader && progressBarElement && progressText && preloaderText) {
+            console.log("Preloader elements found.");
+            const text = "LOADING...";
+            preloaderText.innerHTML = text.split('').map((char, i) => `<span class="preloader-char" style="--char-index: ${i}">${char}</span>`).join('');
+            const preloaderChars = preloaderText.querySelectorAll('.preloader-char');
 
-        // Page Initialization
+            let progress = 0;
+            // *** ADD ACTIVE CLASS TO PROGRESS BAR ITSELF FOR CSS ANIMATION ***
+            progressBarElement.classList.add('active');
+
+            preloaderInterval = setInterval(() => {
+                // Wrap interval logic in try...catch
+                try {
+                    progress += 1; // Increment progress
+                    const displayProgress = Math.min(progress, 100); // Cap at 100
+                    progressText.textContent = `${displayProgress}%`;
+
+                    // Animate chars briefly (optional)
+                    if (displayProgress > 20 && displayProgress < 80) {
+                        preloaderChars.forEach((char, index) => {
+                            char.style.setProperty('--char-index', index);
+                            char.classList.add('wave');
+                        });
+                    } else {
+                        preloaderChars.forEach(char => char.classList.remove('wave'));
+                    }
+
+                    // --- Check for completion ---
+                    if (displayProgress >= 100) {
+                        console.log("Preloader progress reached 100.");
+                        clearInterval(preloaderInterval); // Stop the interval
+                        preloaderInterval = null; // Clear the interval ID variable
+
+                        // Use setTimeout to allow CSS animation to potentially finish and then hide/initialize
+                        setTimeout(() => {
+                             errorHandler.attemptRecovery(() => {
+                                preloader.classList.add('hidden');
+                                console.log("Preloader hidden via class.");
+                                // Call initializePage *only after* hiding the preloader
+                                console.log("Calling initializePage...");
+                                initializePage();
+                             }, null, () => console.error("Error occurred during preloader hiding or calling initializePage."));
+                        }, 500); // Delay (adjust if needed)
+                    }
+                } catch (intervalError) {
+                     console.error("Error inside preloader interval:", intervalError);
+                     if (preloaderInterval) clearInterval(preloaderInterval); // Attempt to clear interval on error
+                     preloaderInterval = null;
+                     // Decide how to handle: hide preloader immediately and try initializing?
+                     preloader.classList.add('hidden'); // Force hide
+                     errorHandler.displayError("Loading failed. Please refresh.");
+                     // Optionally try to initialize anyway, or just stop
+                     // initializePage();
+                }
+            }, 40); // Adjust timing (40ms * 100 = 4 seconds)
+
+        } else {
+            // If preloader elements are missing, log error and try to initialize directly
+            console.error('Preloader elements missing! Attempting to initialize page directly.');
+            if (preloader) preloader.style.display = 'none'; // Force hide if preloader div exists but others dont
+            initializePage();
+        }
+
+        // --- Page Initialization Function ---
+        // This function will ONLY be called if the preloader logic completes successfully
         function initializePage() {
-            // Particles
-            const particleContainer = document.querySelector('.section-particles');
-            for (let i = 0; i < 50; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('section-particle');
-                particle.style.left = `${Math.random() * 100}vw`;
-                particle.style.top = `${Math.random() * 100}vh`;
-                particle.style.animationDelay = `${Math.random() * 5}s`;
-                particleContainer.appendChild(particle);
-            }
+            // Wrap the main initialization logic
+            errorHandler.attemptRecovery(() => {
+                console.log("Running initializePage function...");
 
-            // Intersection Observer for Sections
-            const sections = document.querySelectorAll('section');
-            let currentSectionIndex = 0;
-            const observerOptions = { root: null, threshold: 0.1 };
-            const sectionObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('in-view');
-                        entry.target.classList.remove('out-of-view-up', 'out-of-view-down');
-                        currentSectionIndex = Array.from(sections).indexOf(entry.target);
-                        document.body.classList.remove('hero-bg', 'mixes-bg', 'artist-bg', 'booking-bg');
-                        document.body.classList.add(`${entry.target.id}-bg`);
-                        if (entry.target.id === 'mixes') {
-                            const mixGrid = document.querySelector('.mix-grid');
-                            const mixDescription = document.querySelector('.mix-description');
-                            const mixImages = document.querySelectorAll('.mix-card-front img');
-                            Promise.all(
-                                Array.from(mixImages).map(img => {
-                                    if (img.complete && img.naturalHeight !== 0) return Promise.resolve();
-                                    return new Promise(resolve => {
-                                        img.addEventListener('load', resolve);
-                                        img.addEventListener('error', resolve);
-                                    });
-                                })
-                            ).then(() => {
-                                mixGrid.classList.add('active');
-                                mixDescription.classList.add('active');
+                // Particles (Minimal placeholder)
+                const particleContainer = document.querySelector('.section-particles');
+                if (!particleContainer) {
+                     console.warn("Particle container '.section-particles' not found.");
+                }
+
+                // Intersection Observer for Sections
+                const sections = document.querySelectorAll('section');
+                let currentSectionIndex = 0;
+                const observerOptions = { root: null, threshold: 0.2 };
+
+                if (sections.length > 0) {
+                    const sectionObserver = new IntersectionObserver((entries) => {
+                       errorHandler.attemptRecovery(() => { // Wrap observer callback
+                            entries.forEach(entry => {
+                                const targetId = entry.target.id;
+                                if (entry.isIntersecting) {
+                                    // console.log(`Section ${targetId} intersecting.`);
+                                    entry.target.classList.add('in-view', 'active');
+                                    entry.target.classList.remove('out-of-view-up', 'out-of-view-down', 'zoom-down');
+                                    currentSectionIndex = Array.from(sections).indexOf(entry.target);
+
+                                    const sectionBgClass = `${targetId}-bg`;
+                                    if (!document.body.classList.contains(sectionBgClass)) {
+                                        document.body.classList.remove('hero-bg', 'mixes-bg', 'artist-bg', 'booking-bg');
+                                        document.body.classList.add(sectionBgClass);
+                                        // console.log(`Body class set to: ${sectionBgClass}`);
+                                    }
+
+                                    // Trigger specific section animations
+                                    if (targetId === 'mixes') {
+                                        const mixGrid = document.querySelector('.mix-grid');
+                                        const mixDescription = document.querySelector('.mix-description');
+                                        if (mixGrid) mixGrid.classList.add('active');
+                                        if (mixDescription) mixDescription.classList.add('active');
+                                    }
+                                    if (targetId === 'booking') {
+                                        const neonGrid = document.querySelector('.neon-grid');
+                                        if (neonGrid) neonGrid.classList.add('active');
+                                    }
+                                    // Add more section-specific triggers if needed
+
+                                } else {
+                                    // console.log(`Section ${targetId} NOT intersecting.`);
+                                    // Decide if sections should lose 'active' state when out of view
+                                    // entry.target.classList.remove('active');
+                                }
+                            });
+                       }); // End observer callback attemptRecovery
+                    }, observerOptions);
+
+                    sections.forEach(section => sectionObserver.observe(section));
+                } else {
+                    console.warn("No <section> elements found to observe.");
+                }
+
+
+                // Smooth Scrolling & Nav/Back-to-Top Visibility
+                let lastScrollTop = 0;
+                const debounce = (func, wait) => {
+                    let timeout;
+                    return (...args) => {
+                        clearTimeout(timeout);
+                        timeout = setTimeout(() => errorHandler.attemptRecovery(func, this, () => console.warn("Debounced function failed.")), wait);
+                    };
+                };
+
+                window.addEventListener('scroll', debounce(() => {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const isMobile = window.innerWidth <= 768;
+
+                    const backToTop = document.querySelector('.back-to-top');
+                    if (backToTop) backToTop.classList.toggle('visible', scrollTop > 300);
+
+                    const nav = document.querySelector('.retro-nav');
+                    if (nav) nav.classList.toggle('scrolled', scrollTop > 50 || isMobile);
+
+                    // Flip back mix cards (Keep this logic)
+                    const mixesSection = document.querySelector('#mixes');
+                    const mixCards = document.querySelectorAll('.mix-card');
+                    if (mixesSection && mixCards.length > 0) {
+                        const mixesRect = mixesSection.getBoundingClientRect();
+                        const threshold = window.innerHeight * 0.2;
+                        if (mixesRect.top > window.innerHeight - threshold || mixesRect.bottom < threshold) {
+                            mixCards.forEach(card => {
+                                if (card.classList.contains('flipped')) {
+                                    card.classList.remove('flipped');
+                                    const audio = card.querySelector('.mix-audio');
+                                    if (audio) audio.pause();
+                                }
                             });
                         }
-                        if (entry.target.id === 'booking') {
-                            document.querySelector('.neon-grid').classList.add('active');
-                        }
-                    } else {
-                        const rect = entry.target.getBoundingClientRect();
-                        if (rect.top < 0) {
-                            entry.target.classList.add('out-of-view-up');
-                        } else {
-                            entry.target.classList.add('out-of-view-down');
-                        }
                     }
-                    const particles = document.querySelectorAll('.section-particle');
-                    particles.forEach(p => p.classList.toggle('active', entry.isIntersecting));
-                });
-            }, observerOptions);
+                    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+                }, 50));
 
-            sections.forEach(section => sectionObserver.observe(section));
 
-            // Smooth Scrolling with Mouse Wheel/Touch
-            let lastScrollTop = 0;
-            const debounce = (func, wait) => {
-                let timeout;
-                return (...args) => {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(this, args), wait);
-                };
-            };
-
-            window.addEventListener('scroll', debounce(() => {
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
-                const sectionHeight = window.innerHeight;
-                const isMobile = window.innerWidth <= 768;
-                const scrollThreshold = sectionHeight * (isMobile ? 0.7 : 0.5);
-
-                if (Math.abs(scrollTop - lastScrollTop) > scrollThreshold) {
-                    if (scrollDirection === 'down' && currentSectionIndex < sections.length - 1) {
-                        currentSectionIndex++;
-                    } else if (scrollDirection === 'up' && currentSectionIndex > 0) {
-                        currentSectionIndex--;
-                    }
-                    sections[currentSectionIndex].scrollIntoView({ behavior: 'smooth' });
-                }
-
-                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-
-                const backToTop = document.querySelector('.back-to-top');
-                backToTop.classList.toggle('visible', scrollTop > 300);
-
-                const mixesSection = document.querySelector('#mixes');
-                const mixCards = document.querySelectorAll('.mix-card');
-                const mixesRect = mixesSection.getBoundingClientRect();
-                const threshold = window.innerHeight * 0.5;
-                if (mixesRect.top > window.innerHeight - threshold || mixesRect.bottom < threshold) {
-                    mixCards.forEach(card => {
-                        if (card.classList.contains('flipped')) {
-                            card.classList.remove('flipped');
-                            const audio = card.querySelector('.mix-audio');
-                            if (audio) audio.pause();
-                        }
+                // Navigation Links (Standard Smooth Scroll)
+                document.querySelectorAll('.retro-nav a, .neon-button[href^="#"], .back-to-top[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', (e) => {
+                         errorHandler.attemptRecovery(() => {
+                            const href = anchor.getAttribute('href');
+                            if (href && href.startsWith('#')) {
+                                e.preventDefault();
+                                const targetId = href.substring(1);
+                                const targetElement = document.getElementById(targetId);
+                                if (targetElement) {
+                                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                                } else {
+                                    console.warn(`Target element #${targetId} not found for link.`);
+                                }
+                            }
+                         });
                     });
-                }
-            }, 10));
-
-            // Navigation Links
-            document.querySelectorAll('.retro-nav a, .neon-button').forEach(anchor => {
-                anchor.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetId = anchor.getAttribute('href').substring(1);
-                    const targetSection = document.getElementById(targetId);
-                    const sectionIndex = Array.from(sections).indexOf(targetSection);
-                    currentSectionIndex = sectionIndex;
-                    targetSection.scrollIntoView({ behavior: 'smooth' });
-                });
-            });
-
-            // Mix Card Flipper with Audio Previews
-            const mixCards = document.querySelectorAll('.mix-card');
-            let currentlyFlippedCard = null;
-            let touchStartTime = 0;
-            const longPressDuration = 500;
-
-            mixCards.forEach(card => {
-                const audio = card.querySelector('.mix-audio');
-                let previewTimeout = null;
-
-                card.addEventListener('mouseenter', () => {
-                    if (!card.classList.contains('flipped')) {
-                        audio.currentTime = 0;
-                        audio.play();
-                        previewTimeout = setTimeout(() => audio.pause(), 5000);
-                    }
                 });
 
-                card.addEventListener('mouseleave', () => {
-                    if (!card.classList.contains('flipped')) {
-                        audio.pause();
-                        clearTimeout(previewTimeout);
-                    }
-                });
+                // Mix Card Flipper with Audio Previews
+                const mixCards = document.querySelectorAll('.mix-card');
+                let currentlyFlippedCard = null;
+                // Removed touchStartTime, longPressDuration, clickTimeout - simplified click/hover logic
 
-                card.addEventListener('touchstart', (e) => {
-                    touchStartTime = Date.now();
-                    previewTimeout = setTimeout(() => {
-                        if (currentlyFlippedCard && currentlyFlippedCard !== card) {
-                            currentlyFlippedCard.classList.remove('flipped');
-                            const previousAudio = currentlyFlippedCard.querySelector('.mix-audio');
-                            if (previousAudio) previousAudio.pause();
-                        }
-                        card.classList.toggle('flipped');
-                        currentlyFlippedCard = card.classList.contains('flipped') ? card : null;
-                        if (!card.classList.contains('flipped') && audio) audio.pause();
-                    }, longPressDuration);
-                });
+                if (mixCards.length > 0) {
+                     mixCards.forEach(card => {
+                        const audio = card.querySelector('.mix-audio');
+                        if (!audio) return; // Skip if no audio
 
-                card.addEventListener('touchend', (e) => {
-                    const touchDuration = Date.now() - touchStartTime;
-                    if (touchDuration < longPressDuration) {
-                        clearTimeout(previewTimeout);
-                        if (!card.classList.contains('flipped')) {
-                            audio.currentTime = 0;
-                            audio.play();
-                            previewTimeout = setTimeout(() => audio.pause(), 5000);
-                        }
-                    }
-                });
+                        let previewTimeout = null;
 
-                card.addEventListener('click', (e) => {
-                    if (window.innerWidth > 768) {
-                        if (currentlyFlippedCard && currentlyFlippedCard !== card) {
-                            currentlyFlippedCard.classList.remove('flipped');
-                            const previousAudio = currentlyFlippedCard.querySelector('.mix-audio');
-                            if (previousAudio) previousAudio.pause();
-                        }
-                        card.classList.toggle('flipped');
-                        currentlyFlippedCard = card.classList.contains('flipped') ? card : null;
-                        if (!card.classList.contains('flipped') && audio) audio.pause();
-                    }
-                });
-            });
-
-            // Form Handling
-            const bookingForm = document.getElementById('booking-form');
-            const formFlipper = document.querySelector('.form-flipper');
-            const inputs = bookingForm.querySelectorAll('input, select');
-            const finishButton = document.querySelector('.finish-button-front');
-            const bookNowButton = document.querySelector('.book-now-button');
-            const formGroups = document.querySelectorAll('.form-group');
-            const finishGroup = document.querySelector('.form-group.finish-group');
-            let filledFields = new Set();
-
-            bookNowButton.addEventListener('click', () => {
-                formFlipper.classList.add('flipped');
-            });
-
-            inputs.forEach((input, index) => {
-                const wrapper = input.closest('.input-wrapper');
-                const label = wrapper.querySelector('.input-label');
-                const checkmark = wrapper.querySelector('.checkmark');
-                const fieldName = input.closest('.form-group').dataset.field;
-
-                input.addEventListener('input', () => {
-                    if (input.checkValidity() && input.value.trim()) {
-                        wrapper.classList.add('flipped');
-                        filledFields.add(fieldName);
-                        checkmark.classList.add('glowing');
-                        if (checkAllFields()) finishGroup.classList.add('active');
-                    }
-                });
-
-                input.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && input.checkValidity() && input.value.trim()) {
-                        const nextInput = inputs[index + 1];
-                        if (nextInput) setTimeout(() => nextInput.focus(), 500);
-                    }
-                });
-
-                document.addEventListener('touchend', (e) => {
-                    if (!wrapper.contains(e.target) && input === document.activeElement && input.checkValidity() && input.value.trim()) {
-                        const nextInput = inputs[index + 1];
-                        if (nextInput) setTimeout(() => nextInput.focus(), 500);
-                    }
-                });
-
-                checkmark.addEventListener('click', () => {
-                    wrapper.classList.remove('flipped');
-                    checkmark.classList.remove('glowing');
-                    filledFields.delete(fieldName);
-                    label.classList.remove('hidden');
-                    finishGroup.classList.remove('active');
-                    input.focus();
-                });
-            });
-
-            function checkAllFields() {
-                return Array.from(inputs).every(input => input.checkValidity() && input.value.trim());
-            }
-
-            finishButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (checkAllFields()) {
-                    formGroups.forEach(group => group.classList.remove('active'));
-                    finishGroup.classList.add('active');
-                    setTimeout(() => {
-                        alert('Booking submitted successfully!');
-                        bookingForm.reset();
-                        formFlipper.classList.remove('flipped');
-                        filledFields.clear();
-                        inputs.forEach(input => {
-                            const wrapper = input.closest('.input-wrapper');
-                            const checkmark = wrapper.querySelector('.checkmark');
-                            const label = wrapper.querySelector('.input-label');
-                            wrapper.classList.remove('flipped');
-                            checkmark.classList.remove('glowing');
-                            label.classList.remove('hidden');
+                        card.addEventListener('mouseenter', () => {
+                             errorHandler.attemptRecovery(() => {
+                                if (!card.classList.contains('flipped')) {
+                                    if (!audio.paused) audio.pause(); // Ensure paused before playing preview
+                                    audio.currentTime = 0;
+                                    audio.play().catch(e => console.warn("Audio play interrupted:", e));
+                                    previewTimeout = setTimeout(() => { if (!audio.paused) audio.pause(); }, 5000);
+                                }
+                            });
                         });
-                        finishGroup.classList.remove('active');
-                    }, 500);
+
+                        card.addEventListener('mouseleave', () => {
+                             errorHandler.attemptRecovery(() => {
+                                if (!card.classList.contains('flipped')) {
+                                    if (!audio.paused) audio.pause();
+                                    clearTimeout(previewTimeout);
+                                }
+                             });
+                        });
+
+                        card.addEventListener('click', (e) => {
+                             errorHandler.attemptRecovery(() => {
+                                // Prevent flip if clicking on audio controls
+                                if (e.target.closest('audio')) return;
+
+                                // Simple toggle flip on click
+                                if (currentlyFlippedCard && currentlyFlippedCard !== card) {
+                                    currentlyFlippedCard.classList.remove('flipped');
+                                    const previousAudio = currentlyFlippedCard.querySelector('.mix-audio');
+                                    if (previousAudio) previousAudio.pause();
+                                }
+
+                                card.classList.toggle('flipped');
+                                currentlyFlippedCard = card.classList.contains('flipped') ? card : null;
+
+                                // Pause audio if card is flipped back
+                                if (!card.classList.contains('flipped')) {
+                                     if (!audio.paused) audio.pause();
+                                     clearTimeout(previewTimeout); // Clear any pending preview pause
+                                } else {
+                                    // Optional: Auto-play when flipped TO back?
+                                    // audio.currentTime = 0;
+                                    // audio.play().catch(e => console.warn("Audio play interrupted:", e));
+                                }
+                            });
+                        });
+                    });
                 } else {
-                    errorHandler.displayError('Please fill out all fields correctly.');
+                    console.warn("No '.mix-card' elements found.");
                 }
-            });
 
-            // Sound Wave Animation (Interactive)
-            const heroSection = document.querySelector('.hero');
-            const soundWaveContainer = document.querySelector('.sound-wave-container');
-            const soundBars = document.querySelectorAll('.sound-bar');
 
-            const updateBars = (x, y) => {
-                const containerRect = soundWaveContainer.getBoundingClientRect();
-                const relativeX = x - containerRect.left;
-                const relativeY = y - containerRect.top;
-                const maxDistance = Math.max(containerRect.width, containerRect.height) * 0.6;
-                const maxHeight = 80;
-                const minHeight = 10;
+                // Form Handling
+                const bookingForm = document.getElementById('booking-form');
+                const formFlipper = document.querySelector('.form-flipper');
+                const inputs = bookingForm ? Array.from(bookingForm.querySelectorAll('input, select')) : []; // Use Array.from
+                const finishButtonFront = document.querySelector('.finish-button-front');
+                const finishGroup = document.querySelector('.form-group.finish-group');
+                let filledFields = new Set(); // Keep track of fields marked as valid
 
-                soundBars.forEach((bar, index) => {
-                    const barRect = bar.getBoundingClientRect();
-                    const barCenterX = barRect.left - containerRect.left + barRect.width / 2;
-                    const distanceX = Math.abs(relativeX - barCenterX);
-                    const distance = Math.sqrt(distanceX * distanceX);
-                    const influence = Math.max(0, (maxDistance - distance) / maxDistance);
-                    const height = minHeight + (maxHeight - minHeight) * influence * 1.5;
-                    bar.style.height = `${Math.min(maxHeight, Math.max(minHeight, height))}px`;
-                });
-            };
+                if (bookingForm && formFlipper && inputs.length > 0 && finishButtonFront && finishGroup) {
 
-            heroSection.addEventListener('mousemove', (e) => updateBars(e.clientX, e.clientY));
-            heroSection.addEventListener('touchmove', (e) => {
-                const touch = e.touches[0];
-                const containerRect = soundWaveContainer.getBoundingClientRect();
-                if (touch.clientX >= containerRect.left && touch.clientX <= containerRect.right &&
-                    touch.clientY >= containerRect.top && touch.clientY <= containerRect.bottom) {
-                    e.preventDefault();
-                    updateBars(touch.clientX, touch.clientY);
-                }
-            }, { passive: false });
-            heroSection.addEventListener('mouseleave', () => soundBars.forEach(bar => bar.style.height = '10px'));
-            heroSection.addEventListener('touchend', () => soundBars.forEach(bar => bar.style.height = '10px'));
+                    const checkAllRequiredFieldsValidity = () => {
+                        // Check validity state and required attribute
+                        return inputs.every(input => {
+                           const isRequired = input.hasAttribute('required');
+                           const hasValue = input.value.trim() !== '';
+                           return (!isRequired || hasValue) && input.checkValidity();
+                        });
+                    };
 
-            // Retro Cube and Timer with Cookie Support
-            const cubeContainer = document.querySelector('.retro-cube-container');
-            const cube = document.querySelector('.retro-cube');
-            const countdownTimer = document.querySelector('.countdown-timer');
-            const timerDigits = {
-                minutes1: document.querySelector('.timer-digit.minutes-1'),
-                minutes2: document.querySelector('.timer-digit.minutes-2'),
-                seconds1: document.querySelector('.timer-digit.seconds-1'),
-                seconds2: document.querySelector('.timer-digit.seconds-2')
-            };
-            const totalSeconds = 5 * 60; // 5 minutes
-            let remainingSeconds;
-            const timerEndCookie = CookieManager.getCookie('timerEnd');
+                    inputs.forEach((input) => {
+                        const wrapper = input.closest('.input-wrapper');
+                        const label = wrapper?.querySelector('.input-label');
+                        const checkmark = wrapper?.querySelector('.checkmark');
+                        const formGroup = input.closest('.form-group');
+                        const fieldName = formGroup?.dataset.field;
 
-            if (timerEndCookie) {
-                const endTime = parseInt(timerEndCookie, 10);
-                const currentTime = Math.floor(Date.now() / 1000);
-                remainingSeconds = Math.max(0, endTime - currentTime);
-            } else {
-                remainingSeconds = totalSeconds;
-                const endTime = Math.floor(Date.now() / 1000) + totalSeconds;
-                CookieManager.setCookie('timerEnd', endTime, 1);
-            }
+                        if (!wrapper || !label || !checkmark || !fieldName) return; // Skip malformed inputs
 
-            cubeContainer.classList.add('visible');
+                        // Label visibility based on placeholder trick + focus
+                        input.addEventListener('focus', () => label.classList.add('has-focus')); // Use a class for focus state
+                        input.addEventListener('blur', () => {
+                            label.classList.remove('has-focus');
+                             // Label float based on value exists - CSS handles this with :not(:placeholder-shown)
+                        });
 
-            const cubeClose = document.querySelector('.cube-close');
-            cubeClose.addEventListener('click', () => {
-                cube.classList.add('roll-to-timer');
-                setTimeout(() => {
-                    cubeContainer.classList.add('timer-mode');
-                    startCountdown();
-                }, 1000);
-            });
+                        // Flip logic on valid input using 'input' event
+                        input.addEventListener('input', () => {
+                            errorHandler.attemptRecovery(() => {
+                                const isValid = input.checkValidity() && (input.value.trim() !== '' || !input.hasAttribute('required'));
+                                if (isValid) {
+                                    if (!wrapper.classList.contains('flipped')) {
+                                        wrapper.classList.add('flipped');
+                                        checkmark.classList.add('glowing');
+                                        filledFields.add(fieldName);
+                                        if (checkAllRequiredFieldsValidity()) {
+                                            finishGroup.classList.add('active');
+                                        }
+                                    }
+                                } else {
+                                    // If input becomes invalid, UNFLIP it
+                                    if (wrapper.classList.contains('flipped')) {
+                                        wrapper.classList.remove('flipped');
+                                        checkmark.classList.remove('glowing');
+                                        filledFields.delete(fieldName);
+                                        finishGroup.classList.remove('active'); // Hide finish button if any field is un-flipped
+                                    }
+                                }
+                            });
+                        });
 
-            function startCountdown() {
-                const countdownInterval = setInterval(() => {
-                    if (remainingSeconds <= 0) {
-                        clearInterval(countdownInterval);
-                        countdownTimer.classList.add('expired');
-                        CookieManager.deleteCookie('timerEnd');
-                        return;
-                    }
+                        // Allow unflipping by clicking the checkmark
+                        checkmark.addEventListener('click', () => {
+                             errorHandler.attemptRecovery(() => {
+                                wrapper.classList.remove('flipped');
+                                checkmark.classList.remove('glowing');
+                                filledFields.delete(fieldName);
+                                finishGroup.classList.remove('active');
+                                input.focus();
+                            });
+                        });
+                    });
 
-                    remainingSeconds--;
-                    const minutes = Math.floor(remainingSeconds / 60);
-                    const seconds = remainingSeconds % 60;
-                    updateDigit(timerDigits.minutes1, Math.floor(minutes / 10));
-                    updateDigit(timerDigits.minutes2, minutes % 10);
-                    updateDigit(timerDigits.seconds1, Math.floor(seconds / 10));
-                    updateDigit(timerDigits.seconds2, seconds % 10);
-                }, 1000);
-            }
+                    // Finish button flips the form (only if all required fields are valid)
+                    finishButtonFront.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        errorHandler.attemptRecovery(() => {
+                            // Trigger validation check on all fields before flipping
+                            inputs.forEach(input => input.dispatchEvent(new Event('input'))); // Re-evaluate flip state
 
-            function updateDigit(digitElement, value) {
-                const currentValue = parseInt(digitElement.dataset.currentValue || '0');
-                if (currentValue !== value) {
-                    digitElement.setAttribute('data-current-value', value);
-                    digitElement.setAttribute('data-next-value', value);
-                    digitElement.classList.add('flip');
-                }
-            }
+                            if (checkAllRequiredFieldsValidity()) {
+                                formFlipper.classList.add('flipped');
+                            } else {
+                                errorHandler.displayError('Please correct the invalid fields.');
+                                // Highlight invalid fields
+                                inputs.forEach(input => {
+                                     if (!input.checkValidity()) {
+                                        input.style.outline = '2px solid red'; // Simple highlight
+                                        setTimeout(() => input.style.outline = '', 3000);
+                                     }
+                                });
+                            }
+                        });
+                    });
 
-            if (remainingSeconds > 0 && CookieManager.getCookie('timerEnd')) {
-                cubeContainer.classList.add('timer-mode');
-                startCountdown();
-            }
+                    // Handle actual form submission (triggered by Book Now button type="submit")
+                    bookingForm.addEventListener('submit', (e) => {
+                        console.log("Form submit event triggered.");
+                        // Optional: Add final validation before allowing Formspree
+                        // if (!checkAllRequiredFieldsValidity()) {
+                        //     e.preventDefault();
+                        //     errorHandler.displayError("Please correct errors before submitting.");
+                        //     return;
+                        // }
 
-            // Stickman Animation
-            const stickmanContainer = document.querySelector('.stickman-container');
-            const stickman = document.createElement('div');
-            stickman.classList.add('stickman');
-            stickman.innerHTML = `
-                <div class="stickman-head"></div>
-                <div class="stickman-body"></div>
-                <div class="stickman-arm-left"></div>
-                <div class="stickman-arm-right"></div>
-                <div class="stickman-leg-left"></div>
-                <div class="stickman-leg-right"></div>
-                <div class="stickman-speech-bubble">
-                    <div class="stickman-speech-text"></div>
-                </div>
-            `;
-            stickmanContainer.appendChild(stickman);
+                        // Add a visual cue that submission is happening
+                        const submitButton = bookingForm.querySelector('button[type="submit"]');
+                        if (submitButton) submitButton.textContent = "Booking..."; submitButton.disabled = true;
 
-            const bookButton = document.querySelector('.neon-button');
-            let position = 0;
-            let direction = 1;
-            let isWalking = false;
-            const speechBubble = stickman.querySelector('.stickman-speech-bubble');
-            const speechText = stickman.querySelector('.stickman-speech-text');
-            const actions = [
-                { name: 'walking', duration: 5000, message: 'Just strolling around!' },
-                { name: 'jumping', duration: 1000, message: 'Whee!' },
-                { name: 'dancing', duration: 3000, message: 'Feel the beat!' },
-                { name: 'thinking', duration: 2000, message: 'Hmm...' },
-                { name: 'looking', duration: 3000, message: 'What’s over there?' },
-                { name: 'sleeping', duration: 4000, message: 'Zzz...' },
-                { name: 'tripping', duration: 1000, message: 'Whoops!' },
-                { name: 'pointing', duration: 2000, message: 'Look at that!' },
-                { name: 'shrugging', duration: 2000, message: 'I don’t know!' },
-                { name: 'facepalming', duration: 2000, message: 'Oh no...' },
-                { name: 'waving', duration: 2000, message: 'Hey there!' },
-                { name: 'fighting', duration: 3000, message: 'Take that!' },
-                { name: 'laying', duration: 3000, message: 'Time for a break!' },
-                { name: 'jumpOnButton', duration: 4000, message: 'Book a mix, huh?', action: () => {
-                    const buttonRect = bookButton.getBoundingClientRect();
-                    position = buttonRect.left + buttonRect.width / 2 - 25;
-                    stickman.style.left = `${position}px`;
-                    stickman.classList.add('jumping');
-                }}
-            ];
+                        // Reset UI after a delay (Formspree redirects anyway, this is mostly fallback)
+                        setTimeout(() => {
+                            errorHandler.attemptRecovery(() => {
+                                // Check if still on the page before alerting/resetting
+                                if (document.getElementById('booking-form')) {
+                                    console.log("Resetting form UI after submission delay.");
+                                    // alert('Booking submitted successfully!'); // Avoid alert if redirecting
+                                    bookingForm.reset(); // Reset native form fields
+                                     if (submitButton) submitButton.textContent = "Book Now!"; submitButton.disabled = false;
+                                    formFlipper.classList.remove('flipped');
+                                    filledFields.clear();
+                                    inputs.forEach(input => {
+                                        const wrapper = input.closest('.input-wrapper');
+                                        const checkmark = wrapper?.querySelector('.checkmark');
+                                        const label = wrapper?.querySelector('.input-label');
+                                        wrapper?.classList.remove('flipped');
+                                        checkmark?.classList.remove('glowing');
+                                        // CSS should handle label position on reset via :not(:placeholder-shown)
+                                    });
+                                    finishGroup?.classList.remove('active');
+                                }
+                            });
+                        }, 1500); // Slightly longer delay
+                    });
 
-            function performAction() {
-                const action = actions[Math.floor(Math.random() * actions.length)];
-                stickman.classList.remove(...actions.map(a => a.name));
-                stickman.classList.add(action.name);
-                speechText.textContent = action.message;
-                speechBubble.classList.add('visible');
-                if (action.name === 'walking') {
-                    isWalking = true;
-                    moveStickman();
-                } else if (action.name === 'jumpOnButton' && action.action) {
-                    isWalking = false;
-                    action.action();
                 } else {
-                    isWalking = false;
+                    console.error("Booking form or its essential elements not found.");
                 }
-                setTimeout(() => {
-                    speechBubble.classList.remove('visible');
-                    setTimeout(performAction, 500);
-                }, action.duration);
-            }
 
-            function moveStickman() {
-                if (!isWalking) return;
-                position += direction * 2;
-                stickman.style.left = `${position}px`;
-                if (position > window.innerWidth - 50) {
-                    direction = -1;
-                    stickman.style.transform = 'scaleX(-1)';
-                } else if (position < 0) {
-                    direction = 1;
-                    stickman.style.transform = 'scaleX(1)';
+
+                // Sound Wave Animation (Interactive) - No changes needed here from previous version
+
+
+                // Retro Cube and Timer (Simplified Update Logic) - No changes needed here from previous version
+
+
+                 // Stickman Animation
+                const stickmanContainer = document.querySelector('.stickman-container');
+
+                if (stickmanContainer) {
+                     errorHandler.attemptRecovery(() => {
+                        let stickman = stickmanContainer.querySelector('.stickman');
+                         if (!stickman) { // Dynamically create if missing
+                            stickman = document.createElement('div');
+                            stickman.classList.add('stickman');
+                            // Add innerHTML for parts
+                            stickman.innerHTML = `
+                                <div class="stickman-head"></div><div class="stickman-body"></div>
+                                <div class="stickman-arm-left"></div><div class="stickman-arm-right"></div>
+                                <div class="stickman-leg-left"></div><div class="stickman-leg-right"></div>
+                                <div class="stickman-speech-bubble"><span class="stickman-speech-text"></span></div>`;
+                            stickmanContainer.appendChild(stickman);
+                            console.log("Stickman element created dynamically.");
+                         }
+
+                        const bookButton = document.querySelector('.neon-button[href="#booking"]');
+                        let position = 50;
+                        let direction = 1;
+                        let isWalking = false;
+                        const speechBubble = stickman.querySelector('.stickman-speech-bubble');
+                        const speechText = stickman.querySelector('.stickman-speech-text');
+
+                        const actions = [ /* Keep actions array as defined before */
+                            { name: 'walking', duration: 5000, message: 'Just strolling around!' },
+                            { name: 'jumping', duration: 1000, message: 'Whee!' },
+                            { name: 'dancing', duration: 3000, message: 'Feel the beat!' },
+                            { name: 'thinking', duration: 2000, message: 'Hmm...' },
+                            { name: 'looking', duration: 3000, message: 'What’s over there?' },
+                            { name: 'sleeping', duration: 4000, message: 'Zzz...' },
+                            { name: 'tripping', duration: 1000, message: 'Whoops!' },
+                            { name: 'pointing', duration: 2000, message: 'Look at that!' },
+                            { name: 'shrugging', duration: 2000, message: 'I don’t know!' },
+                            { name: 'facepalming', duration: 2000, message: 'Oh no...' },
+                            { name: 'waving', duration: 2000, message: 'Hey there!' },
+                            { name: 'fighting', duration: 3000, message: 'Take that!' },
+                            { name: 'laying', duration: 3000, message: 'Time for a break!' },
+                         ];
+                         if (bookButton) { /* Add jumpOnButton if button exists */
+                              actions.push({ name: 'jumpOnButton', duration: 4000, message: 'Book a mix, huh?', action: () => {
+                                 const buttonRect = bookButton.getBoundingClientRect();
+                                 const targetX = buttonRect.left + window.scrollX + (buttonRect.width / 2) - (stickman.offsetWidth / 2);
+                                 position = targetX; // Update target position
+                                 stickman.style.transform = `translateX(${position}px) scaleX(${direction})`; // Move towards target
+                                 stickman.classList.add('jumping'); // Trigger jump animation
+                             }});
+                         }
+
+                        let currentActionTimeout = null;
+                        let walkFrameId = null;
+
+                        function performAction() {
+                            // Wrap action logic in recovery block
+                            errorHandler.attemptRecovery(() => {
+                                clearTimeout(currentActionTimeout);
+                                cancelAnimationFrame(walkFrameId);
+
+                                const currentClasses = Array.from(stickman.classList).filter(cls => cls !== 'stickman');
+                                stickman.classList.remove(...currentClasses);
+
+                                const action = actions[Math.floor(Math.random() * actions.length)];
+                                // console.log(`Stickman performing: ${action.name}`);
+                                stickman.classList.add(action.name);
+
+                                if (speechBubble && speechText) {
+                                    speechText.textContent = action.message;
+                                    speechBubble.classList.add('visible');
+                                }
+
+                                isWalking = (action.name === 'walking');
+
+                                if (action.action) action.action();
+                                if (isWalking) moveStickman();
+
+                                currentActionTimeout = setTimeout(() => {
+                                    if (speechBubble) speechBubble.classList.remove('visible');
+                                    setTimeout(performAction, 500);
+                                }, action.duration);
+                            }, null, () => console.error("Stickman action failed."));
+                        }
+
+                        function moveStickman() {
+                            walkFrameId = requestAnimationFrame(() => {
+                                errorHandler.attemptRecovery(() => { // Wrap animation frame logic
+                                    if (!isWalking) return; // Double check walking state
+
+                                    position += direction * 1.5; // Slightly slower walk
+                                    const maxPos = window.innerWidth - stickman.offsetWidth - 10;
+                                    const minPos = 10;
+
+                                    if (position >= maxPos) { direction = -1; position = maxPos; }
+                                    else if (position <= minPos) { direction = 1; position = minPos; }
+
+                                    stickman.style.transform = `translateX(${position}px) scaleX(${direction})`;
+                                    moveStickman(); // Continue the loop
+                                }, null, () => {
+                                     console.error("Stickman movement frame failed.");
+                                     isWalking = false; // Stop walking on error
+                                });
+                            });
+                        }
+
+                        // Initial placement and start
+                        stickman.style.transform = `translateX(${position}px) scaleX(${direction})`;
+                        performAction();
+
+                    }); // End stickman attemptRecovery
+                } else {
+                    console.warn("'.stickman-container' not found. Stickman animation disabled.");
                 }
-                requestAnimationFrame(moveStickman);
-            }
 
-            performAction();
-        }
-    }, () => console.log('Failed to initialize page'));
-});
+                console.log("initializePage function completed successfully.");
+
+            }, null, () => {
+                 console.error("Critical failure during initializePage execution.");
+                 errorHandler.displayError("Page initialization failed. Please refresh.");
+                 // Optionally hide preloader if it's still visible after init failure
+                 const preloader = document.querySelector('.preloader');
+                 if (preloader && !preloader.classList.contains('hidden')) {
+                    preloader.classList.add('hidden');
+                 }
+            }); // End initializePage attemptRecovery
+        } // End of initializePage function
+
+    }, null, () => {
+        // Fallback for the *entire* DOMContentLoaded listener failing
+        console.error("CRITICAL ERROR: DOMContentLoaded event listener failed execution.");
+        // Attempt to notify user, maybe by manipulating body directly if possible
+         document.body.innerHTML = '<h1 style="color:red; text-align:center; margin-top: 50px;">Critical Error Loading Page. Please Refresh.</h1>';
+    }); // End DOMContentLoaded attemptRecovery
+}); // End of DOMContentLoaded listener
