@@ -138,7 +138,7 @@
                 <div class="form-front">
                     <div class="form-group" data-field="name">
                         <div class="input-wrapper">
-                            <input type="text" id="name" name="name" required>
+                            <input type="text" id="name" name="name" required placeholder=" ">
                             <label for="name" class="input-label">Name</label>
                             <div class="input-back">
                                 <span class="checkmark">✔</span>
@@ -147,7 +147,7 @@
                     </div>
                     <div class="form-group" data-field="email">
                         <div class="input-wrapper">
-                            <input type="email" id="email" name="email" required>
+                            <input type="email" id="email" name="email" required placeholder=" ">
                             <label for="email" class="input-label">Email</label>
                             <div class="input-back">
                                 <span class="checkmark">✔</span>
@@ -156,7 +156,7 @@
                     </div>
                     <div class="form-group" data-field="phone">
                         <div class="input-wrapper">
-                            <input type="tel" id="phone" name="phone">
+                            <input type="tel" id="phone" name="phone" placeholder=" ">
                             <label for="phone" class="input-label">Phone</label>
                             <div class="input-back">
                                 <span class="checkmark">✔</span>
@@ -165,7 +165,7 @@
                     </div>
                     <div class="form-group" data-field="date">
                         <div class="input-wrapper">
-                            <input type="date" id="date" name="date" required>
+                            <input type="date" id="date" name="date" required placeholder=" ">
                             <label for="date" class="input-label">Preferred Date</label>
                             <div class="input-back">
                                 <span class="checkmark">✔</span>
@@ -174,7 +174,7 @@
                     </div>
                     <div class="form-group" data-field="time">
                         <div class="input-wrapper">
-                            <input type="time" id="time" name="time" required>
+                            <input type="time" id="time" name="time" required placeholder=" ">
                             <label for="time" class="input-label">Preferred Time</label>
                             <div class="input-back">
                                 <span class="checkmark">✔</span>
@@ -183,7 +183,7 @@
                     </div>
                     <div class="form-group" data-field="genre">
                         <div class="input-wrapper">
-                            <input type="text" id="genre" name="genre">
+                            <input type="text" id="genre" name="genre" placeholder=" ">
                             <label for="genre" class="input-label">Genre</label>
                             <div class="input-back">
                                 <span class="checkmark">✔</span>
@@ -259,14 +259,21 @@
             </div>
         </div>
         <div class="countdown-timer">
-            <div class="timer-digit hours-1"></div>
-            <div class="timer-digit hours-2"></div>
-            <span class="timer-colon">:</span>
-            <div class="timer-digit minutes-1"></div>
-            <div class="timer-digit minutes-2"></div>
-            <span class="timer-colon">:</span>
-            <div class="timer-digit seconds-1"></div>
-            <div class="timer-digit seconds-2"></div>
+             <!-- Digits structure for flip animation -->
+             <div class="timer-part hours">
+                 <div class="timer-digit hours-1" data-value="0">0</div>
+                 <div class="timer-digit hours-2" data-value="0">0</div>
+             </div>
+             <span class="timer-colon">:</span>
+             <div class="timer-part minutes">
+                 <div class="timer-digit minutes-1" data-value="0">0</div>
+                 <div class="timer-digit minutes-2" data-value="0">0</div>
+             </div>
+             <span class="timer-colon">:</span>
+             <div class="timer-part seconds">
+                 <div class="timer-digit seconds-1" data-value="0">0</div>
+                 <div class="timer-digit seconds-2" data-value="0">0</div>
+             </div>
         </div>
     </div>
 
