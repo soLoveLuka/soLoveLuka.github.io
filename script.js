@@ -1,16 +1,14 @@
-// Smooth scrolling animation for sections with enhanced transitions
+// Smooth scrolling animation for sections with background color shift and particles
 document.addEventListener('DOMContentLoaded', () => {
     const sections = document.querySelectorAll('section');
     const sectionParticles = document.querySelector('.section-particles');
     let lastScrollTop = 0;
     let currentSectionIndex = 0;
 
+    // Function to update section visibility based on scroll direction
     function updateSections(scrollDirection, targetIndex = null) {
         sections.forEach((section, index) => {
             section.classList.remove('in-view', 'out-of-view-up', 'out-of-view-down', 'zoom-down');
-            section.style.transition = 'transform 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.8s ease-in-out, scale 0.8s ease-in-out';
-            section.style.opacity = '0';
-            section.style.scale = '0.95';
         });
 
         const oldIndex = currentSectionIndex;
@@ -27,49 +25,44 @@ document.addEventListener('DOMContentLoaded', () => {
         sections.forEach((section, index) => {
             if (index < currentSectionIndex) {
                 section.classList.add(scrollDirection === 'down' || (targetIndex !== null && targetIndex > oldIndex) ? 'out-of-view-up' : 'zoom-down');
-                section.style.transform = 'translateY(-100vh)';
             } else if (index === currentSectionIndex) {
                 section.classList.add('in-view');
-                section.style.transform = 'translateY(0)';
-                section.style.opacity = '1';
-                section.style.scale = '1';
             } else {
                 section.classList.add(scrollDirection === 'down' || (targetIndex !== null && targetIndex > oldIndex) ? 'out-of-view-down' : 'out-of-view-up');
-                section.style.transform = 'translateY(100vh)';
             }
         });
 
+        // Update background color based on section (disable on mobile)
         const isMobile = window.innerWidth <= 768;
         if (!isMobile) {
             const sectionId = sections[currentSectionIndex].id;
-            document.body.className = '';
+            document.body.className = ''; // Reset classes
             document.body.classList.add(`${sectionId}-bg`);
         }
 
+        // Add section transition particles (fewer on mobile)
         if (sectionParticles) {
-            sectionParticles.innerHTML = '';
-            const particleCount = isMobile ? 10 : 30; // Increased particles for better effect
+            sectionParticles.innerHTML = ''; // Clear previous particles
+            const particleCount = isMobile ? 5 : 20; // Reduced particles on mobile
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('section-particle');
                 const side = Math.random() < 0.5 ? 'left' : 'right';
                 const x = side === 'left' ? 0 : window.innerWidth - 5;
                 const y = Math.random() * window.innerHeight;
-                const rotation = Math.random() * 360;
                 particle.style.left = `${x}px`;
                 particle.style.top = `${y}px`;
-                particle.style.transform = `rotate(${rotation}deg)`;
                 sectionParticles.appendChild(particle);
 
                 setTimeout(() => {
                     particle.classList.add('active');
-                    particle.style.transform = `translateX(${side === 'left' ? 150 : -150}px) rotate(${rotation + 180}deg)`;
-                    particle.style.opacity = '1';
-                }, i * 30);
+                    particle.style.transform = `translateX(${side === 'left' ? 100 : -100}px)`;
+                }, i * 50);
             }
         }
     }
 
+    // Debounced scroll handler
     const debounce = (func, wait) => {
         let timeout;
         return (...args) => {
@@ -78,28 +71,41 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     };
 
+    // Scroll event listener
     window.addEventListener('scroll', debounce(() => {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
+
         const sectionHeight = window.innerHeight;
         const isMobile = window.innerWidth <= 768;
-        const scrollThreshold = sectionHeight * (isMobile ? 0.7 : 0.5);
+        const scrollThreshold = sectionHeight * (isMobile ? 0.7 : 0.5); // Higher threshold on mobile
         if (Math.abs(scrollTop - lastScrollTop) > scrollThreshold) {
             updateSections(scrollDirection);
         }
+
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
 
+        // Navigation fade-in (keep visible on mobile)
         const nav = document.querySelector('.retro-nav');
-        if (scrollTop > 50 || isMobile) nav.classList.add('scrolled');
-        else nav.classList.remove('scrolled');
+        if (scrollTop > 50 || isMobile) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
 
+        // Back to Top button visibility
         const backToTop = document.querySelector('.back-to-top');
-        if (scrollTop > 300) backToTop.classList.add('visible');
-        else backToTop.classList.remove('visible');
+        if (scrollTop > 300) {
+            backToTop.classList.add('visible');
+        } else {
+            backToTop.classList.remove('visible');
+        }
 
+        // Check if mix cards should flip back when scrolling out of view
         const mixesSection = document.querySelector('#mixes');
         const mixCards = document.querySelectorAll('.mix-card');
         const mixesRect = mixesSection.getBoundingClientRect();
+
         const threshold = window.innerHeight * 0.5;
         if (mixesRect.top > window.innerHeight - threshold || mixesRect.bottom < threshold) {
             mixCards.forEach(card => {
@@ -112,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 10));
 
+    // Smooth scrolling for nav links and buttons
     document.querySelectorAll('.retro-nav a, .neon-button').forEach(anchor => {
         anchor.addEventListener('click', (e) => {
             e.preventDefault();
@@ -121,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateSections(sectionIndex > currentSectionIndex ? 'down' : 'up', sectionIndex);
             targetSection.scrollIntoView({ behavior: 'smooth' });
 
+            // Ensure mix grid and description are visible when navigating to mixes
             if (targetId === 'mixes') {
                 setTimeout(() => {
                     const mixGrid = document.querySelector('.mix-grid');
@@ -165,7 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const height = minHeight + (maxHeight - minHeight) * influence * 1.5;
 
                 bar.style.height = `${Math.min(maxHeight, Math.max(minHeight, height))}px`;
-                bar.style.transition = 'height 0.3s ease-in-out';
             });
         };
 
@@ -219,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mixImages = document.querySelectorAll('.mix-card-front img');
 
     if (mixesSection && mixGrid && mixDescription && mixImages.length > 0) {
+        // Function to check if all images are loaded
         const checkImagesLoaded = () => {
             return Promise.all(
                 Array.from(mixImages).map(img => {
@@ -227,16 +235,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     return new Promise(resolve => {
                         img.addEventListener('load', resolve);
-                        img.addEventListener('error', resolve);
+                        img.addEventListener('error', resolve); // Resolve even if image fails to load
                     });
                 })
             );
         };
 
+        // Wait for images to load before setting up the observer
         checkImagesLoaded().then(() => {
             const observerOptions = {
-                threshold: window.innerWidth <= 768 ? 0.1 : 0.3,
-                rootMargin: '0px 0px -10% 0px'
+                threshold: window.innerWidth <= 768 ? 0.1 : 0.3, // Adjust threshold for mobile
+                rootMargin: '0px 0px -10% 0px' // Keep section visible slightly after leaving viewport
             };
 
             const observer = new IntersectionObserver((entries) => {
@@ -245,6 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         mixGrid.classList.add('active');
                         mixDescription.classList.add('active');
                     } else if (entry.boundingClientRect.top > 0) {
+                        // Only remove 'active' if section is completely out of view below
                         mixGrid.classList.remove('active');
                         mixDescription.classList.remove('active');
                     }
@@ -284,25 +294,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressText = document.querySelector('.progress-text');
 
     if (preloader && preloaderText && preloaderChars.length > 0 && progressBar && progressText) {
+        // Start progress bar animation
         progressBar.classList.add('active');
 
+        // Update progress percentage
         let progress = 0;
-        const totalDuration = 4000;
+        const totalDuration = 4000; // 4 seconds
         const interval = setInterval(() => {
             progress = Math.min(progress + (100 / (totalDuration / 50)), 100);
             progressText.textContent = `${Math.round(progress)}%`;
             if (progress >= 100) clearInterval(interval);
         }, 50);
 
+        // Step 1: Show "Loading..." with glitch effect for 1 second
         setTimeout(() => {
+            // Step 2: Transform "Loading..." into a waveform for 2 seconds
             preloaderChars.forEach((char, index) => {
                 char.style.setProperty('--char-index', index);
                 char.classList.add('wave');
             });
 
+            // Step 3: Fade out the preloader after waveform animation
             setTimeout(() => {
                 preloader.classList.add('hidden');
-            }, 2000);
+            }, 2000); // Waveform lasts 2 seconds, then fade out
         }, 1000);
     }
 });
@@ -312,19 +327,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const mixCards = document.querySelectorAll('.mix-card');
     let currentlyFlippedCard = null;
     let touchStartTime = 0;
-    const longPressDuration = 500;
+    const longPressDuration = 500; // 500ms for long press to flip
 
     mixCards.forEach(card => {
         const audio = card.querySelector('.mix-audio');
         let previewTimeout = null;
 
+        // Desktop: Hover to preview
         card.addEventListener('mouseenter', () => {
             if (!card.classList.contains('flipped')) {
                 audio.currentTime = 0;
                 audio.play();
                 previewTimeout = setTimeout(() => {
                     audio.pause();
-                }, 5000);
+                }, 5000); // 5-second preview
             }
         });
 
@@ -335,9 +351,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Mobile: Tap for preview, long press to flip
         card.addEventListener('touchstart', (e) => {
             touchStartTime = Date.now();
             previewTimeout = setTimeout(() => {
+                // Long press: Flip the card
                 if (currentlyFlippedCard && currentlyFlippedCard !== card) {
                     currentlyFlippedCard.classList.remove('flipped');
                     const previousAudio = currentlyFlippedCard.querySelector('.mix-audio');
@@ -357,6 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
         card.addEventListener('touchend', (e) => {
             const touchDuration = Date.now() - touchStartTime;
             if (touchDuration < longPressDuration) {
+                // Short tap: Play preview
                 clearTimeout(previewTimeout);
                 if (!card.classList.contains('flipped')) {
                     audio.currentTime = 0;
@@ -368,8 +387,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Click for desktop
         card.addEventListener('click', (e) => {
-            if (window.innerWidth > 768) {
+            if (window.innerWidth > 768) { // Only on desktop
                 if (currentlyFlippedCard && currentlyFlippedCard !== card) {
                     currentlyFlippedCard.classList.remove('flipped');
                     const previousAudio = currentlyFlippedCard.querySelector('.mix-audio');
@@ -388,19 +408,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Booking form interaction with interactive neon grid and enhanced animations
+// Booking form interaction with interactive neon grid
 document.addEventListener('DOMContentLoaded', () => {
     const bookingForm = document.getElementById('booking-form');
-    const formFlipper = bookingForm.querySelector('.form-flipper');
-    const inputs = bookingForm.querySelectorAll('.form-front input, .form-front select');
+    const inputs = bookingForm.querySelectorAll('input, textarea, select');
     const retroMessage = document.getElementById('retro-message');
-    const finishGroup = bookingForm.querySelector('.finish-group');
-    const finishButtonWrapper = finishGroup.querySelector('.finish-button-wrapper');
+    const detailsGroup = bookingForm.querySelector('.details-group');
+    const backArrow = detailsGroup.querySelector('.back-arrow');
+    const finishButtonWrapper = detailsGroup.querySelector('.finish-button-wrapper');
     const finishButtonInner = finishButtonWrapper.querySelector('.finish-button-inner');
+    const detailsInput = detailsGroup.querySelector('textarea');
     const neonGrid = document.querySelector('.neon-grid');
     let filledFields = new Set();
-    let lastFocusedInput = null;
 
+    // Interactive neon grid on form interaction
     bookingForm.addEventListener('mouseover', () => {
         neonGrid.classList.add('active');
     });
@@ -409,8 +430,9 @@ document.addEventListener('DOMContentLoaded', () => {
         neonGrid.classList.add('active');
     });
 
-    const checkAllFieldsBeforeFinish = () => {
-        const formGroups = bookingForm.querySelectorAll('.form-front .form-group:not(.finish-group)');
+    // Check if all fields before details are filled
+    const checkAllFieldsBeforeDetails = () => {
+        const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
         let allFilled = true;
 
         formGroups.forEach(group => {
@@ -430,83 +452,86 @@ document.addEventListener('DOMContentLoaded', () => {
         return allFilled;
     };
 
-    const showFinishGroup = () => {
-        const formGroups = bookingForm.querySelectorAll('.form-front .form-group:not(.finish-group)');
+    // Show details group with animation
+    const showDetailsGroup = () => {
+        const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
         formGroups.forEach((group, index) => {
             setTimeout(() => {
-                group.style.transition = 'transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease-in-out';
+                group.style.transition = 'transform 1s ease-in-out, opacity 0.5s ease-in-out';
                 group.style.transform = `translateY(${(formGroups.length / 2 - index) * 60}px)`;
                 group.style.opacity = '0';
             }, index * 200);
         });
 
         setTimeout(() => {
-            finishGroup.classList.add('active');
-            finishButtonWrapper.style.display = 'block';
+            detailsGroup.classList.add('active');
+            finishButtonWrapper.style.display = 'block'; // Ensure button wrapper is visible
         }, formGroups.length * 200 + 500);
     };
 
-    inputs.forEach((input, index) => {
+    // Revert form to initial state
+    const revertForm = () => {
+        detailsGroup.classList.remove('active');
+        finishButtonInner.classList.remove('flipped');
+        filledFields.delete('details');
+
+        const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
+        formGroups.forEach((group, index) => {
+            setTimeout(() => {
+                group.style.transition = 'transform 1s ease-in-out, opacity 0.5s ease-in-out';
+                group.style.transform = 'translateY(0)';
+                group.style.opacity = '1';
+            }, index * 200);
+        });
+    };
+
+    // Handle input interactions
+    inputs.forEach(input => {
         const wrapper = input.closest('.input-wrapper');
         const label = wrapper.querySelector('.input-label');
         const checkmark = wrapper.querySelector('.checkmark');
         const fieldName = input.closest('.form-group').dataset.field;
 
+        // Show/hide label on focus/blur
         input.addEventListener('focus', () => {
             label.classList.add('hidden');
-            lastFocusedInput = input;
         });
 
         input.addEventListener('blur', () => {
             if (!input.value.trim()) {
                 label.classList.remove('hidden');
             }
-
-            if (lastFocusedInput === input && input.checkValidity() && input.value.trim()) {
-                wrapper.classList.add('flipped');
-                filledFields.add(fieldName);
-                checkmark.classList.add('glowing');
-
-                const allFieldsFilled = checkAllFieldsBeforeFinish();
-                retroMessage.classList.toggle('visible', allFieldsFilled);
-            }
         });
 
+        // Validate input and flip wrapper on Enter key or touch outside
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && input.checkValidity() && input.value.trim()) {
                 wrapper.classList.add('flipped');
                 filledFields.add(fieldName);
-                checkmark.classList.add('glowing');
+                input.blur();
 
-                const allFieldsFilled = checkAllFieldsBeforeFinish();
+                // Check if all required fields are filled to show retro message
+                const allFieldsFilled = checkAllFieldsBeforeDetails();
                 retroMessage.classList.toggle('visible', allFieldsFilled);
-
-                const nextInput = inputs[index + 1];
-                if (nextInput) {
-                    nextInput.focus();
-                }
             }
         });
 
+        // On mobile, flip when tapping outside the input
         document.addEventListener('touchend', (e) => {
             if (!wrapper.contains(e.target) && input === document.activeElement && input.checkValidity() && input.value.trim()) {
                 wrapper.classList.add('flipped');
                 filledFields.add(fieldName);
-                checkmark.classList.add('glowing');
+                input.blur();
 
-                const allFieldsFilled = checkAllFieldsBeforeFinish();
+                // Check if all required fields are filled to show retro message
+                const allFieldsFilled = checkAllFieldsBeforeDetails();
                 retroMessage.classList.toggle('visible', allFieldsFilled);
-
-                const nextInput = inputs[index + 1];
-                if (nextInput) {
-                    nextInput.focus();
-                }
             }
         });
 
+        // Allow unflipping by clicking the checkmark
         checkmark.addEventListener('click', () => {
             wrapper.classList.remove('flipped');
-            checkmark.classList.remove('glowing');
             filledFields.delete(fieldName);
             label.classList.remove('hidden');
             retroMessage.classList.remove('visible');
@@ -514,41 +539,71 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Handle retro message click to show details group
     retroMessage.addEventListener('click', () => {
-        if (checkAllFieldsBeforeFinish()) {
-            showFinishGroup();
+        if (checkAllFieldsBeforeDetails()) {
+            showDetailsGroup();
         }
     });
 
-    finishButtonWrapper.addEventListener('click', (e) => {
-        e.preventDefault();
-        formFlipper.classList.add('flipped');
+    // Handle back arrow click to return to main form
+    backArrow.addEventListener('click', () => {
+        revertForm();
     });
 
-    formFlipper.querySelector('.book-now-button').addEventListener('click', (e) => {
-        setTimeout(() => {
-            alert('Booking submitted successfully!');
-            bookingForm.submit();
-            bookingForm.reset();
-            formFlipper.classList.remove('flipped');
-            filledFields.clear();
-            inputs.forEach(input => {
-                const wrapper = input.closest('.input-wrapper');
-                wrapper.classList.remove('flipped');
-                const checkmark = wrapper.querySelector('.checkmark');
-                checkmark.classList.remove('glowing');
-                const label = wrapper.querySelector('.input-label');
-                label.classList.remove('hidden');
-            });
-            finishGroup.classList.remove('active');
-            const formGroups = bookingForm.querySelectorAll('.form-front .form-group:not(.finish-group)');
-            formGroups.forEach((group, index) => {
-                setTimeout(() => {
-                    group.style.transition = 'transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease-in-out';
-                    group.style.transform = 'translateY(0)';
-                    group.style.opacity = '1';
-                }, index * 200);
-            });
-        }, 500);
+    // Function to flip the finish button and show "Book Now!"
+    const flipFinishButton = () => {
+        if (!finishButtonInner.classList.contains('flipped')) {
+            const wrapper = detailsInput.closest('.input-wrapper');
+            if (detailsInput.value.trim()) {
+                wrapper.classList.add('flipped');
+                filledFields.add('details');
+                finishButtonInner.classList.add('flipped'); // Automatically flip to show "Book Now!"
+            }
+        }
+    };
+
+    // Handle form submission with finish button animation
+    finishButtonWrapper.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent default form submission until we're ready
+        if (finishButtonInner.classList.contains('flipped')) {
+            // "Book Now!" button is visible and clicked
+            setTimeout(() => {
+                alert('Booking submitted successfully!');
+                bookingForm.submit();
+                bookingForm.reset();
+                revertForm();
+                filledFields.clear();
+                inputs.forEach(input => {
+                    const wrapper = input.closest('.input-wrapper');
+                    wrapper.classList.remove('flipped');
+                    const label = wrapper.querySelector('.input-label');
+                    label.classList.remove('hidden');
+                });
+            }, 500);
+        } else {
+            // "Finish" button is clicked, flip to show "Book Now!"
+            flipFinishButton();
+        }
+    });
+
+    // Ensure details input also has flip behavior and triggers the finish button flip
+    detailsInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && detailsInput.value.trim()) {
+            const wrapper = detailsInput.closest('.input-wrapper');
+            wrapper.classList.add('flipped');
+            filledFields.add('details');
+            flipFinishButton(); // Automatically flip the finish button to show "Book Now!"
+        }
+    });
+
+    // On mobile, flip details input and finish button when tapping outside
+    document.addEventListener('touchend', (e) => {
+        if (!detailsGroup.contains(e.target) && detailsInput === document.activeElement && detailsInput.value.trim()) {
+            const wrapper = detailsInput.closest('.input-wrapper');
+            wrapper.classList.add('flipped');
+            filledFields.add('details');
+            flipFinishButton(); // Automatically flip the finish button to show "Book Now!"
+        }
     });
 });
