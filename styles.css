@@ -943,10 +943,185 @@ section {
     text-shadow: 0 0 10px #ff00ff;
 }
 
-/* Responsive Adjustments */
+/* 3D Retro Cube */
+.retro-cube-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.retro-cube-container.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.retro-cube {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1);
+    animation: float 6s infinite ease-in-out;
+    box-shadow: 0 0 20px rgba(0, 247, 255, 0.5), 0 0 40px rgba(255, 0, 255, 0.5);
+}
+
+.retro-cube.interacted {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(0, 247, 255, 0.8), 0 0 60px rgba(255, 0, 255, 0.8);
+}
+
+.retro-cube.roll-to-timer {
+    animation: rollToTimer 1s forwards;
+}
+
+@keyframes rollToTimer {
+    0% { transform: rotateX(0deg) rotateY(0deg); }
+    50% { transform: rotateX(360deg) rotateY(360deg) scale(0.5); }
+    100% { transform: translate(300px, -300px) scale(0.3) rotateX(0deg) rotateY(0deg); opacity: 0; }
+}
+
+.cube-face {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: rgba(0, 0, 20, 0.8);
+    border: 2px solid #00f7ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.9rem;
+    color: #fff;
+    text-shadow: 0 0 10px #00f7ff;
+    box-shadow: 0 0 20px rgba(0, 247, 255, 0.5);
+    animation: neonGlow 3s infinite ease-in-out;
+}
+
+@keyframes neonGlow {
+    0% { box-shadow: 0 0 20px rgba(0, 247, 255, 0.5), 0 0 40px rgba(255, 0, 255, 0.5); }
+    50% { box-shadow: 0 0 30px rgba(0, 247, 255, 0.8), 0 0 60px rgba(255, 0, 255, 0.8); }
+    100% { box-shadow: 0 0 20px rgba(0, 247, 255, 0.5), 0 0 40px rgba(255, 0, 255, 0.5); }
+}
+
+.cube-text {
+    padding: 1rem;
+}
+
+.cube-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.cube-close:hover {
+    transform: scale(1.2);
+}
+
+.face-front { transform: translateZ(100px); }
+.face-back { transform: translateZ(-100px) rotateY(180deg); }
+.face-left { transform: translateX(-100px) rotateY(-90deg); }
+.face-right { transform: translateX(100px) rotateY(90deg); }
+.face-top { transform: translateY(-100px) rotateX(90deg); }
+.face-bottom { transform: translateY(100px) rotateX(-90deg); }
+
+/* Countdown Timer */
+.countdown-timer {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 5px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2rem;
+    color: #fff;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.retro-cube-container.timer-mode .countdown-timer {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.timer-digit {
+    width: 30px;
+    height: 40px;
+    background: rgba(0, 0, 20, 0.8);
+    border: 2px solid #00f7ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-shadow: 0 0 10px #00f7ff;
+    box-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+    transform-style: preserve-3d;
+    animation: pulseTimer 2s infinite ease-in-out;
+}
+
+.timer-digit.flip {
+    animation: flipDigit 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+@keyframes flipDigit {
+    0% { transform: rotateX(0deg); }
+    50% { transform: rotateX(180deg); }
+    100% { transform: rotateX(360deg); }
+}
+
+@keyframes pulseTimer {
+    0% { box-shadow: 0 0 10px rgba(0, 247, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.5); }
+    50% { box-shadow: 0 0 15px rgba(0, 247, 255, 0.8), 0 0 30px rgba(255, 0, 255, 0.8); }
+    100% { box-shadow: 0 0 10px rgba(0, 247, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.5); }
+}
+
+.timer-colon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+}
+
+.countdown-timer.expired .timer-digit {
+    color: #ff0000;
+    text-shadow: 0 0 10px #ff0000;
+    border-color: #ff0000;
+    box-shadow: 0 0 10px #ff0000;
+}
+
+/* Media Queries for Responsiveness */
 @media (max-width: 768px) {
+    body::before,
+    body::after {
+        background-size: 40px 40px; /* Smaller grid on mobile */
+    }
+
+    .retro-nav ul {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .retro-nav li {
+        margin: 0.5rem 0;
+    }
+
     .hero h1 {
-        font-size: 3rem;
+        font-size: 2.5rem;
     }
 
     .hero h2 {
@@ -962,106 +1137,63 @@ section {
         width: 8px;
     }
 
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .mix-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
     .mix-grid {
-        grid-template-columns: 1fr !important; /* Ensure single column on mobile */
-        max-width: 100%;
+        grid-template-columns: 1fr;
     }
 
-    .mix-card {
-        width: 100%;
-        max-width: 300px;
-        min-height: 300px; /* Ensure minimum height on mobile */
-        margin: 0 auto;
-        animation: none; /* Disable float animation on mobile for performance */
-    }
-
-    .mix-card:hover {
-        box-shadow: 0 0 20px rgba(0, 247, 255, 0.5); /* No hover glow on mobile */
-    }
-
-    .mix-card-inner {
-        min-height: 300px; /* Ensure inner container has minimum height on mobile */
-    }
-
-    .mix-card-front,
-    .mix-card-back {
-        min-height: 300px; /* Ensure front/back have minimum height on mobile */
-    }
-
-    .mix-card-front img {
-        max-height: 150px; /* Cap the height but allow scaling */
-        object-fit: cover; /* Ensure image fills space */
-    }
-
-    .mix-card-front h3 {
-        font-size: 1rem; /* Slightly smaller font for better fit */
-    }
-
-    .mix-card-front p {
-        font-size: 0.8rem; /* Slightly smaller font for better fit */
+    .mix-description {
+        text-align: center;
     }
 
     .artist-content {
         flex-direction: column;
-        text-align: center;
     }
 
     .artist-content img {
-        width: 250px;
-        height: 250px;
+        width: 200px;
+        height: 200px;
     }
 
-    .artist-bio {
-        text-align: center;
+    .booking-form {
+        padding: 0 1rem;
     }
 
-    .section-title {
-        font-size: 2rem;
-    }
-
-    .finish-button-wrapper {
+    .retro-cube {
         width: 150px;
-        height: 40px;
+        height: 150px;
     }
 
-    .finish-button-front {
-        font-size: 0.8rem;
+    .cube-face {
+        width: 150px;
+        height: 150px;
+        font-size: 0.7rem;
     }
 
-    .book-now-button {
-        font-size: 1rem;
-        padding: 0.8rem 1.5rem;
+    .face-front { transform: translateZ(75px); }
+    .face-back { transform: translateZ(-75px) rotateY(180deg); }
+    .face-left { transform: translateX(-75px) rotateY(-90deg); }
+    .face-right { transform: translateX(75px) rotateY(90deg); }
+    .face-top { transform: translateY(-75px) rotateX(90deg); }
+    .face-bottom { transform: translateY(75px) rotateX(-90deg); }
+
+    .countdown-timer {
+        font-size: 0.9rem;
+        top: 60px; /* Adjust for nav bar */
+        right: 10px;
     }
 
-    .preloader-text {
-        font-size: 1.2rem;
-    }
-
-    .preloader-char.wave {
-        animation: waveform-mobile 1.2s infinite ease-in-out; /* Slower waveform for mobile */
-        animation-delay: calc(var(--char-index) * 0.15s);
-    }
-
-    @keyframes waveform-mobile {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-8px); } /* Reduced amplitude */
-    }
-
-    .section-particle {
-        width: 4px;
-        height: 4px;
-    }
-
-    .retro-nav ul {
-        padding: 0.5rem 0; /* Reduce padding */
-    }
-
-    .retro-nav li {
-        margin: 0 0.8rem; /* Reduce margin */
-    }
-
-    .retro-nav a {
-        font-size: 0.7rem; /* Further reduce font size */
+    .timer-digit {
+        width: 20px;
+        height: 30px;
     }
 }
 
@@ -1074,118 +1206,214 @@ section {
         font-size: 1.2rem;
     }
 
-    .sound-wave-container {
-        width: 150px;
-        height: 60px;
-    }
-
-    .sound-bar {
-        width: 6px;
-    }
-
     .neon-button {
         font-size: 0.8rem;
-        padding: 0.6rem 1rem;
-    }
-
-    .mix-description h3 {
-        font-size: 1.2rem;
-    }
-
-    .mix-description p {
-        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem;
     }
 
     .section-title {
         font-size: 1.5rem;
     }
 
-    .mix-card {
-        max-width: 280px; /* Slightly smaller max-width for very small screens */
-        min-height: 280px; /* Adjust minimum height for smaller screens */
-    }
-
-    .mix-card-inner {
-        min-height: 280px;
-    }
-
-    .mix-card-front,
-    .mix-card-back {
-        min-height: 280px;
-    }
-
-    .mix-card-front img {
-        max-height: 140px; /* Slightly smaller image height for very small screens */
-    }
-
     .mix-card-front h3 {
-        font-size: 0.9rem;
-    }
-
-    .mix-card-front p {
-        font-size: 0.7rem;
-    }
-
-    .finish-button-wrapper {
-        width: 120px;
-        height: 35px;
-    }
-
-    .finish-button-front {
-        font-size: 0.7rem;
-    }
-
-    .book-now-button {
-        font-size: 0.9rem;
-        padding: 0.6rem 1.2rem;
-    }
-
-    .input-wrapper input,
-    .input-wrapper select {
-        font-size: 0.9rem;
-        padding: 0.6rem;
-    }
-
-    .input-label {
-        font-size: 0.9rem;
-    }
-
-    .preloader-text {
         font-size: 1rem;
     }
 
-    .preloader-char.wave {
-        animation: waveform-mobile 1.2s infinite ease-in-out;
-        animation-delay: calc(var(--char-index) * 0.15s);
+    .mix-card-front p {
+        font-size: 0.8rem;
     }
 
-    @keyframes waveform-mobile {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-6px); }
+    .artist-bio p {
+        font-size: 0.9rem;
     }
 
-    .section-particle {
-        width: 3px;
-        height: 3px;
+    .back-to-top {
+        font-size: 0.7rem;
+        bottom: 1rem;
+        right: 1rem;
     }
 
-    .retro-nav ul {
-        padding: 0.3rem 0; /* Further reduce padding */
+    .retro-cube {
+        width: 120px;
+        height: 120px;
     }
 
-    .retro-nav li {
-        margin: 0 0.4rem; /* Further reduce margin */
-    }
-
-    .retro-nav a {
-        font-size: 0.55rem; /* Further reduce font size */
-    }
-
-    .progress-text {
+    .cube-face {
+        width: 120px;
+        height: 120px;
         font-size: 0.6rem;
     }
 
-    .progress-bar {
-        width: 80px;
+    .face-front { transform: translateZ(60px); }
+    .face-back { transform: translateZ(-60px) rotateY(180deg); }
+    .face-left { transform: translateX(-60px) rotateY(-90deg); }
+    .face-right { transform: translateX(60px) rotateY(90deg); }
+    .face-top { transform: translateY(-60px) rotateX(90deg); }
+    .face-bottom { transform: translateY(60px) rotateX(-90deg); }
+
+    .countdown-timer {
+        font-size: 0.7rem;
+    }
+
+    .timer-digit {
+        width: 15px;
+        height: 25px;
+    }
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    body::before,
+    body::after {
+        background-size: 40px 40px; /* Smaller grid on mobile */
+    }
+
+    .retro-nav ul {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .retro-nav li {
+        margin: 0.5rem 0;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero h2 {
+        font-size: 1.5rem;
+    }
+
+    .sound-wave-container {
+        width: 200px;
+        height: 80px;
+    }
+
+    .sound-bar {
+        width: 8px;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .mix-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .mix-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mix-description {
+        text-align: center;
+    }
+
+    .artist-content {
+        flex-direction: column;
+    }
+
+    .artist-content img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .booking-form {
+        padding: 0 1rem;
+    }
+
+    .retro-cube {
+        width: 150px;
+        height: 150px;
+    }
+
+    .cube-face {
+        width: 150px;
+        height: 150px;
+        font-size: 0.7rem;
+    }
+
+    .face-front { transform: translateZ(75px); }
+    .face-back { transform: translateZ(-75px) rotateY(180deg); }
+    .face-left { transform: translateX(-75px) rotateY(-90deg); }
+    .face-right { transform: translateX(75px) rotateY(90deg); }
+    .face-top { transform: translateY(-75px) rotateX(90deg); }
+    .face-bottom { transform: translateY(75px) rotateX(-90deg); }
+
+    .countdown-timer {
+        font-size: 0.9rem;
+        top: 60px; /* Adjust for nav bar */
+        right: 10px;
+    }
+
+    .timer-digit {
+        width: 20px;
+        height: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero h2 {
+        font-size: 1.2rem;
+    }
+
+    .neon-button {
+        font-size: 0.8rem;
+        padding: 0.6rem 1.2rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .mix-card-front h3 {
+        font-size: 1rem;
+    }
+
+    .mix-card-front p {
+        font-size: 0.8rem;
+    }
+
+    .artist-bio p {
+        font-size: 0.9rem;
+    }
+
+    .back-to-top {
+        font-size: 0.7rem;
+        bottom: 1rem;
+        right: 1rem;
+    }
+
+    .retro-cube {
+        width: 120px;
+        height: 120px;
+    }
+
+    .cube-face {
+        width: 120px;
+        height: 120px;
+        font-size: 0.6rem;
+    }
+
+    .face-front { transform: translateZ(60px); }
+    .face-back { transform: translateZ(-60px) rotateY(180deg); }
+    .face-left { transform: translateX(-60px) rotateY(-90deg); }
+    .face-right { transform: translateX(60px) rotateY(90deg); }
+    .face-top { transform: translateY(-60px) rotateX(90deg); }
+    .face-bottom { transform: translateY(60px) rotateX(-90deg); }
+
+    .countdown-timer {
+        font-size: 0.7rem;
+    }
+
+    .timer-digit {
+        width: 15px;
+        height: 25px;
     }
 }
