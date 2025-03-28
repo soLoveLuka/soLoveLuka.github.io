@@ -1,3 +1,4 @@
+```css
 html {
     scroll-behavior: smooth;
 }
@@ -23,18 +24,22 @@ body {
 
 body.hero-bg {
     background: linear-gradient(rgba(0, 0, 20, 0.8), rgba(0, 0, 20, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover; /* Ensure background covers even if content is short */
 }
 
 body.mixes-bg {
     background: linear-gradient(rgba(50, 0, 50, 0.8), rgba(50, 0, 50, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
 }
 
 body.artist-bg {
     background: linear-gradient(rgba(0, 50, 50, 0.8), rgba(0, 50, 50, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
 }
 
 body.booking-bg {
     background: linear-gradient(rgba(50, 50, 0, 0.8), rgba(50, 50, 0, 0.8)), url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?q=80&w=1974&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
 }
 
 body::before {
@@ -44,7 +49,7 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: 
+    background:
         repeating-linear-gradient(
             90deg,
             transparent 0px,
@@ -95,7 +100,7 @@ body::after {
     left: 0;
     width: 100%;
     height: 100%;
-    background: 
+    background:
         repeating-linear-gradient(
             45deg,
             transparent 0px,
@@ -142,12 +147,15 @@ body::after {
     justify-content: center;
     align-items: center;
     z-index: 2000;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease, visibility 0s linear 0.5s; /* Added visibility */
+    opacity: 1;
+    visibility: visible;
     overflow: hidden;
 }
 
 .preloader.hidden {
     opacity: 0;
+    visibility: hidden; /* Hide completely */
     pointer-events: none;
 }
 
@@ -190,16 +198,20 @@ body::after {
     border: 1px solid #00f7ff;
     border-radius: 3px;
     overflow: hidden;
+    position: relative; /* For pseudo-element */
 }
 
 .progress-bar::after {
     content: '';
     display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 0;
     height: 100%;
     background: #00f7ff;
     box-shadow: 0 0 10px #00f7ff;
-    transition: width 6s linear;
+    transition: width 4s linear; /* Matched JS duration */
 }
 
 .progress-bar.active::after {
@@ -224,6 +236,7 @@ body::after {
     height: 100%;
     pointer-events: none;
     z-index: 100;
+    overflow: hidden; /* Prevent particles appearing outside bounds */
 }
 
 .section-particle {
@@ -233,7 +246,8 @@ body::after {
     background: #00f7ff;
     box-shadow: 0 0 5px #00f7ff;
     opacity: 0;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    border-radius: 50%; /* Make particles round */
+    transition: opacity 0.5s ease, transform 0.8s ease-out; /* Smoother transform */
 }
 
 .section-particle.active {
@@ -247,7 +261,8 @@ body::after {
     width: 100%;
     background: rgba(0, 0, 20, 0.8);
     z-index: 1000;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, opacity 0.3s ease; /* Added opacity transition */
+    opacity: 1; /* Default */
 }
 
 .retro-nav ul {
@@ -271,13 +286,15 @@ body::after {
     text-decoration: none;
     text-shadow: 0 0 10px #00f7ff;
     opacity: 0.7;
-    transition: opacity 0.3s ease, color 0.3s ease;
+    transition: opacity 0.3s ease, color 0.3s ease, text-shadow 0.3s ease; /* Added text-shadow transition */
 }
 
-.retro-nav a:hover {
+.retro-nav a:hover,
+.retro-nav a:focus { /* Added focus style */
     color: #ff00ff;
-    text-shadow: 0 0 10px #ff00ff;
+    text-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff; /* Enhanced hover shadow */
     opacity: 1;
+    outline: none; /* Remove default focus outline */
 }
 
 .retro-nav.scrolled a {
@@ -286,47 +303,45 @@ body::after {
 
 /* General Section Styles for Smooth Scrolling */
 section {
-    min-height: 100vh;
+    min-height: 100vh; /* Ensure sections take at least full viewport height */
     width: 100%;
-    position: relative;
-    transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1), opacity 1s cubic-bezier(0.23, 1, 0.32, 1);
-    opacity: 1;
-    transform: translateY(0);
+    position: relative; /* Needed for absolute positioning inside if any */
+    display: flex; /* Use flexbox for easier centering */
+    flex-direction: column; /* Stack content vertically */
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+    padding: 6rem 2rem 2rem 2rem; /* Add padding (top accounts for fixed nav) */
+    transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.7s cubic-bezier(0.23, 1, 0.32, 1); /* Adjusted timing */
+    opacity: 0; /* Start hidden */
+    transform: translateY(50px); /* Start slightly down */
+    overflow: hidden; /* Prevent content overflow issues */
 }
 
-/* Class for sections that are out of view (above) */
+/* Classes managed by JS for section transitions */
 .out-of-view-up {
-    transform: translateY(-100%) scale(0.98);
+    transform: translateY(-100%) scale(0.95); /* Adjusted transform */
     opacity: 0;
+    pointer-events: none; /* Prevent interaction when out of view */
 }
 
-/* Class for sections that are out of view (below) */
 .out-of-view-down {
-    transform: translateY(100%) scale(0.98);
+    transform: translateY(100%) scale(0.95); /* Adjusted transform */
     opacity: 0;
+    pointer-events: none;
 }
 
-/* Class for sections that are in view */
 .in-view {
     transform: translateY(0) scale(1);
     opacity: 1;
+    pointer-events: auto; /* Allow interaction */
 }
 
-/* Class for zooming down effect when scrolling up */
-.zoom-down {
-    transform: translateY(100%) scale(0.95);
-    opacity: 0;
-}
+/* Removed .zoom-down as it wasn't being used consistently and simplifies logic */
 
 /* Hero Section */
 .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     text-align: center;
-    position: relative;
+    /* Padding is handled by general section style */
 }
 
 .hero h1 {
@@ -356,6 +371,7 @@ section {
     left: 0;
     width: 100%;
     height: 100%;
+    overflow: hidden; /* Prevent glitch text spilling */
 }
 
 .glitch::before {
@@ -397,15 +413,17 @@ section {
     margin-bottom: 2rem;
     width: 300px;
     height: 100px;
-    touch-action: none;
+    touch-action: none; /* Prevent scrolling while interacting */
+    user-select: none; /* Prevent text selection */
 }
 
 .sound-bar {
     width: 10px;
-    height: 10px;
+    height: 10px; /* Initial height */
     background: #00f7ff;
     box-shadow: 0 0 10px #00f7ff;
-    transition: height 0.2s ease;
+    transition: height 0.15s ease-out; /* Slightly faster, ease-out */
+    border-radius: 2px 2px 0 0; /* Slight rounding */
 }
 
 /* Neon Button */
@@ -419,16 +437,21 @@ section {
     text-shadow: 0 0 10px #ff00ff;
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative; /* For potential pseudo-elements */
+    overflow: hidden; /* For potential effects */
 }
 
-.neon-button:hover {
+.neon-button:hover,
+.neon-button:focus { /* Added focus style */
     background: rgba(255, 0, 255, 0.2);
-    box-shadow: 0 0 20px #ff00ff;
+    box-shadow: 0 0 15px #ff00ff, 0 0 25px #ff00ff; /* Enhanced glow */
+    color: #fff; /* Brighter text on hover */
+    outline: none;
 }
 
 /* Mixes Section */
 .mixes {
-    padding: 2rem;
+    /* Padding is handled by general section style */
     text-align: center;
 }
 
@@ -436,26 +459,30 @@ section {
     font-family: 'Press Start 2P', cursive;
     font-size: 2.5rem;
     color: #00f7ff;
-    text-shadow: 0 0 10px #00f7ff;
-    margin-bottom: 2rem;
+    text-shadow: 0 0 10px #00f7ff, 0 0 15px rgba(0, 247, 255, 0.5); /* Slightly enhanced shadow */
+    margin-bottom: 3rem; /* Increased margin */
 }
 
 .mix-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 2rem;
+    align-items: flex-start; /* Align items to the top */
+    gap: 3rem; /* Increased gap */
     padding: 0 1rem;
+    max-width: 1200px; /* Allow wider container */
+    width: 100%;
 }
 
 .mix-grid {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: grid !important; /* Override potential conflicts */
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* Slightly larger min size */
     gap: 2rem;
-    max-width: 900px;
+    flex: 2; /* Allow grid to take more space */
+    min-width: 300px; /* Ensure grid has some minimum width */
     opacity: 0;
     transform: translateY(50px);
-    transition: opacity 1.2s cubic-bezier(0.23, 1, 0.32, 1), transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: opacity 1s cubic-bezier(0.23, 1, 0.32, 1) 0.2s, transform 1s cubic-bezier(0.23, 1, 0.32, 1) 0.2s; /* Added delay */
 }
 
 .mix-grid.active {
@@ -464,11 +491,13 @@ section {
 }
 
 .mix-description {
-    max-width: 500px;
+    flex: 1; /* Allow description to take remaining space */
+    max-width: 450px; /* Limit description width */
+    min-width: 250px;
     text-align: left;
     opacity: 0;
     transform: translateY(50px);
-    transition: opacity 1.2s cubic-bezier(0.23, 1, 0.32, 1), transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: opacity 1s cubic-bezier(0.23, 1, 0.32, 1) 0.4s, transform 1s cubic-bezier(0.23, 1, 0.32, 1) 0.4s; /* Added delay */
 }
 
 .mix-description.active {
@@ -491,24 +520,26 @@ section {
 
 /* Mix Card */
 .mix-card {
-    perspective: 1000px;
+    perspective: 1200px; /* Increased perspective */
     width: 100%;
-    min-width: 250px;
-    min-height: 300px;
+    min-height: 320px; /* Slightly increased height */
     position: relative;
-    animation: float 6s infinite ease-in-out;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added transition */
+    border-radius: 10px; /* Add radius here too */
+    /* Removed float animation - can be distracting */
 }
 
 .mix-card:hover {
-    box-shadow: 0 0 30px rgba(0, 247, 255, 0.8);
+    transform: scale(1.03); /* Slight scale on hover */
+    box-shadow: 0 0 25px rgba(0, 247, 255, 0.7), 0 0 40px rgba(0, 247, 255, 0.4); /* Enhanced hover shadow */
 }
 
 .mix-card-inner {
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 300px;
-    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    min-height: 320px;
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Slightly faster flip */
     transform-style: preserve-3d;
 }
 
@@ -521,31 +552,32 @@ section {
     position: absolute;
     width: 100%;
     height: 100%;
-    min-height: 300px;
+    min-height: 320px;
     backface-visibility: hidden;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* Align content to top */
     align-items: center;
-    background: rgba(0, 0, 20, 0.8);
+    background: rgba(10, 10, 30, 0.85); /* Slightly darker, less transparent */
     border: 2px solid #00f7ff;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 247, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 247, 255, 0.4);
+    padding: 1.5rem; /* Increased padding */
+    overflow: hidden; /* Hide overflow */
 }
 
 .mix-card-front {
-    padding: 1rem;
-    background: rgba(0, 0, 20, 0.8) url('https://via.placeholder.com/250x150/333/fff?text=Image+Not+Loaded') no-repeat center center;
-    background-size: cover;
+    /* Background image removed, using img tag */
 }
 
 .mix-card-front img {
     width: 100%;
-    max-height: 150px;
+    height: 160px; /* Fixed height for consistency */
     object-fit: cover;
     border-radius: 5px;
     margin-bottom: 1rem;
     display: block;
+    border: 1px solid rgba(0, 247, 255, 0.5); /* Subtle border */
 }
 
 .mix-card-front h3 {
@@ -554,34 +586,29 @@ section {
     color: #00f7ff;
     text-shadow: 0 0 10px #00f7ff;
     margin-bottom: 0.5rem;
+    text-align: center;
 }
 
 .mix-card-front p {
     font-size: 0.9rem;
-    color: #fff;
+    color: #ccc; /* Lighter color for subtitle */
+    text-align: center;
 }
 
 .mix-card-back {
     transform: rotateY(180deg);
-    padding: 1rem;
+    justify-content: center; /* Center audio player vertically */
 }
 
 .mix-audio {
     width: 100%;
+    filter: contrast(1.1) brightness(1.1); /* Style the default controls slightly */
 }
 
 /* Artist Section */
 .artist {
-    padding: 2rem;
+    /* Padding/opacity/transform handled by general section styles */
     text-align: center;
-    opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 1.2s cubic-bezier(0.23, 1, 0.32, 1), transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.artist.active {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 .artist-content {
@@ -589,18 +616,24 @@ section {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 3rem; /* Increased gap */
     max-width: 900px;
     margin: 0 auto;
+    width: 100%;
 }
 
 .artist-content img {
-    width: 300px;
-    height: 300px;
+    width: 280px; /* Slightly smaller */
+    height: 280px;
     object-fit: cover;
-    border-radius: 10px;
-    border: 2px solid #ff00ff;
-    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+    border-radius: 50%; /* Make image circular */
+    border: 3px solid #ff00ff;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5), 0 0 30px rgba(255, 0, 255, 0.3); /* Enhanced shadow */
+    transition: transform 0.4s ease;
+}
+
+.artist-content img:hover {
+    transform: scale(1.05) rotate(3deg); /* Add hover effect */
 }
 
 .artist-bio {
@@ -610,39 +643,37 @@ section {
 
 .artist-bio p {
     font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: 1rem;
+    line-height: 1.7; /* Increased line height */
+    margin-bottom: 1.5rem; /* Increased margin */
+    color: #eee; /* Lighter text */
 }
 
 .artist-audio {
     width: 100%;
+    margin-top: 1rem; /* Add space above audio */
+    filter: contrast(1.1) brightness(1.1);
 }
 
 /* Booking Section */
 .booking {
-    padding: 2rem;
+    /* Padding/opacity/transform handled by general section styles */
     text-align: center;
-    opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 1.2s cubic-bezier(0.23, 1, 0.32, 1), transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.booking.active {
-    opacity: 1;
-    transform: translateY(0);
+    position: relative; /* Needed for neon grid positioning */
 }
 
 .booking-form {
     max-width: 600px;
     margin: 0 auto;
-    position: relative;
+    position: relative; /* For flipper */
+    z-index: 1; /* Above neon grid */
 }
 
 .form-flipper {
     position: relative;
-    perspective: 1000px;
+    perspective: 1500px; /* Increased perspective */
     width: 100%;
-    min-height: 400px;
+    min-height: 500px; /* Increased height to accommodate fields */
+    margin-bottom: 2rem; /* Space below form */
 }
 
 .form-front,
@@ -653,11 +684,20 @@ section {
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
-    transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Adjusted timing */
+    background: rgba(10, 10, 30, 0.85); /* Match card background */
+    border: 2px solid #00f7ff;
+    border-radius: 10px;
+    padding: 2rem; /* Add padding */
+    box-shadow: 0 0 15px rgba(0, 247, 255, 0.4);
 }
 
 .form-front {
     transform: rotateY(0deg);
+    display: grid; /* Use grid for layout */
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 1.5rem; /* Gap between fields */
+    align-content: start; /* Align items to start vertically */
 }
 
 .form-back {
@@ -676,12 +716,23 @@ section {
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0; /* Remove bottom margin, use grid gap */
+    /* Span full width if needed */
+    /* grid-column: 1 / -1; */
 }
 
+/* Make specific fields span full width if desired */
+.form-group[data-field="name"],
+.form-group[data-field="email"] {
+     grid-column: 1 / -1; /* Example: Make name/email full width */
+}
+
+
 .form-group.finish-group {
-    display: none;
-    margin-top: 2rem;
+    grid-column: 1 / -1; /* Ensure finish button spans columns */
+    display: none; /* Initially hidden */
+    margin-top: 1rem; /* Space above finish button */
+    justify-self: center; /* Center the button wrapper */
 }
 
 .form-group.finish-group.active {
@@ -690,21 +741,35 @@ section {
 
 .input-wrapper {
     position: relative;
-    perspective: 1000px;
+    perspective: 1000px; /* Apply perspective here for flip effect */
+    width: 100%;
+    height: 50px; /* Set a fixed height */
 }
 
 .input-wrapper input,
-.input-wrapper select {
+.input-wrapper select,
+.input-back {
+    position: absolute; /* Position elements for flip */
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
     padding: 0.8rem;
-    background: rgba(0, 0, 20, 0.8);
+    background: rgba(0, 0, 20, 0.7); /* Darker input background */
     border: 2px solid #00f7ff;
     border-radius: 5px;
     color: #fff;
     font-family: 'VCR OSD Mono', monospace;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
-    backface-visibility: hidden;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Flip transition */
+    backface-visibility: hidden; /* Hide back during flip */
+    transform-style: preserve-3d; /* Ensure children inherit 3D space */
+}
+
+.input-wrapper input,
+.input-wrapper select {
+    z-index: 2; /* Input/select above back */
+    transform: rotateY(0deg); /* Start facing front */
 }
 
 .input-wrapper input:focus,
@@ -716,7 +781,7 @@ section {
 
 .input-wrapper select {
     appearance: none;
-    background: rgba(0, 0, 20, 0.8) url('data:image/svg+xml;utf8,<svg fill="%2300f7ff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 0.75rem center;
+    background: rgba(0, 0, 20, 0.7) url('data:image/svg+xml;utf8,<svg fill="%2300f7ff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 0.75rem center;
     background-size: 1rem;
 }
 
@@ -729,48 +794,44 @@ section {
     text-shadow: 0 0 5px #00f7ff;
     font-size: 1rem;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Add transform transition */
+    z-index: 3; /* Above input */
+    opacity: 0.7; /* Slightly faded */
 }
 
-.input-label.hidden {
+/* Move label up when input has value or focus */
+.input-wrapper input:focus + .input-label,
+.input-wrapper input:not(:placeholder-shown) + .input-label,
+.input-wrapper select:focus + .input-label,
+.input-wrapper select:valid + .input-label { /* Use :valid for select */
+    transform: translateY(-160%) scale(0.8); /* Move up and shrink */
+    opacity: 1;
+    color: #ff00ff; /* Change color when active */
+}
+
+/* Hide label completely when flipped */
+.input-wrapper.flipped .input-label {
     opacity: 0;
 }
 
 .input-back {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 20, 0.8);
-    border: 2px solid #00f7ff;
-    border-radius: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
-    backface-visibility: hidden;
-    transform: rotateY(180deg);
+    transform: rotateY(180deg); /* Start flipped back */
+    z-index: 1; /* Below input */
+    cursor: pointer; /* Indicate it's clickable */
+}
+
+/* Flip Logic via JS adding 'flipped' class */
+.input-wrapper.flipped input,
+.input-wrapper.flipped select {
+    transform: rotateY(-180deg); /* Flip input away */
+    pointer-events: none; /* Disable input when flipped */
 }
 
 .input-wrapper.flipped .input-back {
-    transform: rotateY(0deg);
-}
-
-.input-wrapper:not(.flipped) .input-back {
-    transform: rotateY(180deg);
-}
-
-.input-wrapper {
-    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    transform-style: preserve-3d;
-}
-
-.input-wrapper.flipped {
-    transform: rotateY(180deg);
-}
-
-.input-wrapper.flipped .input-label {
-    display: none;
+    transform: rotateY(0deg); /* Flip back to front */
 }
 
 .checkmark {
@@ -779,9 +840,18 @@ section {
     font-size: 2rem;
     color: #00ff00;
     text-shadow: 0 0 10px #00ff00;
-    cursor: pointer;
+    /* Removed cursor: pointer; - click handled by .input-back */
     transition: all 0.3s ease;
+    transform: scale(0); /* Start hidden */
+    opacity: 0;
 }
+
+.input-wrapper.flipped .checkmark {
+    opacity: 1;
+    transform: scale(1); /* Scale in */
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.3s, opacity 0.3s ease 0.3s; /* Delayed appearance */
+}
+
 
 .checkmark.glowing {
     color: #00ff00;
@@ -789,50 +859,22 @@ section {
     animation: pulseCheck 1.5s infinite ease-in-out, floatTilt 3s infinite ease-in-out;
 }
 
-.checkmark.glowing::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 40px;
-    height: 40px;
-    background: radial-gradient(circle, rgba(0, 255, 0, 0.3) 0%, rgba(0, 255, 0, 0) 70%);
-    transform: translate(-50%, -50%);
-    z-index: -1;
-    animation: fogPulse 2s infinite ease-in-out;
-}
-
-@keyframes pulseCheck {
-    0% { transform: scale(1); text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
-    50% { transform: scale(1.2); text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; }
-    100% { transform: scale(1); text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
-}
-
-@keyframes floatTilt {
-    0% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
-    25% { transform: translateY(-5px) rotateX(10deg) rotateY(10deg); }
-    50% { transform: translateY(0) rotateX(0deg) rotateY(20deg); }
-    75% { transform: translateY(5px) rotateX(-10deg) rotateY(10deg); }
-    100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
-}
-
-@keyframes fogPulse {
-    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
-    100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-}
+/* Checkmark animations remain the same */
+@keyframes pulseCheck { ... }
+@keyframes floatTilt { ... }
+@keyframes fogPulse { ... }
 
 .finish-button-wrapper {
     margin-top: 1rem;
     perspective: 1000px;
+    display: flex; /* Use flex to center */
+    justify-content: center;
 }
 
 .finish-button-inner {
     position: relative;
     width: 200px;
     height: 50px;
-    margin: 0 auto;
-    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     transform-style: preserve-3d;
 }
 
@@ -854,11 +896,14 @@ section {
     border-color: #00f7ff;
     color: #00f7ff;
     text-shadow: 0 0 10px #00f7ff;
+    transition: all 0.3s ease;
 }
 
-.finish-button-front:hover {
+.finish-button-front:hover,
+.finish-button-front:focus {
     background: rgba(0, 247, 255, 0.2);
     box-shadow: 0 0 20px #00f7ff;
+    outline: none;
 }
 
 .book-now-wrapper {
@@ -881,9 +926,12 @@ section {
     transition: all 0.3s ease;
 }
 
-.book-now-button:hover {
+.book-now-button:hover,
+.book-now-button:focus {
     background: rgba(255, 0, 255, 0.2);
     box-shadow: 0 0 20px #ff00ff;
+    color: #fff;
+    outline: none;
 }
 
 /* Neon Grid Background */
@@ -893,13 +941,13 @@ section {
     left: 0;
     width: 100%;
     height: 100%;
-    background: 
+    background:
         repeating-linear-gradient(
             90deg,
             transparent 0px,
             transparent 20px,
-            rgba(0, 247, 255, 0.3) 20px,
-            rgba(0, 247, 255, 0.3) 21px,
+            rgba(0, 247, 255, 0.2) 20px, /* Slightly less intense */
+            rgba(0, 247, 255, 0.2) 21px,
             transparent 21px,
             transparent 40px
         ),
@@ -907,19 +955,21 @@ section {
             0deg,
             transparent 0px,
             transparent 20px,
-            rgba(0, 247, 255, 0.3) 20px,
-            rgba(0, 247, 255, 0.3) 21px,
+            rgba(0, 247, 255, 0.2) 20px,
+            rgba(0, 247, 255, 0.2) 21px,
             transparent 21px,
             transparent 40px
         );
     background-size: 40px 40px;
     opacity: 0;
-    transition: opacity 0.5s ease;
-    z-index: -1;
+    transition: opacity 0.8s ease; /* Slower fade in */
+    z-index: 0; /* Behind form */
+    pointer-events: none; /* Don't intercept clicks */
+    border-radius: 10px; /* Match form border radius */
 }
 
 .neon-grid.active {
-    opacity: 1;
+    opacity: 0.5; /* Don't make it fully opaque */
 }
 
 /* Back to Top Button */
@@ -936,17 +986,23 @@ section {
     text-decoration: none;
     text-shadow: 0 0 10px #00f7ff;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    visibility: hidden; /* Use visibility for hiding */
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
     z-index: 1000;
+    border-radius: 5px;
 }
 
 .back-to-top.visible {
     opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
 }
 
-.back-to-top:hover {
+.back-to-top:hover,
+.back-to-top:focus {
     background: rgba(0, 247, 255, 0.2);
-    box-shadow: 0 0 20px #00f7ff;
+    box-shadow: 0 0 15px #00f7ff;
+    outline: none;
 }
 
 /* 3D Retro Cube and Countdown Timer */
@@ -956,11 +1012,14 @@ section {
     left: 20px;
     z-index: 1000;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    visibility: hidden; /* Use visibility */
+    transition: opacity 0.5s ease, visibility 0s linear 0.5s;
 }
 
 .retro-cube-container.visible {
     opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
 }
 
 .retro-cube {
@@ -969,20 +1028,22 @@ section {
     position: relative;
     transform-style: preserve-3d;
     transition: transform 1s ease;
+    cursor: pointer; /* Indicate cube is interactive */
 }
 
 .cube-face {
     position: absolute;
     width: 150px;
     height: 150px;
-    background: rgba(0, 0, 20, 0.8);
+    background: rgba(0, 0, 20, 0.85); /* Slightly darker */
     border: 2px solid #ff00ff;
-    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.5); /* Adjusted shadow */
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     padding: 1rem;
+    user-select: none; /* Prevent text selection */
 }
 
 .cube-text {
@@ -1000,11 +1061,13 @@ section {
     color: #ff00ff;
     cursor: pointer;
     text-shadow: 0 0 5px #ff00ff;
+    padding: 2px; /* Easier to click */
+    transition: color 0.2s, text-shadow 0.2s;
 }
 
 .cube-close:hover {
     color: #00f7ff;
-    text-shadow: 0 0 5px #00f7ff;
+    text-shadow: 0 0 8px #00f7ff;
 }
 
 .face-front { transform: translateZ(75px); }
@@ -1019,7 +1082,7 @@ section {
 }
 
 @keyframes shake {
-    0%, 100% { transform: rotateX(0deg) rotateY(0deg); }
+    0%, 100% { transform: rotateX(0deg) rotateY(0deg); } /* Use existing rotation */
     25% { transform: rotateX(10deg) rotateY(-10deg); }
     75% { transform: rotateX(-10deg) rotateY(10deg); }
 }
@@ -1029,97 +1092,144 @@ section {
 }
 
 @keyframes roll {
-    0% { transform: rotateX(0deg) rotateY(0deg); }
-    100% { transform: rotateX(720deg) rotateY(720deg); }
+    0% { transform: rotateX(0deg) rotateY(0deg); opacity: 1; } /* Start from current rotation potentially */
+    100% { transform: rotateX(720deg) rotateY(720deg) scale(0.1); opacity: 0; } /* Spin and shrink */
 }
 
 .countdown-timer {
-    display: none;
+    display: none; /* Hidden by default */
     font-family: 'Press Start 2P', cursive;
     font-size: 1.2rem;
     color: #00f7ff;
     text-shadow: 0 0 10px #00f7ff;
-    margin-top: 1rem;
+    margin-top: 1rem; /* Space when visible */
+    background: rgba(0, 0, 20, 0.8); /* Add background */
+    padding: 0.5rem 1rem;
+    border: 1px solid #00f7ff;
+    border-radius: 5px;
+    transform: scale(0.8); /* Start small */
+    opacity: 0;
+    transition: transform 0.5s ease 0.5s, opacity 0.5s ease 0.5s; /* Delayed appearance */
 }
 
 .retro-cube-container.timer-mode .retro-cube {
-    display: none;
+    display: none; /* Hide cube when timer shows */
 }
 
 .retro-cube-container.timer-mode .countdown-timer {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 3px; /* Adjusted gap */
+    transform: scale(1); /* Scale to full size */
+    opacity: 1;
 }
 
 .timer-digit {
     width: 20px;
     height: 30px;
-    background: rgba(0, 0, 20, 0.8);
+    background: rgba(0, 0, 10, 0.9); /* Darker digit background */
     border: 1px solid #00f7ff;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     overflow: hidden;
+    font-size: 1rem; /* Ensure text fits */
+    line-height: 30px; /* Center text vertically */
+    text-align: center;
+    border-radius: 2px;
 }
 
-.timer-digit::before {
-    content: attr(data-value);
-    position: absolute;
-    top: 100%;
-    transition: transform 0.5s ease;
-}
-
-.timer-digit.flip::before {
-    transform: translateY(-100%);
-}
-
+/* Flip animation - simplified using pseudo-elements */
+.timer-digit::before,
 .timer-digit::after {
     content: attr(data-value);
     position: absolute;
-    top: 0;
-    transition: transform 0.5s ease;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 10, 0.9);
+    perspective: 300px;
+    transition: transform 0.5s ease-in-out;
 }
 
-.timer-digit.flip::after {
-    transform: translateY(-100%);
+.timer-digit::before { /* Top half */
+    top: 0;
+    height: 50%;
+    line-height: 30px;
+    transform-origin: bottom;
+    transform: rotateX(0);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* Show top */
 }
+
+.timer-digit::after { /* Bottom half */
+    bottom: 0;
+    height: 50%;
+    line-height: 0; /* Align text to top for bottom half */
+    transform-origin: top;
+    transform: rotateX(180deg); /* Start flipped */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* Show bottom */
+    color: #00d9e6; /* Slightly different shade for flip */
+}
+
+.timer-digit.flip::before {
+    transform: rotateX(-180deg); /* Flip top half up */
+}
+.timer-digit.flip::after {
+    transform: rotateX(0); /* Flip bottom half down */
+}
+
 
 .timer-colon {
     margin: 0 2px;
     color: #00f7ff;
     text-shadow: 0 0 5px #00f7ff;
+    animation: blinkColon 1.5s infinite steps(1, end);
+}
+
+@keyframes blinkColon {
+    50% { opacity: 0; }
 }
 
 .countdown-timer.expired {
     color: #ff00ff;
     text-shadow: 0 0 10px #ff00ff;
-    animation: blink 1s infinite;
+    animation: blinkExpired 1s infinite;
+    border-color: #ff00ff;
+}
+.countdown-timer.expired .timer-digit,
+.countdown-timer.expired .timer-colon {
+    color: #ff00ff;
+    border-color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
 }
 
-@keyframes blink {
+
+@keyframes blinkExpired {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
 }
 
-/* Stickman Styles */
+/* Stickman Styles (Updated) */
 .stickman-container {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
+    pointer-events: none; /* Container doesn't block */
     z-index: 500;
+    overflow: hidden; /* Prevent stickman going completely off */
 }
 
 .stickman {
     position: absolute;
     width: 50px;
     height: 80px;
-    transform: translate(50px, calc(100vh - 100px));
-    transition: transform 0.1s linear;
+    /* Initial position set by JS */
+    transition: transform 0.2s linear; /* Base transition for movement */
+    will-change: transform; /* Performance hint */
+    pointer-events: auto; /* Allow clicking stickman */
+    cursor: help; /* Change cursor on hover */
 }
 
 .stickman-head {
@@ -1129,8 +1239,9 @@ section {
     border-radius: 50%;
     position: absolute;
     top: 0;
-    left: 15px;
+    left: 15px; /* Center head */
     box-shadow: 0 0 5px #fff;
+    transition: transform 0.3s ease; /* Smooth head movements */
 }
 
 .stickman-body {
@@ -1138,9 +1249,11 @@ section {
     height: 30px;
     background: #fff;
     position: absolute;
-    top: 20px;
-    left: 23px;
+    top: 20px; /* Connect below head */
+    left: 23px; /* Center body */
     box-shadow: 0 0 5px #fff;
+    transform-origin: center top; /* *** KEY FIX *** */
+    transition: transform 0.3s ease; /* Smooth body movements */
 }
 
 .stickman-arm-left,
@@ -1148,58 +1261,70 @@ section {
 .stickman-leg-left,
 .stickman-leg-right {
     width: 4px;
-    height: 20px;
+    height: 25px; /* Slightly longer limbs */
     background: #fff;
     position: absolute;
     box-shadow: 0 0 5px #fff;
+    border-radius: 2px; /* Rounded ends */
+    transform-origin: center top; /* Attach limbs at top */
+    transition: transform 0.3s ease; /* Smooth limb movements */
 }
 
 .stickman-arm-left {
-    top: 25px;
-    left: 10px;
-    transform-origin: top;
+    top: 25px; /* Attach to body */
+    left: 23px; /* Start at center */
+    transform: rotate(30deg) translateX(-4px); /* Default arm position */
 }
 
 .stickman-arm-right {
     top: 25px;
-    right: 10px;
-    transform-origin: top;
+    left: 23px;
+    transform: rotate(-30deg) translateX(4px); /* Default arm position */
 }
 
 .stickman-leg-left {
-    top: 50px;
-    left: 15px;
-    transform-origin: top;
+    top: 50px; /* Attach at bottom of body */
+    left: 23px;
+    transform: rotate(15deg) translateX(-2px); /* Default leg position */
 }
 
 .stickman-leg-right {
     top: 50px;
-    right: 15px;
-    transform-origin: top;
+    left: 23px;
+    transform: rotate(-15deg) translateX(2px); /* Default leg position */
 }
 
 .stickman-speech-bubble {
     position: absolute;
-    top: -40px;
-    left: 50px;
-    background: rgba(0, 0, 20, 0.8);
+    top: -45px; /* Position above head */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Precise centering */
+    min-width: 80px; /* Minimum width */
+    max-width: 150px; /* Maximum width */
+    background: rgba(0, 0, 20, 0.9); /* More opaque */
     border: 2px solid #00f7ff;
     border-radius: 10px;
-    padding: 5px 10px;
+    padding: 8px 12px; /* More padding */
     opacity: 0;
-    transition: opacity 0.3s ease;
+    visibility: hidden; /* Use visibility */
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s, transform 0.3s ease;
+    z-index: 10; /* Above stickman */
 }
 
 .stickman-speech-bubble.visible {
     opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+    transform: translateX(-50%) translateY(-5px); /* Slight pop-up */
 }
 
-.stickman-speech-bubble::after {
+.stickman-speech-bubble::after { /* Speech bubble tail */
     content: '';
     position: absolute;
     bottom: -10px;
-    left: 10px;
-    border-width: 10px 10px 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px 8px 0; /* Adjusted size */
     border-style: solid;
     border-color: #00f7ff transparent transparent;
 }
@@ -1209,374 +1334,285 @@ section {
     font-size: 0.6rem;
     color: #00f7ff;
     text-shadow: 0 0 5px #00f7ff;
+    display: block; /* Ensure text wraps */
+    text-align: center;
+    line-height: 1.3;
 }
 
-/* Stickman Animations */
-.stickman.walking .stickman-arm-left {
-    animation: swing-arm 0.5s infinite alternate;
+/* Stickman Animations (Updated & New) */
+.stickman.walking .stickman-arm-left { animation: swing-arm-left 0.5s infinite alternate ease-in-out; }
+.stickman.walking .stickman-arm-right { animation: swing-arm-right 0.5s infinite alternate ease-in-out; }
+.stickman.walking .stickman-leg-left { animation: swing-leg-left 0.5s infinite alternate ease-in-out; }
+.stickman.walking .stickman-leg-right { animation: swing-leg-right 0.5s infinite alternate ease-in-out; }
+
+@keyframes swing-arm-left {
+    from { transform: rotate(40deg) translateX(-4px); }
+    to { transform: rotate(-30deg) translateX(-4px); }
+}
+@keyframes swing-arm-right {
+    from { transform: rotate(-40deg) translateX(4px); }
+    to { transform: rotate(30deg) translateX(4px); }
+}
+@keyframes swing-leg-left {
+    from { transform: rotate(25deg) translateX(-2px); }
+    to { transform: rotate(-15deg) translateX(-2px); }
+}
+@keyframes swing-leg-right {
+    from { transform: rotate(-25deg) translateX(2px); }
+    to { transform: rotate(15deg) translateX(2px); }
 }
 
-.stickman.walking .stickman-arm-right {
-    animation: swing-arm 0.5s infinite alternate reverse;
-}
-
-.stickman.walking .stickman-leg-left {
-    animation: swing-leg 0.5s infinite alternate;
-}
-
-.stickman.walking .stickman-leg-right {
-    animation: swing-leg 0.5s infinite alternate reverse;
-}
-
-@keyframes swing-arm {
-    0% { transform: rotate(-30deg); }
-    100% { transform: rotate(30deg); }
-}
-
-@keyframes swing-leg {
-    0% { transform: rotate(-20deg); }
-    100% { transform: rotate(20deg); }
-}
-
-.stickman.jumping {
-    animation: jump 0.5s ease-in-out;
-}
-
+.stickman.jumping { animation: jump 0.6s ease-out; }
 @keyframes jump {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-50px); }
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-40px); } /* Jump height */
+    100% { transform: translateY(0); }
 }
+.stickman.jumping .stickman-leg-left { transform: rotate(-30deg) translateX(-2px); } /* Legs tuck */
+.stickman.jumping .stickman-leg-right { transform: rotate(30deg) translateX(2px); }
 
-.stickman.laying .stickman-body {
-    transform: rotate(90deg);
-    top: 40px;
-    left: 10px;
+/* Refined Laying */
+.stickman.laying { animation: lay-down 0.5s ease forwards; }
+@keyframes lay-down {
+    to { transform: translateY(30px) rotate(90deg); } /* Move down slightly and rotate */
 }
+.stickman.laying .stickman-head { transform: rotate(-90deg); top: 15px; left: -10px; } /* Keep head upright relative to ground */
+.stickman.laying .stickman-arm-left { transform: rotate(110deg) translateX(-4px); } /* Arm resting */
+.stickman.laying .stickman-arm-right { transform: rotate(60deg) translateX(4px); } /* Other arm resting */
+.stickman.laying .stickman-leg-left { transform: rotate(100deg) translateX(-2px); } /* Legs extended */
+.stickman.laying .stickman-leg-right { transform: rotate(80deg) translateX(2px); }
 
-.stickman.laying .stickman-arm-left {
-    transform: rotate(45deg);
-    top: 35px;
-    left: 0;
-}
-
-.stickman.laying .stickman-arm-right {
-    transform: rotate(-45deg);
-    top: 35px;
-    right: 0;
-}
-
-.stickman.laying .stickman-leg-left {
-    transform: rotate(30deg);
-    top: 55px;
-    left: 5px;
-}
-
-.stickman.laying .stickman-leg-right {
-    transform: rotate(-30deg);
-    top: 55px;
-    right: 5px;
-}
-
-.stickman.fighting .stickman-arm-left {
-    animation: punch-left 0.3s infinite alternate;
-}
-
-.stickman.fighting .stickman-arm-right {
-    animation: punch-right 0.3s infinite alternate;
-}
-
+.stickman.fighting .stickman-arm-left { animation: punch-left 0.3s infinite alternate; }
+.stickman.fighting .stickman-arm-right { animation: punch-right 0.3s infinite alternate; }
 @keyframes punch-left {
-    0% { transform: rotate(-90deg) translateX(-10px); }
-    100% { transform: rotate(-30deg) translateX(0); }
+    from { transform: rotate(-90deg) translateX(-10px); }
+    to { transform: rotate(-30deg) translateX(-4px); }
 }
-
 @keyframes punch-right {
-    0% { transform: rotate(90deg) translateX(10px); }
-    100% { transform: rotate(30deg) translateX(0); }
+    from { transform: rotate(90deg) translateX(10px); }
+    to { transform: rotate(30deg) translateX(4px); }
 }
 
-.stickman.waving .stickman-arm-right {
-    animation: wave 0.5s infinite;
-}
-
+.stickman.waving .stickman-arm-right { animation: wave 0.6s ease-in-out 3; /* Wave 3 times */ }
 @keyframes wave {
-    0% { transform: rotate(0deg); }
-    50% { transform: rotate(45deg); }
-    100% { transform: rotate(0deg); }
+    0%, 100% { transform: rotate(-30deg) translateX(4px); }
+    50% { transform: rotate(-120deg) translateX(8px); } /* Higher wave */
 }
 
-.stickman.dancing {
-    animation: dance 1s infinite;
-}
+.stickman.dancing { animation: dance-bounce 0.5s infinite ease-in-out; }
+.stickman.dancing .stickman-arm-left { animation: dance-arm-l 1s infinite ease-in-out; }
+.stickman.dancing .stickman-arm-right { animation: dance-arm-r 1s infinite ease-in-out; }
+.stickman.dancing .stickman-leg-left { animation: dance-leg-l 0.5s infinite ease-in-out; }
+.stickman.dancing .stickman-leg-right { animation: dance-leg-r 0.5s infinite ease-in-out; }
+@keyframes dance-bounce { 50% { transform: translateY(-8px); } }
+@keyframes dance-arm-l { 50% { transform: rotate(90deg) translateX(-4px); } }
+@keyframes dance-arm-r { 50% { transform: rotate(-90deg) translateX(4px); } }
+@keyframes dance-leg-l { 50% { transform: rotate(40deg) translateX(-2px); } }
+@keyframes dance-leg-r { 50% { transform: rotate(-40deg) translateX(2px); } }
 
-.stickman.dancing .stickman-arm-left,
-.stickman.dancing .stickman-arm-right {
-    animation: dance-arms 1s infinite;
-}
-
-.stickman.dancing .stickman-leg-left,
-.stickman.dancing .stickman-leg-right {
-    animation: dance-legs 1s infinite;
-}
-
-@keyframes dance {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-@keyframes dance-arms {
-    0% { transform: rotate(-30deg); }
-    50% { transform: rotate(30deg); }
-    100% { transform: rotate(-30deg); }
-}
-
-@keyframes dance-legs {
-    0% { transform: rotate(-20deg); }
-    50% { transform: rotate(20deg); }
-    100% { transform: rotate(-20deg); }
-}
-
-.stickman.thinking .stickman-head::after {
-    content: '...';
-    position: absolute;
-    top: -20px;
-    right: -10px;
-    font-size: 1rem;
-    color: #00f7ff;
-    animation: think-dots 1s infinite;
-}
-
-@keyframes think-dots {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    100% { opacity: 0; }
-}
-
-.stickman.looking .stickman-head {
-    animation: look 1s infinite;
-}
-
-@keyframes look {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(-10deg); }
+.stickman.thinking .stickman-head { animation: head-tilt 2s infinite ease-in-out; }
+@keyframes head-tilt {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-15deg); }
     75% { transform: rotate(10deg); }
-    100% { transform: rotate(0deg); }
+}
+.stickman.thinking .stickman-arm-right { transform: rotate(-90deg) translateX(15px) translateY(5px); } /* Hand on chin pose */
+
+.stickman.looking .stickman-head { animation: look-around 3s infinite ease-in-out; }
+@keyframes look-around {
+    0%, 100% { transform: translateX(0) rotateY(0); }
+    25% { transform: translateX(-5px) rotateY(-30deg); } /* Look left */
+    50% { transform: translateX(0) rotateY(0); } /* Look center */
+    75% { transform: translateX(5px) rotateY(30deg); } /* Look right */
 }
 
-.stickman.sleeping .stickman-body {
-    transform: rotate(90deg);
-    top: 40px;
-    left: 10px;
+.stickman.sleeping { animation: sleep-pose 0.5s ease forwards; }
+@keyframes sleep-pose {
+    to { transform: translateY(30px) rotate(90deg); }
 }
-
-.stickman.sleeping .stickman-head::after {
-    content: 'Z';
+.stickman.sleeping .stickman-head { transform: rotate(-90deg); top: 15px; left: -10px; }
+/* Zzz animation can be added via JS/pseudo-elements if desired */
+.stickman.sleeping::after {
+    content: 'Zzz';
     position: absolute;
-    top: -20px;
-    right: -10px;
-    font-size: 1rem;
-    color: #00f7ff;
-    animation: sleep-z 1s infinite;
+    top: -10px;
+    left: -10px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    color: #fff;
+    opacity: 0;
+    animation: sleep-zzz 2s infinite ease-out;
+}
+@keyframes sleep-zzz {
+    0%, 100% { opacity: 0; transform: translate(0, 0); }
+    50% { opacity: 1; transform: translate(10px, -10px); }
 }
 
-@keyframes sleep-z {
-    0% { transform: translate(0, 0); opacity: 0; }
-    50% { transform: translate(5px, -5px); opacity: 1; }
-    100% { transform: translate(10px, -10px); opacity: 0; }
+
+/* New Activity Styles */
+.stickman.tripping { animation: trip 0.7s ease-out forwards; }
+@keyframes trip { /* Stumble and fall */
+    0% { transform: translateY(0) rotate(0deg); }
+    30% { transform: translateY(-5px) rotate(15deg); } /* Stumble */
+    60% { transform: translateY(10px) rotate(-20deg); } /* Losing balance */
+    100% { transform: translateY(40px) rotate(80deg); } /* Fallen */
+}
+.stickman.tripping .stickman-arm-left { transform: rotate(120deg); } /* Arms flail */
+.stickman.tripping .stickman-arm-right { transform: rotate(-50deg); }
+.stickman.tripping .stickman-leg-left { transform: rotate(100deg); } /* Legs tangled */
+.stickman.tripping .stickman-leg-right { transform: rotate(60deg); }
+
+.stickman.pointing .stickman-arm-right { transform: rotate(-90deg) translateX(10px); } /* Point straight */
+.stickman.pointing .stickman-head { transform: rotateY(30deg); } /* Turn head slightly */
+
+.stickman.shrugging .stickman-arm-left { transform: rotate(60deg) translateX(-6px) translateY(-3px); } /* Raise shoulders/arms */
+.stickman.shrugging .stickman-arm-right { transform: rotate(-60deg) translateX(6px) translateY(-3px); }
+.stickman.shrugging .stickman-body { transform: translateY(2px); } /* Slight body lift */
+
+.stickman.facepalming .stickman-head { transform: rotate(15deg); } /* Tilt head */
+.stickman.facepalming .stickman-arm-right {
+    transform: rotate(-110deg) translateX(15px) translateY(-5px); /* Bring hand to face */
+    height: 20px; /* Slightly shorter arm for pose */
 }
 
 /* Error Notification */
 .error-notification {
     position: fixed;
-    top: 20px;
+    top: 80px; /* Below nav */
     right: 20px;
-    background: rgba(255, 0, 0, 0.8);
-    border: 2px solid #ff0000;
+    background: rgba(255, 0, 0, 0.85); /* More opaque */
+    border: 2px solid #ff4d4d; /* Lighter red border */
     border-radius: 5px;
     padding: 1rem;
     display: flex;
     align-items: center;
     gap: 1rem;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    visibility: hidden; /* Use visibility */
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s, transform 0.3s ease;
     z-index: 2000;
+    transform: translateX(100%); /* Slide in from right */
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
 }
 
 .error-notification.visible {
     opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+    transform: translateX(0); /* Slide in */
 }
 
 .error-message {
     font-family: 'Press Start 2P', cursive;
     font-size: 0.8rem;
     color: #fff;
-    text-shadow: 0 0 5px #ff0000;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5); /* Add shadow for readability */
 }
 
 .error-close {
     background: transparent;
     border: none;
     color: #fff;
-    font-size: 1rem;
+    font-size: 1.2rem; /* Larger close button */
     cursor: pointer;
-    text-shadow: 0 0 5px #ff0000;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+    padding: 0.2rem;
+    line-height: 1;
 }
 
 .error-close:hover {
-    color: #ff0000;
-    text-shadow: 0 0 10px #ff0000;
+    color: #ffcccc; /* Lighter red on hover */
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    body { /* Ensure body takes full height on mobile */
+       min-height: 100vh;
+    }
+
     .retro-nav ul {
         flex-direction: column;
         align-items: center;
         gap: 0.5rem;
+        padding: 0.5rem 0; /* Reduced padding */
     }
 
     .retro-nav li {
         margin: 0.5rem 0;
     }
-
-    .hero h1 {
-        font-size: 2.5rem;
+    .retro-nav a {
+        font-size: 0.9rem; /* Slightly smaller nav links */
     }
 
-    .hero h2 {
-        font-size: 1.5rem;
+    section {
+        padding: 5rem 1rem 2rem 1rem; /* Adjusted padding for mobile */
+        min-height: auto; /* Allow sections to be shorter than viewport */
+        /* Ensure content doesn't get cut off if screen is very short */
+         height: auto;
     }
+     section:last-child {
+         padding-bottom: 4rem; /* Extra padding at the bottom */
+     }
 
-    .sound-wave-container {
-        width: 200px;
-        height: 80px;
+
+    .hero h1 { font-size: 2.5rem; }
+    .hero h2 { font-size: 1.5rem; }
+
+    .sound-wave-container { width: 200px; height: 80px; }
+    .sound-bar { width: 8px; }
+
+    .section-title { font-size: 1.8rem; margin-bottom: 2rem; }
+
+    .mix-container { flex-direction: column; align-items: center; gap: 2rem;}
+    .mix-grid { grid-template-columns: 1fr; flex: auto; width: 100%; max-width: 350px; /* Limit width on mobile */}
+    .mix-description { text-align: center; flex: auto; max-width: 90%; } /* Center text */
+
+    .artist-content { flex-direction: column; text-align: center; gap: 1.5rem; }
+    .artist-bio { text-align: center; max-width: 90%; }
+    .artist-content img { width: 200px; height: 200px; }
+
+    .booking-form { padding: 0 1rem; max-width: 100%; }
+    .form-flipper { min-height: auto; } /* Auto height */
+    .form-front {
+        grid-template-columns: 1fr; /* Single column on mobile */
+        padding: 1.5rem;
     }
+    .form-group { grid-column: 1 / -1 !important; } /* Force all to full width */
+    .input-wrapper { height: 45px; } /* Slightly smaller inputs */
+    .input-label { font-size: 0.9rem; }
 
-    .sound-bar {
-        width: 8px;
-    }
 
-    .section-title {
-        font-size: 1.8rem;
-    }
-
-    .mix-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .mix-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .mix-description {
-        text-align: center;
-    }
-
-    .artist-content {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .artist-bio {
-        text-align: center;
-    }
-
-    .artist-content img {
-        width: 200px;
-        height: 200px;
-    }
-
-    .booking-form {
-        padding: 0 1rem;
-    }
-
-    .retro-cube-container {
-        bottom: 10px;
-        left: 10px;
-    }
-
-    .retro-cube {
-        width: 100px;
-        height: 100px;
-    }
-
-    .cube-face {
-        width: 100px;
-        height: 100px;
-    }
-
+    .retro-cube-container { bottom: 10px; left: 10px; transform: scale(0.9); /* Slightly smaller */}
+    .retro-cube { width: 100px; height: 100px; }
+    .cube-face { width: 100px; height: 100px; }
     .face-front { transform: translateZ(50px); }
     .face-back { transform: translateZ(-50px) rotateY(180deg); }
     .face-left { transform: translateX(-50px) rotateY(-90deg); }
     .face-right { transform: translateX(50px) rotateY(90deg); }
     .face-top { transform: translateY(-50px) rotateX(90deg); }
     .face-bottom { transform: translateY(50px) rotateX(-90deg); }
+    .cube-text { font-size: 0.5rem; }
+    .countdown-timer { font-size: 1rem; padding: 0.4rem 0.8rem; }
+    .timer-digit { width: 15px; height: 25px; font-size: 0.8rem; line-height: 25px;}
 
-    .cube-text {
-        font-size: 0.5rem;
-    }
-
-    .countdown-timer {
-        font-size: 1rem;
-    }
-
-    .timer-digit {
-        width: 15px;
-        height: 25px;
-    }
 
     .stickman {
-        width: 40px;
-        height: 60px;
+        width: 40px; height: 64px; /* Adjusted proportions */
+        transform: scale(0.9); /* Make slightly smaller overall */
     }
+    .stickman-head { width: 16px; height: 16px; left: 12px; }
+    .stickman-body { height: 24px; top: 16px; left: 18px; }
+    .stickman-arm-left, .stickman-arm-right,
+    .stickman-leg-left, .stickman-leg-right { height: 20px; /* Shorter limbs */ }
+    .stickman-arm-left { top: 20px; left: 18px; transform: rotate(30deg) translateX(-3px); }
+    .stickman-arm-right { top: 20px; left: 18px; transform: rotate(-30deg) translateX(3px); }
+    .stickman-leg-left { top: 40px; left: 18px; transform: rotate(15deg) translateX(-1px); }
+    .stickman-leg-right { top: 40px; left: 18px; transform: rotate(-15deg) translateX(1px); }
+    .stickman-speech-bubble { top: -35px; padding: 6px 10px; }
+    .stickman-speech-text { font-size: 0.5rem; }
+    /* Adjust laying position for mobile scale if needed */
+    .stickman.laying { transform: translateY(20px) rotate(90deg) scale(0.9); }
 
-    .stickman-head {
-        width: 15px;
-        height: 15px;
-        left: 12px;
-    }
 
-    .stickman-body {
-        height: 20px;
-        top: 15px;
-        left: 18px;
-    }
-
-    .stickman-arm-left,
-    .stickman-arm-right,
-    .stickman-leg-left,
-    .stickman-leg-right {
-        height: 15px;
-    }
-
-    .stickman-arm-left {
-        top: 20px;
-        left: 8px;
-    }
-
-    .stickman-arm-right {
-        top: 20px;
-        right: 8px;
-    }
-
-    .stickman-leg-left {
-        top: 35px;
-        left: 12px;
-    }
-
-    .stickman-leg-right {
-        top: 35px;
-        right: 12px;
-    }
-
-    .stickman-speech-bubble {
-        top: -30px;
-        left: 40px;
-        padding: 3px 8px;
-    }
-
-    .stickman-speech-text {
-        font-size: 0.5rem;
-    }
+    .error-notification { top: 65px; right: 10px; left: 10px; /* Span more width */ width: auto; }
 }
