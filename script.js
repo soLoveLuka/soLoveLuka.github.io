@@ -408,16 +408,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Booking form interaction with interactive neon grid
+// Booking form interaction with interactive neon grid and form flipping
 document.addEventListener('DOMContentLoaded', () => {
     const bookingForm = document.getElementById('booking-form');
-    const inputs = bookingForm.querySelectorAll('input, textarea, select');
-    const retroMessage = document.getElementById('retro-message');
-    const detailsGroup = bookingForm.querySelector('.details-group');
-    const backArrow = detailsGroup.querySelector('.back-arrow');
-    const finishButtonWrapper = detailsGroup.querySelector('.finish-button-wrapper');
-    const finishButtonInner = finishButtonWrapper.querySelector('.finish-button-inner');
-    const detailsInput = detailsGroup.querySelector('textarea');
+    const inputs = bookingForm.querySelectorAll('input, select');
+    const formFlipper = bookingForm.querySelector('.form-flipper');
+    const finishGroup = bookingForm.querySelector('.finish-group');
+    const finishButtonWrapper = bookingForm.querySelector('.finish-button-wrapper');
+    const finishButtonInner = bookingForm.querySelector('.finish-button-inner');
     const neonGrid = document.querySelector('.neon-grid');
     let filledFields = new Set();
 
@@ -430,9 +428,9 @@ document.addEventListener('DOMContentLoaded', () => {
         neonGrid.classList.add('active');
     });
 
-    // Check if all fields before details are filled
-    const checkAllFieldsBeforeDetails = () => {
-        const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
+    // Check if all required fields are filled
+    const checkAllFields = () => {
+        const formGroups = bookingForm.querySelectorAll('.form-group:not(.finish-group)');
         let allFilled = true;
 
         formGroups.forEach(group => {
@@ -452,41 +450,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return allFilled;
     };
 
-    // Show details group with animation
-    const showDetailsGroup = () => {
-        const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
-        formGroups.forEach((group, index) => {
-            setTimeout(() => {
-                group.style.transition = 'transform 1s ease-in-out, opacity 0.5s ease-in-out';
-                group.style.transform = `translateY(${(formGroups.length / 2 - index) * 60}px)`;
-                group.style.opacity = '0';
-            }, index * 200);
-        });
-
-        setTimeout(() => {
-            detailsGroup.classList.add('active');
-            finishButtonWrapper.style.display = 'block'; // Ensure button wrapper is visible
-        }, formGroups.length * 200 + 500);
-    };
-
-    // Revert form to initial state
-    const revertForm = () => {
-        detailsGroup.classList.remove('active');
-        finishButtonInner.classList.remove('flipped');
-        filledFields.delete('details');
-
-        const formGroups = bookingForm.querySelectorAll('.form-group:not(.details-group)');
-        formGroups.forEach((group, index) => {
-            setTimeout(() => {
-                group.style.transition = 'transform 1s ease-in-out, opacity 0.5s ease-in-out';
-                group.style.transform = 'translateY(0)';
-                group.style.opacity = '1';
-            }, index * 200);
-        });
-    };
-
     // Handle input interactions
-    inputs.forEach(input => {
+    inputs.forEach((input, index) => {
         const wrapper = input.closest('.input-wrapper');
         const label = wrapper.querySelector('.input-label');
         const checkmark = wrapper.querySelector('.checkmark');
@@ -500,19 +465,45 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('blur', () => {
             if (!input.value.trim()) {
                 label.classList.remove('hidden');
+            } else if (input.checkValidity()) {
+                wrapper.classList.add('flipped');
+                filledFields.add(fieldName);
+
+                // Trigger glowing checkmark animation
+                checkmark.classList.add('glowing');
+
+                // Check if all fields are filled to show the Finish button
+                if (checkAllFields()) {
+                    finishGroup.classList.add('active');
+                }
+
+                // Auto-focus the next input if available
+                const nextInput = inputs[index + 1];
+                if (nextInput) {
+                    setTimeout(() => nextInput.focus(), 500); // Delay to allow animation
+                }
             }
         });
 
-        // Validate input and flip wrapper on Enter key or touch outside
+        // Validate input and flip wrapper on Enter key
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && input.checkValidity() && input.value.trim()) {
                 wrapper.classList.add('flipped');
                 filledFields.add(fieldName);
-                input.blur();
 
-                // Check if all required fields are filled to show retro message
-                const allFieldsFilled = checkAllFieldsBeforeDetails();
-                retroMessage.classList.toggle('visible', allFieldsFilled);
+                // Trigger glowing checkmark animation
+                checkmark.classList.add('glowing');
+
+                // Check if all fields are filled to show the Finish button
+                if (checkAllFields()) {
+                    finishGroup.classList.add('active');
+                }
+
+                // Auto-focus the next input if available
+                const nextInput = inputs[index + 1];
+                if (nextInput) {
+                    setTimeout(() => nextInput.focus(), 500); // Delay to allow animation
+                }
             }
         });
 
@@ -521,89 +512,56 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!wrapper.contains(e.target) && input === document.activeElement && input.checkValidity() && input.value.trim()) {
                 wrapper.classList.add('flipped');
                 filledFields.add(fieldName);
-                input.blur();
 
-                // Check if all required fields are filled to show retro message
-                const allFieldsFilled = checkAllFieldsBeforeDetails();
-                retroMessage.classList.toggle('visible', allFieldsFilled);
+                // Trigger glowing checkmark animation
+                checkmark.classList.add('glowing');
+
+                // Check if all fields are filled to show the Finish button
+                if (checkAllFields()) {
+                    finishGroup.classList.add('active');
+                }
+
+                // Auto-focus the next input if available
+                const nextInput = inputs[index + 1];
+                if (nextInput) {
+                    setTimeout(() => nextInput.focus(), 500); // Delay to allow animation
+                }
             }
         });
 
         // Allow unflipping by clicking the checkmark
         checkmark.addEventListener('click', () => {
             wrapper.classList.remove('flipped');
+            checkmark.classList.remove('glowing');
             filledFields.delete(fieldName);
             label.classList.remove('hidden');
-            retroMessage.classList.remove('visible');
+            finishGroup.classList.remove('active');
             input.focus();
         });
     });
 
-    // Handle retro message click to show details group
-    retroMessage.addEventListener('click', () => {
-        if (checkAllFieldsBeforeDetails()) {
-            showDetailsGroup();
-        }
-    });
-
-    // Handle back arrow click to return to main form
-    backArrow.addEventListener('click', () => {
-        revertForm();
-    });
-
-    // Function to flip the finish button and show "Book Now!"
-    const flipFinishButton = () => {
-        if (!finishButtonInner.classList.contains('flipped')) {
-            const wrapper = detailsInput.closest('.input-wrapper');
-            if (detailsInput.value.trim()) {
-                wrapper.classList.add('flipped');
-                filledFields.add('details');
-                finishButtonInner.classList.add('flipped'); // Automatically flip to show "Book Now!"
-            }
-        }
-    };
-
-    // Handle form submission with finish button animation
+    // Handle form flipping and submission
     finishButtonWrapper.addEventListener('click', (e) => {
-        e.preventDefault(); // Prevent default form submission until we're ready
-        if (finishButtonInner.classList.contains('flipped')) {
-            // "Book Now!" button is visible and clicked
-            setTimeout(() => {
-                alert('Booking submitted successfully!');
-                bookingForm.submit();
-                bookingForm.reset();
-                revertForm();
-                filledFields.clear();
-                inputs.forEach(input => {
-                    const wrapper = input.closest('.input-wrapper');
-                    wrapper.classList.remove('flipped');
-                    const label = wrapper.querySelector('.input-label');
-                    label.classList.remove('hidden');
-                });
-            }, 500);
-        } else {
-            // "Finish" button is clicked, flip to show "Book Now!"
-            flipFinishButton();
-        }
+        e.preventDefault();
+        formFlipper.classList.add('flipped');
     });
 
-    // Ensure details input also has flip behavior and triggers the finish button flip
-    detailsInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && detailsInput.value.trim()) {
-            const wrapper = detailsInput.closest('.input-wrapper');
-            wrapper.classList.add('flipped');
-            filledFields.add('details');
-            flipFinishButton(); // Automatically flip the finish button to show "Book Now!"
-        }
-    });
-
-    // On mobile, flip details input and finish button when tapping outside
-    document.addEventListener('touchend', (e) => {
-        if (!detailsGroup.contains(e.target) && detailsInput === document.activeElement && detailsInput.value.trim()) {
-            const wrapper = detailsInput.closest('.input-wrapper');
-            wrapper.classList.add('flipped');
-            filledFields.add('details');
-            flipFinishButton(); // Automatically flip the finish button to show "Book Now!"
-        }
+    // Reset form after submission
+    bookingForm.addEventListener('submit', (e) => {
+        setTimeout(() => {
+            alert('Booking submitted successfully!');
+            bookingForm.reset();
+            formFlipper.classList.remove('flipped');
+            filledFields.clear();
+            inputs.forEach(input => {
+                const wrapper = input.closest('.input-wrapper');
+                const checkmark = wrapper.querySelector('.checkmark');
+                wrapper.classList.remove('flipped');
+                checkmark.classList.remove('glowing');
+                const label = wrapper.querySelector('.input-label');
+                label.classList.remove('hidden');
+            });
+            finishGroup.classList.remove('active');
+        }, 500);
     });
 });
