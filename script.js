@@ -565,3 +565,134 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     });
 });
+
+// 3D Retro Cube and Countdown Timer
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const cubeContainer = document.querySelector('.retro-cube-container');
+        const cube = document.querySelector('.retro-cube');
+        const countdownTimer = document.querySelector('.countdown-timer');
+        const closeButtons = document.querySelectorAll('.cube-close');
+        const timerDigits = {
+            hours1: document.querySelector('.timer-digit.hours-1'),
+            hours2: document.querySelector('.timer-digit.hours-2'),
+            minutes1: document.querySelector('.timer-digit.minutes-1'),
+            minutes2: document.querySelector('.timer-digit.minutes-2'),
+            seconds1: document.querySelector('.timer-digit.seconds-1'),
+            seconds2: document.querySelector('.timer-digit.seconds-2')
+        };
+
+        // Failsafe: Check if all required elements exist
+        if (!cubeContainer || !cube || !countdownTimer || closeButtons.length !== 6 || Object.values(timerDigits).some(digit => !digit)) {
+            console.error('Required elements for retro cube or timer are missing.');
+            return;
+        }
+
+        // Show cube after 45 seconds
+        setTimeout(() => {
+            cubeContainer.classList.add('visible');
+        }, 45000);
+
+        // Cube rotation logic
+        let currentFace = 0;
+        const faces = ['front', 'right', 'back', 'left', 'top', 'bottom'];
+        let rotationInterval;
+
+        const rotateCube = () => {
+            try {
+                currentFace = (currentFace + 1) % faces.length;
+                cube.style.transform = `rotateX(${currentFace === 4 ? -90 : currentFace === 5 ? 90 : 0}deg) rotateY(${currentFace < 4 ? currentFace * 90 : 0}deg)`;
+            } catch (error) {
+                console.error('Error during cube rotation:', error);
+                clearInterval(rotationInterval);
+            }
+        };
+
+        // Start cube rotation every 4 seconds
+        rotationInterval = setInterval(rotateCube, 4000);
+
+        // Interaction enhancement: Scale and glow on hover/touch
+        cube.addEventListener('mouseenter', () => {
+            cube.classList.add('interacted');
+        });
+
+        cube.addEventListener('touchstart', () => {
+            cube.classList.add('interacted');
+        });
+
+        // Handle cube close and transform to timer
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                try {
+                    // Stop cube rotation
+                    clearInterval(rotationInterval);
+
+                    // Roll cube and transform to timer
+                    cube.classList.add('roll-to-timer');
+                    setTimeout(() => {
+                        cubeContainer.classList.add('timer-mode');
+                        startCountdown();
+                    }, 1000); // Match the roll animation duration
+                } catch (error) {
+                    console.error('Error during cube close:', error);
+                }
+            });
+        });
+
+        // Countdown timer logic
+        const totalSeconds = 3 * 60 * 60; // 3 hours in seconds
+        let remainingSeconds = totalSeconds;
+
+        const startCountdown = () => {
+            try {
+                const countdownInterval = setInterval(() => {
+                    if (remainingSeconds <= 0) {
+                        clearInterval(countdownInterval);
+                        countdownTimer.classList.add('expired');
+                        return;
+                    }
+
+                    remainingSeconds--;
+
+                    // Calculate hours, minutes, seconds
+                    const hours = Math.floor(remainingSeconds / 3600);
+                    const minutes = Math.floor((remainingSeconds % 3600) / 60);
+                    const seconds = remainingSeconds % 60;
+
+                    // Update digits with flip animation
+                    updateDigit(timerDigits.hours1, Math.floor(hours / 10));
+                    updateDigit(timerDigits.hours2, hours % 10);
+                    updateDigit(timerDigits.minutes1, Math.floor(minutes / 10));
+                    updateDigit(timerDigits.minutes2, minutes % 10);
+                    updateDigit(timerDigits.seconds1, Math.floor(seconds / 10));
+                    updateDigit(timerDigits.seconds2, seconds % 10);
+                }, 1000);
+            } catch (error) {
+                console.error('Error in countdown timer:', error);
+            }
+        };
+
+        const updateDigit = (digitElement, value) => {
+            try {
+                const currentValue = parseInt(digitElement.dataset.value || '0');
+                if (currentValue !== value) {
+                    digitElement.dataset.value = value;
+                    digitElement.classList.remove('flip');
+                    void digitElement.offsetWidth; // Trigger reflow to restart animation
+                    digitElement.classList.add('flip');
+                    digitElement.textContent = value;
+                }
+            } catch (error) {
+                console.error('Error updating timer digit:', error);
+            }
+        };
+
+        // Initialize timer digits
+        Object.values(timerDigits).forEach(digit => {
+            digit.dataset.value = '0';
+            digit.textContent = '0';
+        });
+    } catch (error) {
+        console.error('Error initializing retro cube and timer:', error);
+    }
+});
