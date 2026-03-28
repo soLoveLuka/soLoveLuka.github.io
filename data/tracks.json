@@ -1,0 +1,118 @@
+{
+  "artist": {
+    "name": "Receipts",
+    "genre": ["Indie Pop", "Indie Alternative", "Indie Dream"]
+  },
+  "projects": [
+    {
+      "id": "midnight-receiver",
+      "title": "Midnight Receiver",
+      "year": "2026",
+      "type": "Single set",
+      "cover": "assets/covers/cover-equinox.svg",
+      "description": "Bright-edge songs for after-hours motion, neon reflection, and wide awake dreaming.",
+      "tracks": [
+        {
+          "id": "northbound-light",
+          "title": "Northbound Light",
+          "duration": "3:18",
+          "mood": ["awake", "electric"],
+          "audioSrc": "audio/01-northbound-light.mp3"
+        },
+        {
+          "id": "paper-sky",
+          "title": "Paper Sky",
+          "duration": "2:56",
+          "mood": ["open", "late"],
+          "audioSrc": "audio/02-paper-sky.mp3"
+        },
+        {
+          "id": "receiver-bloom",
+          "title": "Receiver Bloom",
+          "duration": "4:02",
+          "mood": ["dream", "glow"],
+          "audioSrc": "audio/03-receiver-bloom.mp3"
+        }
+      ]
+    },
+    {
+      "id": "soft-machines",
+      "title": "Soft Machines",
+      "year": "2025",
+      "type": "Project",
+      "cover": "assets/covers/cover-monolith.svg",
+      "description": "A cleaner, colder body of work with distance, symmetry, and low-lit pulse.",
+      "tracks": [
+        {
+          "id": "silver-hall",
+          "title": "Silver Hall",
+          "duration": "3:42",
+          "mood": ["cinematic", "soft"],
+          "audioSrc": "audio/04-silver-hall.mp3"
+        },
+        {
+          "id": "clean-fiction",
+          "title": "Clean Fiction",
+          "duration": "3:09",
+          "mood": ["minimal", "glass"],
+          "audioSrc": "audio/05-clean-fiction.mp3"
+        }
+      ]
+    },
+    {
+      "id": "after-image",
+      "title": "After Image Geometry",
+      "year": "2024",
+      "type": "Demos",
+      "cover": "assets/covers/cover-pulse.svg",
+      "description": "Sketches, fragments, and drafts with enough shape to keep returning to.",
+      "tracks": [
+        {
+          "id": "haze-index",
+          "title": "Haze Index",
+          "duration": "2:31",
+          "mood": ["restless", "night"],
+          "audioSrc": "audio/06-haze-index.mp3"
+        },
+        {
+          "id": "open-purpose",
+          "title": "Open Purpose",
+          "duration": "3:47",
+          "mood": ["lift", "purpose"],
+          "audioSrc": "audio/07-open-purpose.mp3"
+        },
+        {
+          "id": "signal-veil",
+          "title": "Signal Veil",
+          "duration": "4:14",
+          "mood": ["wide", "mist"],
+          "audioSrc": "audio/08-signal-veil.mp3"
+        }
+      ]
+    },
+    {
+      "id": "zero-hour-color",
+      "title": "Zero Hour Color",
+      "year": "2023",
+      "type": "Single set",
+      "cover": "assets/covers/cover-veil.svg",
+      "description": "More saturated and more volatile — a brighter edge against the darker catalog.",
+      "tracks": [
+        {
+          "id": "pink-static",
+          "title": "Pink Static",
+          "duration": "3:28",
+          "mood": ["bold", "saturated"],
+          "audioSrc": "audio/09-pink-static.mp3"
+        },
+        {
+          "id": "soft-flare",
+          "title": "Soft Flare",
+          "duration": "3:01",
+          "mood": ["lift", "modern"],
+          "audioSrc": "audio/10-soft-flare.mp3"
+        }
+      ]
+    }
+  ]
+}

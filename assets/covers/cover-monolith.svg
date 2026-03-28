@@ -1,0 +1,31 @@
+<svg width="1400" height="1400" viewBox="0 0 1400 1400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="1400" rx="72" fill="#0A0B0E"/>
+  <rect x="72" y="72" width="1256" height="1256" rx="44" stroke="rgba(255,255,255,0.08)"/>
+  <rect x="150" y="150" width="1100" height="1100" rx="28" fill="url(#mist)"/>
+  <path d="M164 1020C388 858 508 784 702 664C902 540 1056 420 1234 286" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+  <path d="M160 1148C360 1002 510 908 704 780C894 650 1068 500 1236 362" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+  <path d="M186 200C330 272 476 410 640 544" stroke="rgba(216,181,121,0.16)" stroke-width="2"/>
+  <circle cx="1068" cy="306" r="24" fill="#F4F2EC" fill-opacity="0.8"/>
+  <circle cx="934" cy="376" r="10" fill="#F4F2EC" fill-opacity="0.46"/>
+  <circle cx="286" cy="1052" r="66" fill="#83F0E2" fill-opacity="0.16"/>
+  <rect x="602" y="226" width="198" height="902" rx="99" fill="url(#monolith)"/>
+  <rect x="644" y="290" width="112" height="786" rx="56" fill="#07070A"/>
+  <circle cx="700" cy="744" r="170" stroke="rgba(255,255,255,0.1)"/>
+  <circle cx="700" cy="744" r="274" stroke="rgba(255,255,255,0.05)"/>
+  <text x="124" y="186" fill="#F4F2EC" fill-opacity="0.92" font-family="Inter, Arial, sans-serif" font-size="44" letter-spacing="10">RECEIPTS</text>
+  <text x="124" y="1260" fill="#F4F2EC" fill-opacity="0.5" font-family="Inter, Arial, sans-serif" font-size="34" letter-spacing="8">SOFT MACHINES</text>
+  <defs>
+    <linearGradient id="monolith" x1="701" y1="226" x2="701" y2="1128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4F2EC" stop-opacity="0.72"/>
+      <stop offset="0.18" stop-color="#D8B579" stop-opacity="0.36"/>
+      <stop offset="0.6" stop-color="#8D7BFF" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#07070A" stop-opacity="0.02"/>
+    </linearGradient>
+    <linearGradient id="mist" x1="700" y1="150" x2="700" y2="1250" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4F2EC" stop-opacity="0.08"/>
+      <stop offset="0.44" stop-color="#F4F2EC" stop-opacity="0.02"/>
+      <stop offset="0.82" stop-color="#83F0E2" stop-opacity="0.09"/>
+      <stop offset="1" stop-color="#090A0F" stop-opacity="0.02"/>
+    </linearGradient>
+  </defs>
+</svg>

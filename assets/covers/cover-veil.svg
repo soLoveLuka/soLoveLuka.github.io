@@ -1,0 +1,32 @@
+<svg width="1400" height="1400" viewBox="0 0 1400 1400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="1400" rx="72" fill="#09090B"/>
+  <rect x="72" y="72" width="1256" height="1256" rx="46" stroke="rgba(255,255,255,0.08)"/>
+  <rect x="148" y="148" width="1104" height="1104" rx="34" fill="#0C0D12"/>
+  <path d="M140 1034C328 950 442 908 558 850C664 796 736 738 844 664C948 594 1040 524 1262 412" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+  <path d="M162 1118C340 1038 480 968 620 878C770 780 900 640 1244 478" stroke="rgba(255,255,255,0.05)" stroke-width="2"/>
+  <circle cx="716" cy="696" r="388" stroke="rgba(255,255,255,0.1)"/>
+  <circle cx="716" cy="696" r="276" stroke="rgba(216,181,121,0.16)"/>
+  <path d="M408 1004L716 356L1028 1004H408Z" fill="url(#triangleGlow)"/>
+  <path d="M480 962L716 458L956 962H480Z" fill="#0A0A0E"/>
+  <path d="M458 980L716 414L978 980" stroke="#FF54C6" stroke-opacity="0.64" stroke-width="8"/>
+  <path d="M438 968L700 426L958 968" stroke="#8D7BFF" stroke-opacity="0.48" stroke-width="4"/>
+  <circle cx="302" cy="344" r="128" fill="url(#sun)"/>
+  <circle cx="1060" cy="1074" r="116" fill="url(#mint)"/>
+  <text x="124" y="186" fill="#F4F2EC" fill-opacity="0.94" font-family="Inter, Arial, sans-serif" font-size="44" letter-spacing="10">RECEIPTS</text>
+  <text x="124" y="1260" fill="#F4F2EC" fill-opacity="0.5" font-family="Inter, Arial, sans-serif" font-size="34" letter-spacing="8">ZERO HOUR COLOR</text>
+  <defs>
+    <linearGradient id="triangleGlow" x1="716" y1="356" x2="716" y2="1004" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF54C6" stop-opacity="0.9"/>
+      <stop offset="0.42" stop-color="#8D7BFF" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#09090B" stop-opacity="0.02"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(302 344) rotate(90) scale(128)">
+      <stop stop-color="#FF8B38" stop-opacity="0.96"/>
+      <stop offset="1" stop-color="#FF8B38" stop-opacity="0.02"/>
+    </radialGradient>
+    <radialGradient id="mint" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1060 1074) rotate(90) scale(116)">
+      <stop stop-color="#83F0E2" stop-opacity="0.76"/>
+      <stop offset="1" stop-color="#83F0E2" stop-opacity="0.02"/>
+    </radialGradient>
+  </defs>
+</svg>
