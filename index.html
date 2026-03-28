@@ -1,279 +1,321 @@
-<!DOCTYPE html>
+<!--
+FILE: /index.html
+Receipts — Listening Room (Lux Minimal Artist Site)
+-->
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Receipts — Artist Site</title>
-  <meta
-    name="description"
-    content="Receipts — an artist site for songs, atmosphere, deep listening, and quiet contrast."
-  />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="room-lines" aria-hidden="true"></div>
-  <div class="room-grain" aria-hidden="true"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Receipts — Listening Room</title>
 
-  <div class="preloader" aria-hidden="true">
-    <div class="preloader__inner">
-      <p class="preloader__brand">RECEIPTS</p>
-      <div class="preloader__meter">
-        <span class="preloader__meter-fill"></span>
-      </div>
-      <p class="preloader__status">Entering the room<span class="preloader__dots">...</span></p>
-    </div>
-  </div>
+    <meta name="description" content="Receipts — Indie / Indie Alternative / Indie Pop / Dream Pop. A minimalist listening room for existential contrast and raw expression." />
+    <meta property="og:title" content="Receipts — Listening Room" />
+    <meta property="og:description" content="A site that feels like it was waiting on its fans to find it." />
+    <meta property="og:type" content="website" />
 
-  <header class="site-header" id="top">
-    <a class="brand blackhole-hover" href="#hero" aria-label="Go to home">RECEIPTS</a>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-    <nav class="site-nav" aria-label="Primary">
-      <a class="blackhole-hover" href="#hero">Home</a>
-      <a class="blackhole-hover" href="#music">Music</a>
-      <a class="blackhole-hover" href="#world">World</a>
-      <a class="blackhole-hover" href="#contact">Contact</a>
-    </nav>
-
-    <div class="header-actions">
-      <button class="header-chip blackhole-hover" type="button" data-action="focus-toggle">
-        Focus Mode
-      </button>
-      <button class="header-chip header-chip--ghost blackhole-hover" type="button" data-action="share-current">
-        Share Current
-      </button>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero reveal" id="hero">
-      <div class="hero__copy">
-        <p class="eyebrow">Receipts / Indie / Indie Alternative / Indie Pop / Dream Pop</p>
-        <h1 class="hero__title">It feels like it was waiting on you.</h1>
-        <p class="hero__intro">
-          A white room for black-and-white songs. Quiet architecture. Deep contrast.
-          Faint purple traces. Nothing loud unless the song asks for it.
-        </p>
-
-        <div class="hero__actions">
-          <button class="primary-button blackhole-hover" type="button" data-action="play-current">
-            Play
-          </button>
-          <button class="secondary-button blackhole-hover" type="button" data-action="lyrics-toggle">
-            Lyrics
-          </button>
-          <button class="secondary-button blackhole-hover" type="button" data-action="scroll-music">
-            Enter Music
-          </button>
+  <body class="theme-room">
+    <!-- Preloader -->
+    <div class="preloader" aria-hidden="true">
+      <div class="preloader-core">
+        <div class="preloader-mark">
+          <div class="preloader-ring"></div>
+          <div class="preloader-ring ring-2"></div>
         </div>
-
-        <div class="hero__mini-meta">
-          <div class="meta-chip">
-            <span class="meta-chip__label">Artist</span>
-            <span class="meta-chip__value">Receipts</span>
-          </div>
-          <div class="meta-chip">
-            <span class="meta-chip__label">Values</span>
-            <span class="meta-chip__value">Existentialism / Contrast / Raw Art / Expression</span>
-          </div>
+        <div class="preloader-label">
+          <span class="mono">RECEIPTS</span>
+          <span class="dot">·</span>
+          <span class="mono">LOADING</span>
+          <span class="preloader-percent mono" id="preloaderPercent">0%</span>
         </div>
       </div>
+    </div>
 
-      <div class="player-stage">
-        <div class="player-stage__halo" aria-hidden="true"></div>
+    <!-- Ambient room grain -->
+    <div class="room-grain" aria-hidden="true"></div>
 
-        <div class="player-shell reveal">
-          <div class="player-shell__media">
-            <button class="stage-nav stage-nav--prev blackhole-hover" type="button" aria-label="Previous track" data-action="prev-track">
-              <span>Prev</span>
-            </button>
+    <!-- Nav -->
+    <header class="topbar" id="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="#home" aria-label="Receipts home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-text">Receipts</span>
+        </a>
 
-            <div class="cylinder-scene">
-              <div class="cylinder-card" id="cylinderCard">
-                <div class="cylinder-card__sleeve" id="cylinderSleeve">
-                  <div class="cover-frame">
-                    <img id="currentCover" alt="Current track cover art" />
+        <nav class="nav" aria-label="Primary">
+          <a class="nav-link" href="#home">Home</a>
+          <a class="nav-link" href="#music">Music</a>
+          <a class="nav-link" href="#about">About</a>
+          <a class="nav-link" href="#contact">Contact</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <button class="icon-btn" id="toggleAmbient" type="button" aria-pressed="true" title="Toggle ambient motion">
+            <span class="icon" aria-hidden="true">◐</span>
+          </button>
+          <button class="icon-btn" id="deepModeBtn" type="button" aria-pressed="false" title="Deep Listening Mode">
+            <span class="icon" aria-hidden="true">◎</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+      <!-- HERO -->
+      <section id="home" class="section hero">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="kicker mono">INDIE / DREAM POP</p>
+            <h1 class="hero-title">Receipts</h1>
+            <p class="hero-sub">
+              Existentialism, contrast, raw art, expression —
+              <span class="accent">a listening room</span> that feels like it was waiting on its fans to find it.
+            </p>
+
+            <div class="hero-ctas">
+              <a class="btn primary" href="#music">Enter Listening Room</a>
+              <button class="btn ghost" id="shareSiteBtn" type="button">Share this room</button>
+            </div>
+
+            <div class="hero-meta">
+              <div class="meta-pill">
+                <span class="mono">NOW</span>
+                <span class="dot">·</span>
+                <span id="nowHint">select a song</span>
+              </div>
+              <div class="meta-pill">
+                <span class="mono">MOOD</span>
+                <span class="dot">·</span>
+                <span>high contrast</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-sculpt" aria-hidden="true">
+            <div class="sculpt-card">
+              <div class="sculpt-room">
+                <div class="sculpt-line l1"></div>
+                <div class="sculpt-line l2"></div>
+                <div class="sculpt-line l3"></div>
+              </div>
+              <div class="sculpt-caption mono">white room / ink sound / violet whisper</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MUSIC -->
+      <section id="music" class="section music">
+        <div class="section-head">
+          <h2 class="section-title">Music</h2>
+          <p class="section-sub">
+            Minimal surface. Deep core. Choose a track — the center object becomes the song.
+          </p>
+        </div>
+
+        <div class="music-layout">
+          <!-- Player Room -->
+          <div class="player-room" id="playerRoom">
+            <div class="player-surface">
+              <div class="player-core">
+                <!-- Cylinder -->
+                <div class="cylinder-wrap" aria-hidden="true">
+                  <div class="cylinder" id="cylinder"></div>
+                  <div class="cylinder-shadow"></div>
+                </div>
+
+                <!-- Primary Player -->
+                <div class="player-ui" role="region" aria-label="Audio player">
+                  <div class="track-top">
+                    <div class="track-titles">
+                      <div class="track-title" id="trackTitle">—</div>
+                      <div class="track-meta mono" id="trackMeta">—</div>
+                    </div>
+
+                    <button class="fav-btn" id="favBtn" type="button" aria-pressed="false" title="Favorite">
+                      <span class="fav-mark" aria-hidden="true">✶</span>
+                      <span class="mono">FAV</span>
+                    </button>
                   </div>
-                  <div class="cylinder-card__edge cylinder-card__edge--left" aria-hidden="true"></div>
-                  <div class="cylinder-card__edge cylinder-card__edge--right" aria-hidden="true"></div>
-                </div>
 
-                <div class="waveform-shell">
-                  <div class="waveform" id="waveform" aria-hidden="true"></div>
+                  <!-- Waveform / Progress -->
+                  <div class="wave-wrap">
+                    <canvas id="waveCanvas" width="1400" height="240" aria-label="Waveform visualization"></canvas>
+                    <div class="scrub" aria-label="Scrubber">
+                      <input id="scrubRange" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" />
+                      <div class="time-row mono">
+                        <span id="timeCurrent">0:00</span>
+                        <span class="time-divider">/</span>
+                        <span id="timeTotal">0:00</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Transport -->
+                  <div class="transport">
+                    <button class="transport-btn hole-hover" id="prevBtn" type="button" title="Previous">
+                      <span class="mono">PREV</span>
+                    </button>
+
+                    <button class="transport-btn play hole-hover" id="playBtn" type="button" title="Play/Pause">
+                      <span class="mono" id="playLabel">PLAY</span>
+                    </button>
+
+                    <button class="transport-btn hole-hover" id="nextBtn" type="button" title="Next">
+                      <span class="mono">NEXT</span>
+                    </button>
+
+                    <div class="transport-right">
+                      <button class="mini-btn hole-hover" id="lyricsBtn" type="button" aria-expanded="false">
+                        <span class="mono">LYRICS</span>
+                      </button>
+                      <button class="mini-btn hole-hover" id="shareTrackBtn" type="button">
+                        <span class="mono">SHARE</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Lyrics Drawer -->
+                  <div class="lyrics-drawer" id="lyricsDrawer" hidden>
+                    <div class="lyrics-head">
+                      <div class="mono">LYRICS</div>
+                      <button class="icon-btn" id="lyricsClose" type="button" aria-label="Close lyrics">
+                        <span class="icon" aria-hidden="true">✕</span>
+                      </button>
+                    </div>
+                    <div class="lyrics-body" id="lyricsBody">
+                      <p class="muted">Select a track to view lyrics.</p>
+                    </div>
+                  </div>
+
+                  <!-- Share Drawer (micro) -->
+                  <div class="share-row" id="shareRow" hidden>
+                    <button class="share-chip hole-hover" id="copyLinkBtn" type="button">
+                      <span class="mono">COPY LINK</span>
+                    </button>
+                    <button class="share-chip hole-hover" id="nativeShareBtn" type="button">
+                      <span class="mono">SHARE…</span>
+                    </button>
+                    <div class="share-hint mono" id="shareHint">people don’t share enough when they feel something.</div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <button class="stage-nav stage-nav--next blackhole-hover" type="button" aria-label="Next track" data-action="next-track">
-              <span>Next</span>
-            </button>
+              <!-- Hidden single audio element -->
+              <audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
+            </div>
           </div>
 
-          <div class="player-shell__content">
-            <div class="track-head">
-              <p class="track-head__kicker" id="currentIndexLabel">Current transmission</p>
-              <h2 class="track-head__title" id="currentTitle">Track Title</h2>
-              <p class="track-head__subtitle" id="currentSubtitle">Year • Type • Mood</p>
+          <!-- Library -->
+          <aside class="library" aria-label="Track library">
+            <div class="library-head">
+              <div class="filters">
+                <button class="chip hole-hover is-active" type="button" data-filter="all">All</button>
+                <button class="chip hole-hover" type="button" data-filter="favorites">Favorites</button>
+              </div>
+
+              <div class="albums" id="albumChips" aria-label="Album filters"></div>
             </div>
 
-            <div class="player-bar">
-              <button class="icon-button blackhole-hover" id="playPauseButton" type="button" aria-label="Play current track">
-                <span id="playPauseText">Play</span>
-              </button>
+            <div class="tracklist" id="tracklist" aria-label="Tracks"></div>
 
-              <div class="progress-cluster">
-                <label class="sr-only" for="progressInput">Track progress</label>
-                <input id="progressInput" class="progress-input" type="range" min="0" max="100" value="0" step="0.1" />
-                <div class="time-row">
-                  <span id="currentTime">0:00</span>
-                  <span id="currentDuration">0:00</span>
-                </div>
+            <div class="library-foot">
+              <div class="foot-note mono">
+                Add songs by editing <span class="code">TRACKS</span> in <span class="code">script.js</span>.
               </div>
             </div>
+          </aside>
+        </div>
+      </section>
 
-            <div class="player-tools">
-              <button class="tool-button blackhole-hover" id="favoriteButton" type="button">Favorite</button>
-              <button class="tool-button blackhole-hover" id="shareButton" type="button">Share Song</button>
-              <button class="tool-button blackhole-hover" id="focusButton" type="button">Deep Listen</button>
-              <button class="tool-button tool-button--soft blackhole-hover" id="lyricsButton" type="button" aria-expanded="false">
-                Open Lyrics
-              </button>
-            </div>
+      <!-- ABOUT -->
+      <section id="about" class="section about">
+        <div class="section-head">
+          <h2 class="section-title">About</h2>
+          <p class="section-sub">
+            Indie / Indie Alternative / Indie Pop / Dream Pop — built on existential contrast.
+          </p>
+        </div>
 
-            <div class="lyrics-panel" id="lyricsPanel" hidden>
-              <div class="lyrics-panel__head">
-                <p class="lyrics-panel__label">Lyrics window</p>
-                <button class="mini-close blackhole-hover" type="button" data-action="lyrics-toggle" aria-label="Close lyrics">
-                  Close
-                </button>
-              </div>
-              <pre class="lyrics-panel__body" id="lyricsBody"></pre>
-            </div>
-
-            <audio id="mainAudio" preload="metadata"></audio>
+        <div class="about-grid">
+          <div class="panel">
+            <h3>Values</h3>
+            <p>
+              Existentialism. Contrast. Raw art. Expression. The point is to feel the edge and keep listening anyway.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>Intent</h3>
+            <p>
+              Minimalist surface — unusually deep detail. Every motion has a reason. Every silence has shape.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>Note</h3>
+            <p>
+              This room is designed to be found late at night. Share a track with someone who gets it.
+            </p>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="music reveal" id="music">
-      <div class="section-head">
-        <p class="eyebrow">Discography</p>
-        <h2 class="section-title">Pick a favorite. Share it instantly.</h2>
-        <p class="section-copy">
-          The current track is always deep-linkable. Every song card can play, favorite,
-          and copy a share-ready link straight to that track.
-        </p>
-      </div>
+      <!-- CONTACT -->
+      <section id="contact" class="section contact">
+        <div class="section-head">
+          <h2 class="section-title">Contact</h2>
+          <p class="section-sub">Minimal form. Clear intention.</p>
+        </div>
 
-      <div class="track-rail" id="trackRail" aria-label="Track rail"></div>
+        <form class="contact-form panel" id="contactForm" action="#" method="post" novalidate>
+          <div class="field">
+            <label class="mono" for="cName">Name</label>
+            <input id="cName" name="name" type="text" autocomplete="name" placeholder="Your name" />
+          </div>
+          <div class="field">
+            <label class="mono" for="cEmail">Email</label>
+            <input id="cEmail" name="email" type="email" autocomplete="email" placeholder="you@domain.com" />
+          </div>
+          <div class="field">
+            <label class="mono" for="cMsg">Message</label>
+            <textarea id="cMsg" name="message" rows="5" placeholder="Say what you mean."></textarea>
+          </div>
 
-      <div class="catalog-grid" id="catalogGrid" aria-label="Track catalog"></div>
-    </section>
+          <div class="form-row">
+            <button class="btn primary hole-hover" type="submit">Send</button>
+            <div class="muted mono">Tip: wire this to Formspree later (drop-in).</div>
+          </div>
+        </form>
+      </section>
 
-    <section class="world reveal" id="world">
-      <div class="world-layout">
-        <article class="world-card">
-          <p class="eyebrow">World</p>
-          <h2 class="section-title section-title--tight">A site built like a quiet exhibit.</h2>
-          <p>
-            This version is no longer framed like a service page. It is framed like an arrival:
-            less “hire me,” more “stay here for a while.”
-          </p>
-          <p>
-            The visual system is almost entirely white, sharply black, and touched only faintly
-            by neutral purple. The room lines are barely there on purpose.
-          </p>
-        </article>
+      <footer class="footer">
+        <div class="footer-inner">
+          <div class="mono">© <span id="year"></span> Receipts</div>
+          <div class="mono subtle">built like a room. shared like a secret.</div>
+        </div>
+      </footer>
+    </main>
 
-        <article class="world-card world-card--quote">
-          <p class="quote-mark">“</p>
-          <p class="quote-copy">
-            Songs first. Atmosphere second. Everything else only if it deserves to remain.
-          </p>
-          <p class="quote-signoff">— Receipts</p>
-        </article>
-      </div>
-
-      <div class="advanced-panel-wrap">
-        <button class="advanced-toggle blackhole-hover" id="advancedToggle" type="button" aria-expanded="false" aria-controls="advancedPanel">
-          <span class="advanced-toggle__line"></span>
-          Open Listening Room
+    <!-- Error Toast -->
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true" hidden>
+      <div class="toast-inner">
+        <div class="toast-msg" id="toastMsg">—</div>
+        <button class="icon-btn" id="toastClose" type="button" aria-label="Close">
+          <span class="icon" aria-hidden="true">✕</span>
         </button>
-
-        <div class="advanced-panel" id="advancedPanel" hidden>
-          <div class="advanced-panel__grid">
-            <section class="deep-card">
-              <p class="deep-card__label">Current track note</p>
-              <h3 id="deepTitle">Selected song</h3>
-              <p id="deepDescription"></p>
-            </section>
-
-            <section class="deep-card">
-              <p class="deep-card__label">Credits</p>
-              <ul class="credit-list" id="creditList"></ul>
-            </section>
-
-            <section class="deep-card">
-              <p class="deep-card__label">Share path</p>
-              <div class="share-strip">
-                <input id="sharePath" class="share-path" type="text" readonly />
-                <button class="tool-button blackhole-hover" type="button" data-action="share-current">Copy Link</button>
-              </div>
-            </section>
-          </div>
-        </div>
       </div>
-    </section>
-
-    <section class="contact reveal" id="contact">
-      <div class="contact-card">
-        <p class="eyebrow">Contact / Streaming</p>
-        <h2 class="section-title section-title--tight">Leave clean placeholders. Expand forever.</h2>
-        <p class="contact-copy">
-          Drop in your real platform links, your email, and more tracks over time.
-          The song system is data-driven in <code>script.js</code>, so you can keep adding releases
-          without rebuilding the layout.
-        </p>
-
-        <div class="platform-links">
-          <a class="platform-link blackhole-hover" href="#" aria-label="Spotify placeholder">Spotify</a>
-          <a class="platform-link blackhole-hover" href="#" aria-label="Apple Music placeholder">Apple Music</a>
-          <a class="platform-link blackhole-hover" href="#" aria-label="YouTube placeholder">YouTube</a>
-          <a class="platform-link blackhole-hover" href="#" aria-label="Instagram placeholder">Instagram</a>
-        </div>
-
-        <div class="contact-note">
-          Replace these placeholders with your real links when ready.
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <button class="back-to-top blackhole-hover" id="backToTop" type="button" aria-label="Back to top">
-    Top
-  </button>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-  <div class="error-notification" id="errorNotification" aria-live="assertive">
-    <span id="errorText">Something went wrong.</span>
-    <button class="mini-close blackhole-hover" id="errorClose" type="button" aria-label="Close error">
-      Close
-    </button>
-  </div>
-
-  <noscript>
-    <div class="noscript-banner">
-      This site uses JavaScript for the player, sharing, and song switching.
     </div>
-  </noscript>
 
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
