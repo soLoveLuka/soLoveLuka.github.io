@@ -2,311 +2,278 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LUKA - Mix Engineer & Artist</title>
-  <link rel="stylesheet" href="styles.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VCR+OSD+Mono&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Receipts — Artist Site</title>
+  <meta
+    name="description"
+    content="Receipts — an artist site for songs, atmosphere, deep listening, and quiet contrast."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="hero-bg">
-  <!-- Preloader -->
-  <div class="preloader">
-    <div class="preloader-text">
-      <span class="preloader-char">L</span>
-      <span class="preloader-char">o</span>
-      <span class="preloader-char">a</span>
-      <span class="preloader-char">d</span>
-      <span class="preloader-char">i</span>
-      <span class="preloader-char">n</span>
-      <span class="preloader-char">g</span>
-      <span class="preloader-char">.</span>
-      <span class="preloader-char">.</span>
-      <span class="preloader-char">.</span>
-    </div>
-    <div class="preloader-progress">
-      <div class="progress-bar"></div>
-      <span class="progress-text">0%</span>
+<body>
+  <div class="room-lines" aria-hidden="true"></div>
+  <div class="room-grain" aria-hidden="true"></div>
+
+  <div class="preloader" aria-hidden="true">
+    <div class="preloader__inner">
+      <p class="preloader__brand">RECEIPTS</p>
+      <div class="preloader__meter">
+        <span class="preloader__meter-fill"></span>
+      </div>
+      <p class="preloader__status">Entering the room<span class="preloader__dots">...</span></p>
     </div>
   </div>
 
-  <!-- Navigation -->
-  <nav class="retro-nav">
-    <ul>
-      <li><a href="#hero">Home</a></li>
-      <li><a href="#mixes">Mixes</a></li>
-      <li><a href="#artist">Artist</a></li>
-      <li><a href="#booking">Book a Mix</a></li>
-    </ul>
-  </nav>
+  <header class="site-header" id="top">
+    <a class="brand blackhole-hover" href="#hero" aria-label="Go to home">RECEIPTS</a>
 
-  <!-- Hero -->
-  <section id="hero" class="hero">
-    <h1 class="glitch" data-text="LUKA">LUKA</h1>
-    <h2>Mix Engineer</h2>
+    <nav class="site-nav" aria-label="Primary">
+      <a class="blackhole-hover" href="#hero">Home</a>
+      <a class="blackhole-hover" href="#music">Music</a>
+      <a class="blackhole-hover" href="#world">World</a>
+      <a class="blackhole-hover" href="#contact">Contact</a>
+    </nav>
 
-    <div class="sound-wave-container">
-      <div class="sound-bar"></div><div class="sound-bar"></div><div class="sound-bar"></div><div class="sound-bar"></div><div class="sound-bar"></div>
-      <div class="sound-bar"></div><div class="sound-bar"></div><div class="sound-bar"></div><div class="sound-bar"></div><div class="sound-bar"></div>
-    </div>
-
-    <a href="#booking"><button class="neon-button">Book a Mix</button></a>
-  </section>
-
-  <!-- Mixes -->
-  <section id="mixes" class="mixes">
-    <h2 class="section-title">
-      Featured Mixes
-      <!-- NEW: Advanced toggle (hidden tab opener) -->
-      <button class="advanced-toggle" aria-expanded="false" aria-controls="advanced-tab" title="Show Mastering Lab">
-        <span class="arrow">▸</span> Advanced
+    <div class="header-actions">
+      <button class="header-chip blackhole-hover" type="button" data-action="focus-toggle">
+        Focus Mode
       </button>
-    </h2>
-
-    <!-- NEW: Ultra-3D Sphere Scene (progressive enhancement; grid remains below) -->
-    <div class="mix-sphere-scene" aria-hidden="true">
-      <div class="mix-sphere" id="mixSphere"></div>
-      <!-- Fog/Depth layers for realism -->
-      <div class="sphere-fog"></div>
-      <div class="sphere-glow"></div>
+      <button class="header-chip header-chip--ghost blackhole-hover" type="button" data-action="share-current">
+        Share Current
+      </button>
     </div>
+  </header>
 
-    <div class="mix-container">
-      <div class="mix-grid">
-        <div class="mix-card" data-mix-id="1">
-          <div class="mix-card-inner">
-            <div class="mix-card-front">
-              <img src="https://i.imgur.com/Dsmu7SA.jpeg" alt="House" loading="lazy" onerror="handleImageError(this)">
-              <h3>House</h3>
-              <p>Da Silva | SilverOvrGold</p>
-            </div>
-            <div class="mix-card-back">
-              <audio controls class="mix-audio">
-                <source src="https://github.com/soLoveLuka/soLoveLuka.github.io/raw/refs/heads/main/audio/Silva.mp3" type="audio/mpeg">
-                Your browser does not support the audio element.
-              </audio>
-            </div>
-          </div>
+  <main>
+    <section class="hero reveal" id="hero">
+      <div class="hero__copy">
+        <p class="eyebrow">Receipts / Indie / Indie Alternative / Indie Pop / Dream Pop</p>
+        <h1 class="hero__title">It feels like it was waiting on you.</h1>
+        <p class="hero__intro">
+          A white room for black-and-white songs. Quiet architecture. Deep contrast.
+          Faint purple traces. Nothing loud unless the song asks for it.
+        </p>
+
+        <div class="hero__actions">
+          <button class="primary-button blackhole-hover" type="button" data-action="play-current">
+            Play
+          </button>
+          <button class="secondary-button blackhole-hover" type="button" data-action="lyrics-toggle">
+            Lyrics
+          </button>
+          <button class="secondary-button blackhole-hover" type="button" data-action="scroll-music">
+            Enter Music
+          </button>
         </div>
 
-        <div class="mix-card" data-mix-id="2">
-          <div class="mix-card-inner">
-            <div class="mix-card-front">
-              <img src="https://i.imgur.com/LhATq4E.jpeg" alt="Hip Hop" loading="lazy" onerror="handleImageError(this)">
-              <h3>Hip Hop</h3>
-              <p>Evil Hunna</p>
-            </div>
-            <div class="mix-card-back">
-              <audio controls class="mix-audio">
-                <source src="https://github.com/soLoveLuka/soLoveLuka.github.io/raw/refs/heads/main/audio/Evil%20Hunna.mp3" type="audio/mpeg">
-                Your browser does not support the audio element.
-              </audio>
-            </div>
+        <div class="hero__mini-meta">
+          <div class="meta-chip">
+            <span class="meta-chip__label">Artist</span>
+            <span class="meta-chip__value">Receipts</span>
           </div>
-        </div>
-
-        <div class="mix-card" data-mix-id="3">
-          <div class="mix-card-inner">
-            <div class="mix-card-front">
-              <img src="https://i.imgur.com/bbx6WBJ.jpeg" alt="Alternative" loading="lazy" onerror="handleImageError(this)">
-              <h3>Alternative</h3>
-              <p>FNF Style</p>
-            </div>
-            <div class="mix-card-back">
-              <audio controls class="mix-audio">
-                <source src="https://github.com/soLoveLuka/soLoveLuka.github.io/raw/refs/heads/main/audio/FNF.mp3" type="audio/mpeg">
-                Your browser does not support the audio element.
-              </audio>
-            </div>
+          <div class="meta-chip">
+            <span class="meta-chip__label">Values</span>
+            <span class="meta-chip__value">Existentialism / Contrast / Raw Art / Expression</span>
           </div>
         </div>
       </div>
 
-      <div class="mix-description">
-        <h3>Explore the Mixes</h3>
-        <p>These featured mixes aren't everything I can do, just some things. Book me and let me level up your sound!</p>
-      </div>
-    </div>
+      <div class="player-stage">
+        <div class="player-stage__halo" aria-hidden="true"></div>
 
-    <!-- NEW: Hidden Advanced Tab (Mastering Lab) -->
-    <div id="advanced-tab" class="advanced-tab" hidden>
-      <div class="lab-header">
-        <h3>Mastering Lab — A/B Compare</h3>
-        <p>Hear the difference. Crossfade and A/B between the original mix and the master. Upload your own pairs or use the demos.</p>
-      </div>
+        <div class="player-shell reveal">
+          <div class="player-shell__media">
+            <button class="stage-nav stage-nav--prev blackhole-hover" type="button" aria-label="Previous track" data-action="prev-track">
+              <span>Prev</span>
+            </button>
 
-      <!-- Demos: using your existing audio as placeholders for both sides -->
-     <div class="ab-compare" data-title="Evil Hunna"
-     data-a-src="https://soloveluka.github.io/audio/Hunna%20mp3.mp3"
-     data-b-src="https://soloveluka.github.io/audio/Evil%20Hunna.mp3"></div>
+            <div class="cylinder-scene">
+              <div class="cylinder-card" id="cylinderCard">
+                <div class="cylinder-card__sleeve" id="cylinderSleeve">
+                  <div class="cover-frame">
+                    <img id="currentCover" alt="Current track cover art" />
+                  </div>
+                  <div class="cylinder-card__edge cylinder-card__edge--left" aria-hidden="true"></div>
+                  <div class="cylinder-card__edge cylinder-card__edge--right" aria-hidden="true"></div>
+                </div>
 
-<div class="ab-compare" data-title="Da Silva | SilverOvrGold"
-     data-a-src="https://soloveluka.github.io/audio/Da%20Silva%20old.mp3"
-     data-b-src="https://soloveluka.github.io/audio/Silva.mp3"></div>
-
-
-      <!-- Uploader to create custom A/B tiles -->
-      <div class="lab-uploader">
-        <h4>Add Your Own Comparison</h4>
-        <div class="uploader-row">
-          <label>Original Mix (A)
-            <input type="file" accept="audio/*" class="file-a"/>
-          </label>
-          <label>Master (B)
-            <input type="file" accept="audio/*" class="file-b"/>
-          </label>
-          <label>Title
-            <input type="text" class="file-title" placeholder="Track title">
-          </label>
-          <button class="create-ab">Create</button>
-        </div>
-        <p class="lab-tip">Tip: enable “Link timelines” to keep both versions perfectly in sync while crossfading.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Artist -->
-  <section id="artist" class="artist">
-    <h2 class="section-title">My Work</h2>
-    <div class="artist-content">
-      <img src="https://i.imgur.com/as6TYAz.jpeg" alt="Your Photo" loading="lazy" onerror="handleImageError(this)">
-      <div class="artist-bio">
-        <p>Yo, it's Luka. I'm an engineer based in the U.S. I work with artists all over the world helping them find their sound and pave their way forward in the industry. Like what you hear? Book me here or add me on Discord |soloveluka| for more info!</p>
-        <audio controls class="artist-audio">
-          <source src="https://github.com/soLoveLuka/soLoveLuka.github.io/raw/refs/heads/main/THT%202.mp3" type="audio/mpeg">
-          Your browser does not support the audio element.
-        </audio>
-      </div>
-    </div>
-  </section>
-
-  <!-- Booking -->
-  <section id="booking" class="booking">
-    <h2 class="section-title">Book Me</h2>
-    <form id="booking-form" class="booking-form" action="https://formspree.io/f/xrbplnap" method="POST">
-      <div class="form-flipper">
-        <div class="form-front">
-          <div class="form-group" data-field="name">
-            <div class="input-wrapper">
-              <input type="text" id="name" name="name" required placeholder=" ">
-              <label for="name" class="input-label">Name</label>
-              <div class="input-back"><span class="checkmark">✔</span></div>
-            </div>
-          </div>
-
-          <div class="form-group" data-field="email">
-            <div class="input-wrapper">
-              <input type="email" id="email" name="email" required placeholder=" ">
-              <label for="email" class="input-label">Email</label>
-              <div class="input-back"><span class="checkmark">✔</span></div>
-            </div>
-          </div>
-
-          <div class="form-group" data-field="phone">
-            <div class="input-wrapper">
-              <input type="tel" id="phone" name="phone" placeholder=" ">
-              <label for="phone" class="input-label">Phone</label>
-              <div class="input-back"><span class="checkmark">✔</span></div>
-            </div>
-          </div>
-
-          <div class="form-group" data-field="date">
-            <div class="input-wrapper">
-              <input type="date" id="date" name="date" required placeholder=" ">
-              <label for="date" class="input-label">Preferred Date</label>
-              <div class="input-back"><span class="checkmark">✔</span></div>
-            </div>
-          </div>
-
-          <div class="form-group" data-field="time">
-            <div class="input-wrapper">
-              <input type="time" id="time" name="time" required placeholder=" ">
-              <label for="time" class="input-label">Preferred Time</label>
-              <div class="input-back"><span class="checkmark">✔</span></div>
-            </div>
-          </div>
-
-          <div class="form-group" data-field="genre">
-            <div class="input-wrapper">
-              <input type="text" id="genre" name="genre" placeholder=" ">
-              <label for="genre" class="input-label">Genre</label>
-              <div class="input-back"><span class="checkmark">✔</span></div>
-            </div>
-          </div>
-
-          <div class="form-group" data-field="engagement">
-            <div class="input-wrapper">
-              <select id="engagement" name="engagement" required>
-                <option value="" disabled selected></option>
-                <option value="zoom">Zoom</option>
-                <option value="discord">Discord</option>
-                <option value="call">Phone Call</option>
-                <option value="email">Email</option>
-                <option value="in-person">In-Person</option>
-              </select>
-              <label for="engagement" class="input-label">Choice of Engagement</label>
-              <div class="input-back"><span class="checkmark">✔</span></div>
-            </div>
-          </div>
-
-          <div class="form-group finish-group">
-            <div class="finish-button-wrapper">
-              <div class="finish-button-inner">
-                <button type="button" class="finish-button-front">Finish</button>
+                <div class="waveform-shell">
+                  <div class="waveform" id="waveform" aria-hidden="true"></div>
+                </div>
               </div>
             </div>
+
+            <button class="stage-nav stage-nav--next blackhole-hover" type="button" aria-label="Next track" data-action="next-track">
+              <span>Next</span>
+            </button>
+          </div>
+
+          <div class="player-shell__content">
+            <div class="track-head">
+              <p class="track-head__kicker" id="currentIndexLabel">Current transmission</p>
+              <h2 class="track-head__title" id="currentTitle">Track Title</h2>
+              <p class="track-head__subtitle" id="currentSubtitle">Year • Type • Mood</p>
+            </div>
+
+            <div class="player-bar">
+              <button class="icon-button blackhole-hover" id="playPauseButton" type="button" aria-label="Play current track">
+                <span id="playPauseText">Play</span>
+              </button>
+
+              <div class="progress-cluster">
+                <label class="sr-only" for="progressInput">Track progress</label>
+                <input id="progressInput" class="progress-input" type="range" min="0" max="100" value="0" step="0.1" />
+                <div class="time-row">
+                  <span id="currentTime">0:00</span>
+                  <span id="currentDuration">0:00</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="player-tools">
+              <button class="tool-button blackhole-hover" id="favoriteButton" type="button">Favorite</button>
+              <button class="tool-button blackhole-hover" id="shareButton" type="button">Share Song</button>
+              <button class="tool-button blackhole-hover" id="focusButton" type="button">Deep Listen</button>
+              <button class="tool-button tool-button--soft blackhole-hover" id="lyricsButton" type="button" aria-expanded="false">
+                Open Lyrics
+              </button>
+            </div>
+
+            <div class="lyrics-panel" id="lyricsPanel" hidden>
+              <div class="lyrics-panel__head">
+                <p class="lyrics-panel__label">Lyrics window</p>
+                <button class="mini-close blackhole-hover" type="button" data-action="lyrics-toggle" aria-label="Close lyrics">
+                  Close
+                </button>
+              </div>
+              <pre class="lyrics-panel__body" id="lyricsBody"></pre>
+            </div>
+
+            <audio id="mainAudio" preload="metadata"></audio>
           </div>
         </div>
+      </div>
+    </section>
 
-        <div class="form-back">
-          <div class="book-now-wrapper">
-            <button type="submit" class="book-now-button">Book Now!</button>
+    <section class="music reveal" id="music">
+      <div class="section-head">
+        <p class="eyebrow">Discography</p>
+        <h2 class="section-title">Pick a favorite. Share it instantly.</h2>
+        <p class="section-copy">
+          The current track is always deep-linkable. Every song card can play, favorite,
+          and copy a share-ready link straight to that track.
+        </p>
+      </div>
+
+      <div class="track-rail" id="trackRail" aria-label="Track rail"></div>
+
+      <div class="catalog-grid" id="catalogGrid" aria-label="Track catalog"></div>
+    </section>
+
+    <section class="world reveal" id="world">
+      <div class="world-layout">
+        <article class="world-card">
+          <p class="eyebrow">World</p>
+          <h2 class="section-title section-title--tight">A site built like a quiet exhibit.</h2>
+          <p>
+            This version is no longer framed like a service page. It is framed like an arrival:
+            less “hire me,” more “stay here for a while.”
+          </p>
+          <p>
+            The visual system is almost entirely white, sharply black, and touched only faintly
+            by neutral purple. The room lines are barely there on purpose.
+          </p>
+        </article>
+
+        <article class="world-card world-card--quote">
+          <p class="quote-mark">“</p>
+          <p class="quote-copy">
+            Songs first. Atmosphere second. Everything else only if it deserves to remain.
+          </p>
+          <p class="quote-signoff">— Receipts</p>
+        </article>
+      </div>
+
+      <div class="advanced-panel-wrap">
+        <button class="advanced-toggle blackhole-hover" id="advancedToggle" type="button" aria-expanded="false" aria-controls="advancedPanel">
+          <span class="advanced-toggle__line"></span>
+          Open Listening Room
+        </button>
+
+        <div class="advanced-panel" id="advancedPanel" hidden>
+          <div class="advanced-panel__grid">
+            <section class="deep-card">
+              <p class="deep-card__label">Current track note</p>
+              <h3 id="deepTitle">Selected song</h3>
+              <p id="deepDescription"></p>
+            </section>
+
+            <section class="deep-card">
+              <p class="deep-card__label">Credits</p>
+              <ul class="credit-list" id="creditList"></ul>
+            </section>
+
+            <section class="deep-card">
+              <p class="deep-card__label">Share path</p>
+              <div class="share-strip">
+                <input id="sharePath" class="share-path" type="text" readonly />
+                <button class="tool-button blackhole-hover" type="button" data-action="share-current">Copy Link</button>
+              </div>
+            </section>
           </div>
         </div>
       </div>
-    </form>
-    <div class="neon-grid"></div>
-  </section>
+    </section>
 
-  <!-- Back to Top -->
-  <a href="#hero" class="back-to-top">Back to Top</a>
+    <section class="contact reveal" id="contact">
+      <div class="contact-card">
+        <p class="eyebrow">Contact / Streaming</p>
+        <h2 class="section-title section-title--tight">Leave clean placeholders. Expand forever.</h2>
+        <p class="contact-copy">
+          Drop in your real platform links, your email, and more tracks over time.
+          The song system is data-driven in <code>script.js</code>, so you can keep adding releases
+          without rebuilding the layout.
+        </p>
 
-  <!-- Section Transition Particles -->
-  <div class="section-particles"></div>
+        <div class="platform-links">
+          <a class="platform-link blackhole-hover" href="#" aria-label="Spotify placeholder">Spotify</a>
+          <a class="platform-link blackhole-hover" href="#" aria-label="Apple Music placeholder">Apple Music</a>
+          <a class="platform-link blackhole-hover" href="#" aria-label="YouTube placeholder">YouTube</a>
+          <a class="platform-link blackhole-hover" href="#" aria-label="Instagram placeholder">Instagram</a>
+        </div>
 
-  <!-- 3D Retro Cube & Timer -->
-  <div class="retro-cube-container">
-    <div class="retro-cube">
-      <div class="cube-face face-front"><span class="cube-text">book in the next X minutes!</span><span class="cube-close">✖</span></div>
-      <div class="cube-face face-back"><span class="cube-text">book in the next X minutes!</span><span class="cube-close">✖</span></div>
-      <div class="cube-face face-left"><span class="cube-text">book in the next X minutes!</span><span class="cube-close">✖</span></div>
-      <div class="cube-face face-right"><span class="cube-text">book in the next X minutes!</span><span class="cube-close">✖</span></div>
-      <div class="cube-face face-top"><span class="cube-text">book in the next X minutes!</span><span class="cube-close">✖</span></div>
-      <div class="cube-face face-bottom"><span class="cube-text">book in the next X minutes!</span><span class="cube-close">✖</span></div>
-    </div>
-
-    <div class="countdown-timer">
-      <div class="timer-part minutes">
-        <div class="timer-digit minutes-1">0</div>
-        <div class="timer-digit minutes-2">0</div>
+        <div class="contact-note">
+          Replace these placeholders with your real links when ready.
+        </div>
       </div>
-      <span class="timer-colon">:</span>
-      <div class="timer-part seconds">
-        <div class="timer-digit seconds-1">0</div>
-        <div class="timer-digit seconds-2">0</div>
-      </div>
-    </div>
+    </section>
+  </main>
+
+  <button class="back-to-top blackhole-hover" id="backToTop" type="button" aria-label="Back to top">
+    Top
+  </button>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="error-notification" id="errorNotification" aria-live="assertive">
+    <span id="errorText">Something went wrong.</span>
+    <button class="mini-close blackhole-hover" id="errorClose" type="button" aria-label="Close error">
+      Close
+    </button>
   </div>
 
-  <!-- Stickman -->
-  <div class="stickman-container"></div>
-
-  <!-- Error Notification -->
-  <div class="error-notification">
-    <span class="error-message"></span>
-    <button class="error-close">✖</button>
-  </div>
+  <noscript>
+    <div class="noscript-banner">
+      This site uses JavaScript for the player, sharing, and song switching.
+    </div>
+  </noscript>
 
   <script src="script.js"></script>
 </body>
 </html>
-
-
