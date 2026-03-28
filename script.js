@@ -1,899 +1,723 @@
-/*
-FILE: /script.js
-Receipts — Player + Cylinder + Waveform + Share
-*/
-
+/* FILE: /script.js */
 "use strict";
 
 /* =========================
-   Hardened Toast/Error Layer
+   Toast / Hardened Errors
    ========================= */
-class ErrorHandler {
+class Toast {
   constructor() {
-    this.toastEl = document.getElementById("toast");
-    this.toastMsgEl = document.getElementById("toastMsg");
-    this.toastCloseEl = document.getElementById("toastClose");
-    this.toastTimer = null;
+    this.el = document.getElementById("toast");
+    this.msg = document.getElementById("toastMsg");
+    this.x = document.getElementById("toastX");
+    this.t = null;
 
-    if (this.toastCloseEl) {
-      this.toastCloseEl.addEventListener("click", () => this.hideToast());
-    }
+    this.x?.addEventListener("click", () => this.hide());
 
-    window.addEventListener("error", (e) => {
-      const msg = e?.message || "Unknown script error";
-      this.showToast(`Error: ${msg}`);
-    });
-
+    window.addEventListener("error", (e) => this.show(`Error: ${e?.message || "script error"}`));
     window.addEventListener("unhandledrejection", (e) => {
-      const msg = e?.reason instanceof Error ? e.reason.message : String(e?.reason || "Unknown async error");
-      this.showToast(`Async: ${msg}`);
+      const r = e?.reason instanceof Error ? e.reason.message : String(e?.reason || "async error");
+      this.show(`Async: ${r}`);
     });
   }
 
-  showToast(message) {
+  show(m) {
     try {
-      if (!this.toastEl || !this.toastMsgEl) return;
-      this.toastMsgEl.textContent = message;
-      this.toastEl.hidden = false;
-      clearTimeout(this.toastTimer);
-      this.toastTimer = setTimeout(() => this.hideToast(), 4200);
+      if (!this.el || !this.msg) return;
+      this.msg.textContent = m;
+      this.el.hidden = false;
+      clearTimeout(this.t);
+      this.t = setTimeout(() => this.hide(), 4200);
     } catch {
       /* no-op */
     }
   }
 
-  hideToast() {
+  hide() {
     try {
-      if (!this.toastEl) return;
-      this.toastEl.hidden = true;
+      if (!this.el) return;
+      this.el.hidden = true;
     } catch {
       /* no-op */
-    }
-  }
-
-  attempt(fn, fallback) {
-    try {
-      return fn();
-    } catch (err) {
-      this.showToast(err instanceof Error ? err.message : "Operation failed");
-      return typeof fallback === "function" ? fallback() : undefined;
     }
   }
 }
 
-const errorHandler = new ErrorHandler();
+const toast = new Toast();
 
 /* =========================
-   Track Data (DROP-IN READY)
+   Tracks (DROP-IN READY)
    =========================
-   Add new songs by appending entries to TRACKS.
-   - id must be unique (used for share URLs).
-   - audioSrc can be a local file: "audio/my-song.mp3"
-   - coverSrc can be local: "images/cover.jpg"
+   Put files in:
+   - /audio/*.mp3
+   - /images/*.jpg
 */
 const TRACKS = [
   {
     id: "ghost-room",
     title: "Ghost Room",
-    album: "White Room Demos",
-    year: "2026",
+    subtitle: "White Room Demos · 2026",
     audioSrc: "audio/ghost-room.mp3",
     coverSrc: "images/cover-01.jpg",
-    lyrics: [
-      "Placeholder lyrics.",
-      "Replace this with your real words.",
-      "Keep line breaks as separate strings for clean spacing.",
-    ],
+    lyrics: ["Placeholder lyrics.", "Replace with your real words."],
   },
   {
     id: "violet-static",
     title: "Violet Static",
-    album: "White Room Demos",
-    year: "2026",
+    subtitle: "White Room Demos · 2026",
     audioSrc: "audio/violet-static.mp3",
     coverSrc: "images/cover-02.jpg",
-    lyrics: [
-      "Placeholder lyrics.",
-      "This drawer is intentionally minimal.",
-    ],
+    lyrics: ["Placeholder lyrics.", "Keep each line as a separate string."],
   },
   {
     id: "receipt-iii",
     title: "Receipt III",
-    album: "Receipts (EP) — Placeholder",
-    year: "2026",
+    subtitle: "Receipts (EP) · 2026",
     audioSrc: "audio/receipt-iii.mp3",
     coverSrc: "images/cover-03.jpg",
-    lyrics: [
-      "Placeholder lyrics.",
-      "Drop in future songs anytime.",
-    ],
+    lyrics: ["Placeholder lyrics.", "Add more tracks anytime."],
   },
 ];
 
 /* =========================
-   Small Utils
+   Helpers
    ========================= */
-function $(sel, root = document) {
-  return root.querySelector(sel);
-}
-function $all(sel, root = document) {
-  return Array.from(root.querySelectorAll(sel));
-}
-function clamp(n, a, b) {
-  return Math.max(a, Math.min(b, n));
-}
+function $(s, r = document) { return r.querySelector(s); }
+function $all(s, r = document) { return Array.from(r.querySelectorAll(s)); }
+function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
 function formatTime(sec) {
   if (!Number.isFinite(sec) || sec < 0) return "0:00";
   const m = Math.floor(sec / 60);
   const s = Math.floor(sec % 60);
   return `${m}:${String(s).padStart(2, "0")}`;
 }
-function safeUrlFromLocation() {
-  try {
-    return new URL(window.location.href);
-  } catch {
-    return null;
-  }
+function esc(x) {
+  return String(x ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+function safeUrl() {
+  try { return new URL(window.location.href); }
+  catch { return null; }
 }
 
 /* =========================
    Storage
    ========================= */
-const Storage = {
-  key: "receipts_favs_v1",
-  getFavs() {
-    return errorHandler.attempt(() => {
-      const raw = localStorage.getItem(Storage.key);
-      if (!raw) return new Set();
-      const arr = JSON.parse(raw);
+const Store = {
+  k: "receipts_favs_v2",
+  get() {
+    try {
+      const raw = localStorage.getItem(Store.k);
+      const arr = raw ? JSON.parse(raw) : [];
       return new Set(Array.isArray(arr) ? arr : []);
-    }, () => new Set());
+    } catch {
+      return new Set();
+    }
   },
-  setFavs(set) {
-    errorHandler.attempt(() => {
-      localStorage.setItem(Storage.key, JSON.stringify(Array.from(set)));
-    });
+  set(set) {
+    try {
+      localStorage.setItem(Store.k, JSON.stringify(Array.from(set)));
+    } catch {
+      /* no-op */
+    }
   },
 };
 
 /* =========================
-   Audio Engine + Visuals
+   Player (minimal, art-first)
    ========================= */
 class Player {
   constructor() {
     this.audio = $("#audio");
-    this.canvas = $("#waveCanvas");
-    this.ctx = this.canvas?.getContext("2d") || null;
+    this.c = $("#waveC");
+    this.g = this.c?.getContext("2d") || null;
 
-    this.scrub = $("#scrubRange");
-    this.timeCurrent = $("#timeCurrent");
-    this.timeTotal = $("#timeTotal");
+    this.coverImg = $("#coverImg");
+    this.title = $("#title");
+    this.meta = $("#meta");
+    this.nowText = $("#nowText");
 
-    this.playBtn = $("#playBtn");
-    this.playLabel = $("#playLabel");
-    this.prevBtn = $("#prevBtn");
-    this.nextBtn = $("#nextBtn");
+    this.playBtn = $("#play");
+    this.playLab = $("#playLab");
+    this.prevBtn = $("#prev");
+    this.nextBtn = $("#next");
 
-    this.trackTitle = $("#trackTitle");
-    this.trackMeta = $("#trackMeta");
-    this.nowHint = $("#nowHint");
+    this.scrub = $("#scrub");
+    this.tCur = $("#tCur");
+    this.tDur = $("#tDur");
+
+    this.rows = $("#rows");
+
+    this.favBtn = $("#favBtn");
+    this.shareBtn = $("#shareBtn");
+    this.shareline = $("#shareline");
+    this.copyLink = $("#copyLink");
+    this.nativeShare = $("#nativeShare");
 
     this.lyricsBtn = $("#lyricsBtn");
-    this.lyricsDrawer = $("#lyricsDrawer");
+    this.lyrics = $("#lyrics");
     this.lyricsBody = $("#lyricsBody");
     this.lyricsClose = $("#lyricsClose");
 
-    this.shareTrackBtn = $("#shareTrackBtn");
-    this.shareRow = $("#shareRow");
-    this.copyLinkBtn = $("#copyLinkBtn");
-    this.nativeShareBtn = $("#nativeShareBtn");
+    this.deepBtn = $("#deepBtn");
+    this.shareRoomBtn = $("#shareRoomBtn");
+    this.shareSiteBtn = $("#shareSiteBtn");
+    this.shareRoomBtn2 = $("#shareRoomBtn");
+    this.shareSiteBtn2 = $("#shareSiteBtn");
 
-    this.favBtn = $("#favBtn");
+    this.pre = $("#pre");
+    this.prePct = $("#prePct");
+    this.totem = $("#totem");
 
-    this.cylinder = $("#cylinder");
+    this.favs = Store.get();
+    this.filter = "all";
+    this.idx = -1;
 
-    this.albumChips = $("#albumChips");
-    this.tracklist = $("#tracklist");
+    this.ac = null;
+    this.an = null;
+    this.src = null;
+    this.buf = null;
 
-    this.deepModeBtn = $("#deepModeBtn");
-    this.toggleAmbient = $("#toggleAmbient");
-
-    this.activeIndex = -1;
-
-    this.favs = Storage.getFavs();
-    this.filterMode = "all";
-    this.albumMode = "all";
-
-    this.audioCtx = null;
-    this.analyser = null;
-    this.sourceNode = null;
-    this.freq = null;
-
-    this.visualRaf = null;
-    this.ambientOn = true;
-
-    this.cylPanels = 14;
-    this.cylIdle = 0;
-    this.cylTargetDeg = 0;
+    this.raf = null;
+    this.phase = 0;
 
     this._bind();
-    this._renderAlbums();
-    this._renderTracks();
-    this._buildCylinder();
-
-    this._preloaderBoot().then(() => {
-      this._bootFromHash();
-      $("#year").textContent = String(new Date().getFullYear());
-    });
+    this._renderList();
+    this._preload().then(() => this._bootFromHash());
+    $("#yr").textContent = String(new Date().getFullYear());
   }
 
   _bind() {
-    if (!this.audio) return;
-
-    this.playBtn?.addEventListener("click", () => this.togglePlay());
+    this.playBtn?.addEventListener("click", () => this.toggle());
     this.prevBtn?.addEventListener("click", () => this.prev());
     this.nextBtn?.addEventListener("click", () => this.next());
 
-    this.audio.addEventListener("loadedmetadata", () => this._syncTimes());
-    this.audio.addEventListener("timeupdate", () => this._syncTimes());
-    this.audio.addEventListener("ended", () => this.next());
+    this.audio?.addEventListener("loadedmetadata", () => this._syncTime());
+    this.audio?.addEventListener("timeupdate", () => this._syncTime());
+    this.audio?.addEventListener("ended", () => this.next());
 
     this.scrub?.addEventListener("input", () => {
-      if (!this.audio.duration) return;
+      if (!this.audio?.duration) return;
       const v = Number(this.scrub.value) / 1000;
       this.audio.currentTime = clamp(v * this.audio.duration, 0, this.audio.duration);
-      this._syncTimes();
+      this._syncTime();
     });
+
+    $all("[data-filter]").forEach((b) => {
+      b.addEventListener("click", () => {
+        $all("[data-filter]").forEach((x) => x.classList.remove("is"));
+        b.classList.add("is");
+        this.filter = b.dataset.filter || "all";
+        this._renderList();
+      });
+    });
+
+    this.favBtn?.addEventListener("click", () => this.toggleFav());
+    this.shareBtn?.addEventListener("click", () => this.toggleShare());
+    this.copyLink?.addEventListener("click", () => this.copyTrackLink());
+    this.nativeShare?.addEventListener("click", () => this.nativeShare());
 
     this.lyricsBtn?.addEventListener("click", () => this.toggleLyrics());
     this.lyricsClose?.addEventListener("click", () => this.closeLyrics());
 
-    this.shareTrackBtn?.addEventListener("click", () => this.toggleShareRow());
-    this.copyLinkBtn?.addEventListener("click", () => this.copyShareLink());
-    this.nativeShareBtn?.addEventListener("click", () => this.nativeShare());
-
-    this.favBtn?.addEventListener("click", () => this.toggleFavorite());
-
-    this.deepModeBtn?.addEventListener("click", () => {
-      const pressed = this.deepModeBtn.getAttribute("aria-pressed") === "true";
-      this.deepModeBtn.setAttribute("aria-pressed", String(!pressed));
-      document.body.classList.toggle("deep-mode", !pressed);
+    this.deepBtn?.addEventListener("click", () => {
+      const on = document.body.classList.toggle("deep");
+      this.deepBtn.setAttribute("aria-pressed", String(on));
+      this._drawIdle();
     });
 
-    this.toggleAmbient?.addEventListener("click", () => {
-      const pressed = this.toggleAmbient.getAttribute("aria-pressed") === "true";
-      this.toggleAmbient.setAttribute("aria-pressed", String(!pressed));
-      this.ambientOn = pressed;
-      if (!this.ambientOn) this._setCylinderRotation(this.cylTargetDeg);
-    });
+    const shareRoom = () => {
+      const u = safeUrl();
+      if (!u) return;
+      u.hash = "#music";
+      this._copy(u.toString(), "Copied room link.");
+    };
 
-    // smooth anchor, slight topbar fade
-    $all(".nav-link").forEach((a) => {
-      a.addEventListener("click", (e) => {
-        const href = a.getAttribute("href") || "";
-        if (!href.startsWith("#")) return;
-        e.preventDefault();
-        const el = document.getElementById(href.slice(1));
-        el?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    });
+    this.shareRoomBtn?.addEventListener("click", shareRoom);
+    this.shareSiteBtn?.addEventListener("click", shareRoom);
 
-    // share site
-    $("#shareSiteBtn")?.addEventListener("click", () => {
-      const url = safeUrlFromLocation();
-      if (!url) return;
-      url.hash = "#music";
-      this._copyText(url.toString(), "Copied room link.");
-    });
-
-    // contact form: placeholder (no network)
-    $("#contactForm")?.addEventListener("submit", (e) => {
-      e.preventDefault();
-      errorHandler.showToast("Wire this to Formspree later (drop-in).");
-    });
+    window.addEventListener("hashchange", () => this._bootFromHash());
   }
 
-  async _preloaderBoot() {
-    const pre = $(".preloader");
-    const pct = $("#preloaderPercent");
-    if (!pre || !pct) return;
+  async _preload() {
+    if (!this.pre || !this.prePct) return;
 
     const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     const steps = reduce ? 30 : 70;
 
     for (let i = 0; i <= steps; i++) {
       await new Promise((r) => setTimeout(r, 16));
-      const n = Math.round((i / steps) * 100);
-      pct.textContent = `${n}%`;
+      this.prePct.textContent = `${Math.round((i / steps) * 100)}%`;
     }
 
-    pre.classList.add("is-hidden");
-    setTimeout(() => (pre.style.display = "none"), 560);
+    this.pre.classList.add("is-off");
+    setTimeout(() => (this.pre.style.display = "none"), 560);
   }
 
-  _renderAlbums() {
-    if (!this.albumChips) return;
+  _bootFromHash() {
+    const u = safeUrl();
+    if (!u) return this._idleUI();
 
-    const albums = Array.from(new Set(TRACKS.map((t) => t.album)));
-    const all = ["all", ...albums];
+    const raw = u.hash.replace(/^#/, "");
+    const p = new URLSearchParams(raw);
+    const id = p.get("track");
 
-    this.albumChips.innerHTML = all
-      .map((a) => {
-        const label = a === "all" ? "Albums" : a;
-        return `<button class="chip hole-hover ${a === "all" ? "is-active" : ""}" type="button" data-album="${this._esc(
-          a
-        )}"><span class="mono">${this._esc(label)}</span></button>`;
-      })
-      .join("");
+    if (id) {
+      const ok = this.loadById(id, { autoplay: false });
+      if (ok) return;
+    }
 
-    $all("[data-album]", this.albumChips).forEach((btn) => {
-      btn.addEventListener("click", () => {
-        $all("[data-album]", this.albumChips).forEach((b) => b.classList.remove("is-active"));
-        btn.classList.add("is-active");
-        this.albumMode = btn.dataset.album || "all";
-        this._renderTracks();
-      });
-    });
-
-    // filter row
-    $all("[data-filter]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        $all("[data-filter]").forEach((b) => b.classList.remove("is-active"));
-        btn.classList.add("is-active");
-        this.filterMode = btn.dataset.filter || "all";
-        this._renderTracks();
-      });
-    });
+    this._idleUI();
   }
 
-  _renderTracks() {
-    if (!this.tracklist) return;
+  _idleUI() {
+    if (this.title) this.title.textContent = "—";
+    if (this.meta) this.meta.textContent = "—";
+    if (this.nowText) this.nowText.textContent = "select a track";
+    if (this.playLab) this.playLab.textContent = "PLAY";
+    if (this.tCur) this.tCur.textContent = "0:00";
+    if (this.tDur) this.tDur.textContent = "0:00";
+    if (this.scrub) this.scrub.value = "0";
+    if (this.coverImg) this.coverImg.removeAttribute("src");
+    this._drawIdle();
+  }
 
-    const filtered = TRACKS.filter((t) => {
-      if (this.filterMode === "favorites" && !this.favs.has(t.id)) return false;
-      if (this.albumMode !== "all" && t.album !== this.albumMode) return false;
-      return true;
-    });
+  _renderList() {
+    if (!this.rows) return;
 
-    this.tracklist.innerHTML =
-      filtered
+    const items = TRACKS.filter((t) => (this.filter === "favorites" ? this.favs.has(t.id) : true));
+
+    this.rows.innerHTML =
+      items
         .map((t) => {
-          const playing = this.activeIndex >= 0 && TRACKS[this.activeIndex]?.id === t.id;
+          const on = this.idx >= 0 && TRACKS[this.idx]?.id === t.id;
           const fav = this.favs.has(t.id);
           return `
-            <div class="track-item hole-hover ${playing ? "is-playing" : ""}" role="button" tabindex="0" data-track="${this._esc(t.id)}">
-              <div class="track-cover" aria-hidden="true">
-                <img src="${this._esc(t.coverSrc)}" alt="" loading="lazy" />
+            <div class="row hole ${on ? "on" : ""}" tabindex="0" role="button" data-id="${esc(t.id)}">
+              <div class="thumb" aria-hidden="true">
+                <img src="${esc(t.coverSrc)}" alt="" loading="lazy" />
               </div>
               <div>
-                <div class="track-name">${this._esc(t.title)}</div>
-                <div class="track-sub mono">${this._esc(t.album)} · ${this._esc(t.year)}</div>
+                <div class="rname">${esc(t.title)}</div>
+                <div class="rsub mono">${esc(t.subtitle)}</div>
               </div>
-              <div class="track-actions">
-                <button class="small hole-hover" type="button" data-fav="${this._esc(t.id)}" aria-pressed="${fav}">
+              <div class="actions">
+                <button class="sbtn hole" type="button" data-fav="${esc(t.id)}" aria-pressed="${fav}">
                   <span class="mono">${fav ? "FAV✓" : "FAV"}</span>
                 </button>
-                <button class="small hole-hover" type="button" data-share="${this._esc(t.id)}">
-                  <span class="mono">LINK</span>
+                <button class="sbtn hole" type="button" data-link="${esc(t.id)}">
+                  <span class="mono">↗</span>
                 </button>
               </div>
             </div>
           `;
         })
-        .join("") || `<div class="muted mono" style="padding: 0.6rem 0.4rem;">No tracks in this view.</div>`;
+        .join("") || `<div class="mono muted" style="padding:0.6rem 0.4rem;">No tracks in this view.</div>`;
 
-    $all(".track-item", this.tracklist).forEach((row) => {
-      const tid = row.dataset.track;
-      row.addEventListener("click", () => this.loadById(tid, { autoplay: true }));
-      row.addEventListener("keydown", (e) => {
+    $all(".row", this.rows).forEach((r) => {
+      const id = r.dataset.id;
+      r.addEventListener("click", () => this.loadById(id, { autoplay: true }));
+      r.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          this.loadById(tid, { autoplay: true });
+          this.loadById(id, { autoplay: true });
         }
       });
     });
 
-    $all("[data-fav]", this.tracklist).forEach((btn) => {
-      btn.addEventListener("click", (e) => {
+    $all("[data-fav]", this.rows).forEach((b) => {
+      b.addEventListener("click", (e) => {
         e.stopPropagation();
-        const tid = btn.dataset.fav;
-        this._toggleFavId(tid);
+        const id = b.dataset.fav;
+        this._toggleFavId(id);
       });
     });
 
-    $all("[data-share]", this.tracklist).forEach((btn) => {
-      btn.addEventListener("click", (e) => {
+    $all("[data-link]", this.rows).forEach((b) => {
+      b.addEventListener("click", (e) => {
         e.stopPropagation();
-        const tid = btn.dataset.share;
-        this._copyTrackLink(tid);
+        const id = b.dataset.link;
+        this._copyTrackLink(id);
       });
     });
-  }
-
-  _buildCylinder() {
-    if (!this.cylinder) return;
-
-    const panels = this.cylPanels;
-    const radius = 240;
-    const step = 360 / panels;
-
-    this.cylinder.innerHTML = "";
-
-    for (let i = 0; i < panels; i++) {
-      const t = TRACKS[i % TRACKS.length];
-      const panel = document.createElement("div");
-      panel.className = "cyl-panel";
-      panel.style.transform = `translate(-50%, -50%) rotateY(${i * step}deg) translateZ(${radius}px)`;
-
-      const img = document.createElement("img");
-      img.className = "cyl-img";
-      img.loading = "lazy";
-      img.alt = "";
-      img.src = t.coverSrc;
-
-      img.addEventListener("error", () => {
-        img.style.display = "none";
-        panel.style.background = "rgba(10,10,14,0.94)";
-      });
-
-      panel.appendChild(img);
-      this.cylinder.appendChild(panel);
-    }
-  }
-
-  _setCylinderRotation(deg) {
-    if (!this.cylinder) return;
-    this.cylinder.style.setProperty("--cyl-rot", `${deg}deg`);
-  }
-
-  _tickCylinder() {
-    if (!this.ambientOn) return;
-
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-    if (reduce) return;
-
-    this.cylIdle += 0.15;
-    const wobble = Math.sin(this.cylIdle * 0.015) * 6;
-    const drift = this.cylIdle * 0.02;
-
-    this._setCylinderRotation(this.cylTargetDeg + wobble + drift);
-  }
-
-  _bootFromHash() {
-    const url = safeUrlFromLocation();
-    const params = new URLSearchParams(url?.hash?.replace(/^#/, "") || "");
-    const trackId = params.get("track");
-    if (trackId) {
-      const ok = this.loadById(trackId, { autoplay: false });
-      if (ok) return;
-    }
-    this._syncUIEmpty();
-  }
-
-  _syncUIEmpty() {
-    if (this.trackTitle) this.trackTitle.textContent = "—";
-    if (this.trackMeta) this.trackMeta.textContent = "—";
-    if (this.nowHint) this.nowHint.textContent = "select a song";
-    if (this.playLabel) this.playLabel.textContent = "PLAY";
-    if (this.timeCurrent) this.timeCurrent.textContent = "0:00";
-    if (this.timeTotal) this.timeTotal.textContent = "0:00";
-    if (this.scrub) this.scrub.value = "0";
-    this._drawIdleCanvas();
   }
 
   loadById(id, { autoplay } = { autoplay: true }) {
-    const idx = TRACKS.findIndex((t) => t.id === id);
-    if (idx < 0) {
-      errorHandler.showToast("Track not found.");
+    const i = TRACKS.findIndex((t) => t.id === id);
+    if (i < 0) {
+      toast.show("Track not found.");
       return false;
     }
-    this.loadIndex(idx, { autoplay });
+    this.loadIndex(i, { autoplay });
     return true;
   }
 
-  loadIndex(idx, { autoplay } = { autoplay: true }) {
+  loadIndex(i, { autoplay } = { autoplay: true }) {
     if (!this.audio) return;
-    idx = clamp(idx, 0, TRACKS.length - 1);
-    this.activeIndex = idx;
 
-    const t = TRACKS[idx];
+    this.idx = clamp(i, 0, TRACKS.length - 1);
+    const t = TRACKS[this.idx];
 
     this.audio.src = t.audioSrc;
     this.audio.load();
 
-    if (this.trackTitle) this.trackTitle.textContent = t.title;
-    if (this.trackMeta) this.trackMeta.textContent = `${t.album} · ${t.year}`;
-    if (this.nowHint) this.nowHint.textContent = t.title;
+    if (this.coverImg) {
+      this.coverImg.src = t.coverSrc;
+      this.coverImg.onerror = () => (this.coverImg.style.display = "none");
+      this.coverImg.onload = () => (this.coverImg.style.display = "block");
+    }
 
-    // cylinder “roll in”
-    const step = 360 / this.cylPanels;
-    this.cylTargetDeg = -(idx * step) - 30;
-    this._setCylinderRotation(this.cylTargetDeg);
+    if (this.title) this.title.textContent = t.title;
+    if (this.meta) this.meta.textContent = t.subtitle;
+    if (this.nowText) this.nowText.textContent = t.title;
 
-    // lyrics
     this._setLyrics(t);
-
-    // share url hash
-    this._setHashTrack(t.id);
-
-    // favorites state
+    this._setHash(t.id);
     this._syncFavBtn();
 
-    // rerender highlights
-    this._renderTracks();
-
-    // start visuals
     this._ensureAudioGraph();
-    this._startVisualLoop();
+    this._startDraw();
+
+    this._renderList();
 
     if (autoplay) {
-      this.play().catch(() => {
-        errorHandler.showToast("Tap play to start audio.");
-      });
+      this.play().catch(() => toast.show("Tap play to start audio."));
     } else {
       this.pause();
     }
   }
 
-  _setHashTrack(id) {
-    const url = safeUrlFromLocation();
-    if (!url) return;
+  _setHash(id) {
+    const u = safeUrl();
+    if (!u) return;
     const p = new URLSearchParams();
     p.set("track", id);
-    url.hash = `#${p.toString()}`;
-    history.replaceState(null, "", url.toString());
+    u.hash = `#${p.toString()}`;
+    history.replaceState(null, "", u.toString());
   }
 
-  _syncFavBtn() {
-    const t = TRACKS[this.activeIndex];
-    const on = t ? this.favs.has(t.id) : false;
-    this.favBtn?.setAttribute("aria-pressed", String(on));
+  async play() {
+    await this.audio.play();
+    if (this.playLab) this.playLab.textContent = "PAUSE";
+    this._startDraw();
   }
 
-  _toggleFavId(id) {
-    if (!id) return;
-    if (this.favs.has(id)) this.favs.delete(id);
-    else this.favs.add(id);
-    Storage.setFavs(this.favs);
-
-    if (TRACKS[this.activeIndex]?.id === id) this._syncFavBtn();
-    this._renderTracks();
-    errorHandler.showToast(this.favs.has(id) ? "Favorited." : "Unfavorited.");
+  pause() {
+    this.audio.pause();
+    if (this.playLab) this.playLab.textContent = "PLAY";
   }
 
-  toggleFavorite() {
-    const t = TRACKS[this.activeIndex];
-    if (!t) {
-      errorHandler.showToast("Select a track first.");
-      return;
+  toggle() {
+    if (this.idx < 0) return this.loadIndex(0, { autoplay: true });
+    if (this.audio.paused) this.play().catch(() => toast.show("Tap play to start audio."));
+    else this.pause();
+  }
+
+  prev() {
+    if (this.idx < 0) return this.loadIndex(0, { autoplay: true });
+    this.loadIndex((this.idx - 1 + TRACKS.length) % TRACKS.length, { autoplay: true });
+  }
+
+  next() {
+    if (this.idx < 0) return this.loadIndex(0, { autoplay: true });
+    this.loadIndex((this.idx + 1) % TRACKS.length, { autoplay: true });
+  }
+
+  _syncTime() {
+    const dur = this.audio.duration || 0;
+    const cur = this.audio.currentTime || 0;
+    if (this.tCur) this.tCur.textContent = formatTime(cur);
+    if (this.tDur) this.tDur.textContent = formatTime(dur);
+
+    if (dur > 0 && this.scrub) {
+      this.scrub.value = String(Math.round(clamp(cur / dur, 0, 1) * 1000));
     }
-    this._toggleFavId(t.id);
   }
 
-  toggleLyrics() {
-    const expanded = this.lyricsBtn?.getAttribute("aria-expanded") === "true";
-    if (expanded) this.closeLyrics();
-    else this.openLyrics();
-  }
+  _ensureAudioGraph() {
+    if (this.ac || !this.audio) return;
 
-  openLyrics() {
-    if (!this.lyricsDrawer) return;
-    this.lyricsDrawer.hidden = false;
-    this.lyricsBtn?.setAttribute("aria-expanded", "true");
-  }
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
 
-  closeLyrics() {
-    if (!this.lyricsDrawer) return;
-    this.lyricsDrawer.hidden = true;
-    this.lyricsBtn?.setAttribute("aria-expanded", "false");
-  }
+      this.ac = new Ctx();
+      this.an = this.ac.createAnalyser();
+      this.an.fftSize = 2048;
+      this.an.smoothingTimeConstant = 0.86;
 
-  _setLyrics(track) {
-    if (!this.lyricsBody) return;
-    const lines = Array.isArray(track?.lyrics) ? track.lyrics : [];
-    if (!lines.length) {
-      this.lyricsBody.innerHTML = `<p class="muted">No lyrics added yet.</p>`;
-      return;
+      this.src = this.ac.createMediaElementSource(this.audio);
+      this.src.connect(this.an);
+      this.an.connect(this.ac.destination);
+
+      this.buf = new Uint8Array(this.an.frequencyBinCount);
+    } catch {
+      this.ac = null;
+      this.an = null;
+      this.src = null;
+      this.buf = null;
     }
-    this.lyricsBody.innerHTML = lines.map((l) => `<p>${this._esc(l)}</p>`).join("");
   }
 
-  toggleShareRow() {
-    if (!this.shareRow) return;
-    this.shareRow.hidden = !this.shareRow.hidden;
+  _startDraw() {
+    if (!this.c || !this.g) return;
+    if (this.raf) return;
+
+    const loop = () => {
+      this._draw();
+      this._totemPulse();
+      this.raf = requestAnimationFrame(loop);
+    };
+
+    this.raf = requestAnimationFrame(loop);
   }
 
-  copyShareLink() {
-    const t = TRACKS[this.activeIndex];
-    if (!t) {
-      errorHandler.showToast("Select a track first.");
-      return;
+  _resizeCanvas() {
+    const ratio = Math.max(1, Math.floor(window.devicePixelRatio || 1));
+    const cssW = this.c.clientWidth || 1;
+    const cssH = Math.round(cssW * (260 / 1400));
+
+    const w = Math.floor(cssW * ratio);
+    const h = Math.floor(cssH * ratio);
+
+    if (this.c.width !== w || this.c.height !== h) {
+      this.c.width = w;
+      this.c.height = h;
     }
+  }
+
+  _drawIdle() {
+    if (!this.c || !this.g) return;
+    this._resizeCanvas();
+
+    const g = this.g;
+    const w = this.c.width;
+    const h = this.c.height;
+
+    g.clearRect(0, 0, w, h);
+
+    const deep = document.body.classList.contains("deep");
+    const ink = deep ? "rgba(251,251,253,0.78)" : "rgba(10,10,14,0.78)";
+    const vio = deep ? "rgba(123,115,255,0.22)" : "rgba(123,115,255,0.14)";
+
+    const bg = g.createRadialGradient(w * 0.44, h * 0.32, 10, w * 0.44, h * 0.32, w * 0.95);
+    bg.addColorStop(0, vio);
+    bg.addColorStop(1, "rgba(10,10,14,0.00)");
+    g.fillStyle = bg;
+    g.fillRect(0, 0, w, h);
+
+    g.strokeStyle = "rgba(10,10,14,0.10)";
+    g.lineWidth = 1;
+    g.strokeRect(w * 0.02, h * 0.10, w * 0.96, h * 0.80);
+
+    g.strokeStyle = ink;
+    g.lineWidth = 2.2;
+    g.beginPath();
+    g.moveTo(w * 0.08, h * 0.52);
+    g.quadraticCurveTo(w * 0.46, h * 0.38, w * 0.92, h * 0.50);
+    g.stroke();
+  }
+
+  _draw() {
+    if (!this.c || !this.g || !this.audio) return;
+    this._resizeCanvas();
+
+    const g = this.g;
+    const w = this.c.width;
+    const h = this.c.height;
+
+    g.clearRect(0, 0, w, h);
+
+    const deep = document.body.classList.contains("deep");
+    const ink = deep ? "rgba(251,251,253,0.78)" : "rgba(10,10,14,0.82)";
+    const inkSoft = deep ? "rgba(251,251,253,0.12)" : "rgba(10,10,14,0.10)";
+    const vio = deep ? "rgba(123,115,255,0.30)" : "rgba(123,115,255,0.20)";
+
+    const bg = g.createRadialGradient(w * 0.42, h * 0.30, 10, w * 0.42, h * 0.30, w * 0.95);
+    bg.addColorStop(0, vio);
+    bg.addColorStop(1, "rgba(10,10,14,0.00)");
+    g.fillStyle = bg;
+    g.fillRect(0, 0, w, h);
+
+    const dur = this.audio.duration || 0;
+    const cur = this.audio.currentTime || 0;
+    const p = dur > 0 ? clamp(cur / dur, 0, 1) : 0;
+
+    g.fillStyle = deep ? "rgba(251,251,253,0.02)" : "rgba(10,10,14,0.05)";
+    g.fillRect(0, 0, w, h);
+
+    g.fillStyle = deep ? "rgba(251,251,253,0.04)" : "rgba(10,10,14,0.09)";
+    g.fillRect(0, 0, w * p, h);
+
+    g.strokeStyle = inkSoft;
+    g.lineWidth = 1;
+    g.strokeRect(w * 0.02, h * 0.10, w * 0.96, h * 0.80);
+
+    if (this.an && this.buf) this.an.getByteFrequencyData(this.buf);
+
+    const mid = h * 0.48;
+    const amp = h * 0.22;
+
+    g.strokeStyle = ink;
+    g.lineWidth = 2.4;
+    g.beginPath();
+
+    const steps = 260;
+    this.phase += 0.9;
+
+    for (let i = 0; i <= steps; i++) {
+      const x = (i / steps) * w;
+      const idx = this.buf ? Math.floor((i / steps) * (this.buf.length - 1)) : i;
+      const v = this.buf ? this.buf[idx] / 255 : 0.12;
+
+      const shaped = Math.pow(v, 1.12);
+      const y = mid + Math.sin(i * 0.18 + this.phase * 0.02) * (amp * shaped);
+
+      if (i === 0) g.moveTo(x, y);
+      else g.lineTo(x, y);
+    }
+
+    g.stroke();
+
+    // progress line (violet whisper)
+    g.strokeStyle = deep ? "rgba(123,115,255,0.55)" : "rgba(123,115,255,0.52)";
+    g.lineWidth = 2;
+    g.beginPath();
+    g.moveTo(w * p, h * 0.14);
+    g.lineTo(w * p, h * 0.86);
+    g.stroke();
+  }
+
+  _totemPulse() {
+    if (!this.totem) return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    if (reduce) return;
+    const t = Date.now() * 0.001;
+    const a = 0.85 + Math.sin(t * 0.9) * 0.05;
+    this.totem.style.opacity = String(a);
+  }
+
+  toggleShare() {
+    if (!this.shareline) return;
+    this.shareline.hidden = !this.shareline.hidden;
+  }
+
+  copyTrackLink() {
+    const t = TRACKS[this.idx];
+    if (!t) return toast.show("Select a track first.");
     this._copyTrackLink(t.id);
   }
 
   _copyTrackLink(id) {
-    const url = safeUrlFromLocation();
-    if (!url) return;
+    const u = safeUrl();
+    if (!u) return;
     const p = new URLSearchParams();
     p.set("track", id);
-    url.hash = `#${p.toString()}`;
-    this._copyText(url.toString(), "Copied track link.");
+    u.hash = `#${p.toString()}`;
+    this._copy(u.toString(), "Copied track link.");
   }
 
   async nativeShare() {
-    const t = TRACKS[this.activeIndex];
-    if (!t) {
-      errorHandler.showToast("Select a track first.");
-      return;
-    }
-    const url = safeUrlFromLocation();
-    if (!url) return;
+    const t = TRACKS[this.idx];
+    if (!t) return toast.show("Select a track first.");
+
+    const u = safeUrl();
+    if (!u) return;
+
     const p = new URLSearchParams();
     p.set("track", t.id);
-    url.hash = `#${p.toString()}`;
+    u.hash = `#${p.toString()}`;
 
-    const payload = {
-      title: `Receipts — ${t.title}`,
-      text: `Receipts — ${t.title}`,
-      url: url.toString(),
-    };
+    const payload = { title: `Receipts — ${t.title}`, text: `Receipts — ${t.title}`, url: u.toString() };
 
     if (navigator.share) {
       try {
         await navigator.share(payload);
-        errorHandler.showToast("Shared.");
+        toast.show("Shared.");
       } catch {
-        /* user cancelled */
+        /* user canceled */
       }
       return;
     }
 
-    this._copyText(payload.url, "Share not supported here — link copied.");
+    this._copy(payload.url, "Share not supported — link copied.");
   }
 
-  async _copyText(text, okMsg) {
+  async _copy(text, okMsg) {
     try {
       await navigator.clipboard.writeText(text);
-      errorHandler.showToast(okMsg);
+      toast.show(okMsg);
     } catch {
-      // fallback
       const ta = document.createElement("textarea");
       ta.value = text;
       document.body.appendChild(ta);
       ta.select();
       document.execCommand("copy");
       ta.remove();
-      errorHandler.showToast(okMsg);
+      toast.show(okMsg);
     }
   }
 
-  async play() {
-    if (!this.audio) return;
-    await this.audio.play();
-    if (this.playLabel) this.playLabel.textContent = "PAUSE";
-    this._startVisualLoop();
+  _toggleFavId(id) {
+    if (!id) return;
+    if (this.favs.has(id)) this.favs.delete(id);
+    else this.favs.add(id);
+    Store.set(this.favs);
+
+    if (TRACKS[this.idx]?.id === id) this._syncFavBtn();
+    this._renderList();
+    toast.show(this.favs.has(id) ? "Favorited." : "Unfavorited.");
   }
 
-  pause() {
-    if (!this.audio) return;
-    this.audio.pause();
-    if (this.playLabel) this.playLabel.textContent = "PLAY";
+  toggleFav() {
+    const t = TRACKS[this.idx];
+    if (!t) return toast.show("Select a track first.");
+    this._toggleFavId(t.id);
   }
 
-  togglePlay() {
-    if (!this.audio) return;
-    if (this.activeIndex < 0) {
-      this.loadIndex(0, { autoplay: true });
+  _syncFavBtn() {
+    const t = TRACKS[this.idx];
+    const on = t ? this.favs.has(t.id) : false;
+    this.favBtn?.setAttribute("aria-pressed", String(on));
+  }
+
+  toggleLyrics() {
+    const open = this.lyricsBtn?.getAttribute("aria-expanded") === "true";
+    if (open) this.closeLyrics();
+    else this.openLyrics();
+  }
+
+  openLyrics() {
+    if (!this.lyrics) return;
+    this.lyrics.hidden = false;
+    this.lyricsBtn?.setAttribute("aria-expanded", "true");
+  }
+
+  closeLyrics() {
+    if (!this.lyrics) return;
+    this.lyrics.hidden = true;
+    this.lyricsBtn?.setAttribute("aria-expanded", "false");
+  }
+
+  _setLyrics(t) {
+    if (!this.lyricsBody) return;
+    const lines = Array.isArray(t?.lyrics) ? t.lyrics : [];
+    if (!lines.length) {
+      this.lyricsBody.innerHTML = `<p class="muted">No lyrics yet.</p>`;
       return;
     }
-    if (this.audio.paused) this.play().catch(() => errorHandler.showToast("Tap play to start audio."));
-    else this.pause();
-  }
-
-  prev() {
-    if (this.activeIndex < 0) {
-      this.loadIndex(0, { autoplay: true });
-      return;
-    }
-    const i = (this.activeIndex - 1 + TRACKS.length) % TRACKS.length;
-    this.loadIndex(i, { autoplay: true });
-  }
-
-  next() {
-    if (this.activeIndex < 0) {
-      this.loadIndex(0, { autoplay: true });
-      return;
-    }
-    const i = (this.activeIndex + 1) % TRACKS.length;
-    this.loadIndex(i, { autoplay: true });
-  }
-
-  _syncTimes() {
-    if (!this.audio || !this.scrub) return;
-
-    const dur = this.audio.duration || 0;
-    const cur = this.audio.currentTime || 0;
-
-    if (this.timeCurrent) this.timeCurrent.textContent = formatTime(cur);
-    if (this.timeTotal) this.timeTotal.textContent = formatTime(dur);
-
-    if (dur > 0) {
-      const v = clamp(cur / dur, 0, 1);
-      this.scrub.value = String(Math.round(v * 1000));
-    }
-  }
-
-  _ensureAudioGraph() {
-    if (this.audioCtx || !this.audio) return;
-
-    try {
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-
-      this.audioCtx = new Ctx();
-      this.analyser = this.audioCtx.createAnalyser();
-      this.analyser.fftSize = 2048;
-      this.analyser.smoothingTimeConstant = 0.84;
-
-      this.sourceNode = this.audioCtx.createMediaElementSource(this.audio);
-      this.sourceNode.connect(this.analyser);
-      this.analyser.connect(this.audioCtx.destination);
-
-      this.freq = new Uint8Array(this.analyser.frequencyBinCount);
-    } catch {
-      this.audioCtx = null;
-      this.analyser = null;
-      this.sourceNode = null;
-      this.freq = null;
-    }
-  }
-
-  _startVisualLoop() {
-    if (!this.canvas || !this.ctx) return;
-    if (this.visualRaf) return;
-
-    const loop = () => {
-      this._draw();
-      this._tickCylinder();
-      this.visualRaf = requestAnimationFrame(loop);
-    };
-
-    this.visualRaf = requestAnimationFrame(loop);
-  }
-
-  _drawIdleCanvas() {
-    if (!this.canvas || !this.ctx) return;
-    this._resizeCanvasToDisplay();
-    const { width: w, height: h } = this.canvas;
-    const g = this.ctx;
-
-    g.clearRect(0, 0, w, h);
-
-    // faint “room pulse”
-    g.globalAlpha = 0.7;
-    const grad = g.createRadialGradient(w * 0.45, h * 0.35, 10, w * 0.45, h * 0.35, w * 0.9);
-    grad.addColorStop(0, "rgba(123,115,255,0.10)");
-    grad.addColorStop(1, "rgba(10,10,14,0.00)");
-    g.fillStyle = grad;
-    g.fillRect(0, 0, w, h);
-
-    g.globalAlpha = 1;
-    g.strokeStyle = "rgba(10,10,14,0.10)";
-    g.lineWidth = 2;
-    g.beginPath();
-    g.moveTo(w * 0.08, h * 0.55);
-    g.quadraticCurveTo(w * 0.42, h * 0.42, w * 0.92, h * 0.52);
-    g.stroke();
-  }
-
-  _draw() {
-    if (!this.canvas || !this.ctx || !this.audio) return;
-
-    this._resizeCanvasToDisplay();
-
-    const g = this.ctx;
-    const w = this.canvas.width;
-    const h = this.canvas.height;
-
-    g.clearRect(0, 0, w, h);
-
-    // background glow
-    const bg = g.createRadialGradient(w * 0.42, h * 0.35, 10, w * 0.42, h * 0.35, w * 0.95);
-    bg.addColorStop(0, "rgba(123,115,255,0.11)");
-    bg.addColorStop(1, "rgba(10,10,14,0.00)");
-    g.fillStyle = bg;
-    g.fillRect(0, 0, w, h);
-
-    // progress fill (as requested: “filling the waveform as it plays”)
-    const dur = this.audio.duration || 0;
-    const cur = this.audio.currentTime || 0;
-    const p = dur > 0 ? clamp(cur / dur, 0, 1) : 0;
-
-    g.fillStyle = "rgba(10,10,14,0.05)";
-    g.fillRect(0, 0, w, h);
-
-    g.fillStyle = "rgba(10,10,14,0.09)";
-    g.fillRect(0, 0, w * p, h);
-
-    // waveform-ish line derived from analyser (frequency bins)
-    let bins = null;
-    if (this.analyser && this.freq) {
-      this.analyser.getByteFrequencyData(this.freq);
-      bins = this.freq;
-    }
-
-    const mid = h * 0.46;
-    const amp = h * 0.22;
-
-    g.lineWidth = 2.3;
-    g.strokeStyle = "rgba(10,10,14,0.82)";
-    g.beginPath();
-
-    const steps = 240;
-    for (let i = 0; i <= steps; i++) {
-      const x = (i / steps) * w;
-      const idx = bins ? Math.floor((i / steps) * (bins.length - 1)) : i;
-      const v = bins ? bins[idx] / 255 : 0.12 + 0.08 * Math.sin((Date.now() * 0.001) + i * 0.09);
-      const shaped = Math.pow(v, 1.15);
-      const y = mid + Math.sin(i * 0.19 + (Date.now() * 0.002)) * (amp * shaped);
-
-      if (i === 0) g.moveTo(x, y);
-      else g.lineTo(x, y);
-    }
-    g.stroke();
-
-    // violet highlight line at progress boundary
-    g.strokeStyle = "rgba(123,115,255,0.55)";
-    g.lineWidth = 2;
-    g.beginPath();
-    g.moveTo(w * p, h * 0.12);
-    g.lineTo(w * p, h * 0.88);
-    g.stroke();
-
-    // subtle corner ticks
-    g.globalAlpha = 0.55;
-    g.strokeStyle = "rgba(10,10,14,0.12)";
-    g.lineWidth = 1;
-    g.strokeRect(w * 0.02, h * 0.08, w * 0.96, h * 0.84);
-    g.globalAlpha = 1;
-  }
-
-  _resizeCanvasToDisplay() {
-    const c = this.canvas;
-    if (!c) return;
-
-    const ratio = Math.max(1, Math.floor(window.devicePixelRatio || 1));
-    const cssW = c.clientWidth || 1;
-    const cssH = Math.round(cssW * (240 / 1400));
-
-    const wantW = Math.floor(cssW * ratio);
-    const wantH = Math.floor(cssH * ratio);
-
-    if (c.width !== wantW || c.height !== wantH) {
-      c.width = wantW;
-      c.height = wantH;
-    }
-  }
-
-  _esc(s) {
-    return String(s ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+    this.lyricsBody.innerHTML = lines.map((l) => `<p>${esc(l)}</p>`).join("");
   }
 }
 
-/* =========================
-   Boot
-   ========================= */
+/* Boot */
 document.addEventListener("DOMContentLoaded", () => {
-  errorHandler.attempt(() => {
-    // If you want to keep your old file URLs, just set TRACKS[*].audioSrc accordingly.
-    // This build assumes you'll add: /audio/*.mp3 and /images/*.jpg later.
+  try {
     new Player();
-  });
+  } catch (e) {
+    toast.show(e instanceof Error ? e.message : "Failed to initialize.");
+  }
 });
