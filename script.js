@@ -1,723 +1,554 @@
-/* FILE: /script.js */
-"use strict";
-
-/* =========================
-   Toast / Hardened Errors
-   ========================= */
-class Toast {
-  constructor() {
-    this.el = document.getElementById("toast");
-    this.msg = document.getElementById("toastMsg");
-    this.x = document.getElementById("toastX");
-    this.t = null;
-
-    this.x?.addEventListener("click", () => this.hide());
-
-    window.addEventListener("error", (e) => this.show(`Error: ${e?.message || "script error"}`));
-    window.addEventListener("unhandledrejection", (e) => {
-      const r = e?.reason instanceof Error ? e.reason.message : String(e?.reason || "async error");
-      this.show(`Async: ${r}`);
-    });
-  }
-
-  show(m) {
-    try {
-      if (!this.el || !this.msg) return;
-      this.msg.textContent = m;
-      this.el.hidden = false;
-      clearTimeout(this.t);
-      this.t = setTimeout(() => this.hide(), 4200);
-    } catch {
-      /* no-op */
+const FALLBACK_DATA = {
+  artist: {
+    name: 'Receipts',
+    genre: ['Indie Pop', 'Indie Alternative', 'Indie Dream']
+  },
+  projects: [
+    {
+      id: 'midnight-receiver',
+      title: 'Midnight Receiver',
+      year: '2026',
+      type: 'Single set',
+      cover: 'assets/covers/cover-equinox.svg',
+      description: 'Bright-edge songs for after-hours motion, neon reflection, and wide awake dreaming.',
+      tracks: [
+        {
+          id: 'northbound',
+          title: 'Northbound Light',
+          duration: '3:18',
+          mood: ['awake', 'electric'],
+          audioSrc: 'audio/01-northbound-light.mp3'
+        },
+        {
+          id: 'paper-sky',
+          title: 'Paper Sky',
+          duration: '2:56',
+          mood: ['open', 'late'],
+          audioSrc: 'audio/02-paper-sky.mp3'
+        },
+        {
+          id: 'receiver',
+          title: 'Receiver Bloom',
+          duration: '4:02',
+          mood: ['dream', 'glow'],
+          audioSrc: 'audio/03-receiver-bloom.mp3'
+        }
+      ]
+    },
+    {
+      id: 'soft-machines',
+      title: 'Soft Machines',
+      year: '2025',
+      type: 'Project',
+      cover: 'assets/covers/cover-monolith.svg',
+      description: 'A cleaner, colder body of work with distance, symmetry, and low-lit pulse.',
+      tracks: [
+        {
+          id: 'silver-hall',
+          title: 'Silver Hall',
+          duration: '3:42',
+          mood: ['cinematic', 'soft'],
+          audioSrc: 'audio/04-silver-hall.mp3'
+        },
+        {
+          id: 'clean-fiction',
+          title: 'Clean Fiction',
+          duration: '3:09',
+          mood: ['minimal', 'glass'],
+          audioSrc: 'audio/05-clean-fiction.mp3'
+        }
+      ]
+    },
+    {
+      id: 'after-image',
+      title: 'After Image Geometry',
+      year: '2024',
+      type: 'Demos',
+      cover: 'assets/covers/cover-pulse.svg',
+      description: 'Sketches, fragments, and drafts with enough shape to keep returning to.',
+      tracks: [
+        {
+          id: 'haze-index',
+          title: 'Haze Index',
+          duration: '2:31',
+          mood: ['restless', 'night'],
+          audioSrc: 'audio/06-haze-index.mp3'
+        },
+        {
+          id: 'open-purpose',
+          title: 'Open Purpose',
+          duration: '3:47',
+          mood: ['lift', 'purpose'],
+          audioSrc: 'audio/07-open-purpose.mp3'
+        },
+        {
+          id: 'signal-veil',
+          title: 'Signal Veil',
+          duration: '4:14',
+          mood: ['wide', 'mist'],
+          audioSrc: 'audio/08-signal-veil.mp3'
+        }
+      ]
     }
-  }
-
-  hide() {
-    try {
-      if (!this.el) return;
-      this.el.hidden = true;
-    } catch {
-      /* no-op */
-    }
-  }
-}
-
-const toast = new Toast();
-
-/* =========================
-   Tracks (DROP-IN READY)
-   =========================
-   Put files in:
-   - /audio/*.mp3
-   - /images/*.jpg
-*/
-const TRACKS = [
-  {
-    id: "ghost-room",
-    title: "Ghost Room",
-    subtitle: "White Room Demos · 2026",
-    audioSrc: "audio/ghost-room.mp3",
-    coverSrc: "images/cover-01.jpg",
-    lyrics: ["Placeholder lyrics.", "Replace with your real words."],
-  },
-  {
-    id: "violet-static",
-    title: "Violet Static",
-    subtitle: "White Room Demos · 2026",
-    audioSrc: "audio/violet-static.mp3",
-    coverSrc: "images/cover-02.jpg",
-    lyrics: ["Placeholder lyrics.", "Keep each line as a separate string."],
-  },
-  {
-    id: "receipt-iii",
-    title: "Receipt III",
-    subtitle: "Receipts (EP) · 2026",
-    audioSrc: "audio/receipt-iii.mp3",
-    coverSrc: "images/cover-03.jpg",
-    lyrics: ["Placeholder lyrics.", "Add more tracks anytime."],
-  },
-];
-
-/* =========================
-   Helpers
-   ========================= */
-function $(s, r = document) { return r.querySelector(s); }
-function $all(s, r = document) { return Array.from(r.querySelectorAll(s)); }
-function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
-function formatTime(sec) {
-  if (!Number.isFinite(sec) || sec < 0) return "0:00";
-  const m = Math.floor(sec / 60);
-  const s = Math.floor(sec % 60);
-  return `${m}:${String(s).padStart(2, "0")}`;
-}
-function esc(x) {
-  return String(x ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-function safeUrl() {
-  try { return new URL(window.location.href); }
-  catch { return null; }
-}
-
-/* =========================
-   Storage
-   ========================= */
-const Store = {
-  k: "receipts_favs_v2",
-  get() {
-    try {
-      const raw = localStorage.getItem(Store.k);
-      const arr = raw ? JSON.parse(raw) : [];
-      return new Set(Array.isArray(arr) ? arr : []);
-    } catch {
-      return new Set();
-    }
-  },
-  set(set) {
-    try {
-      localStorage.setItem(Store.k, JSON.stringify(Array.from(set)));
-    } catch {
-      /* no-op */
-    }
-  },
+  ]
 };
 
-/* =========================
-   Player (minimal, art-first)
-   ========================= */
-class Player {
-  constructor() {
-    this.audio = $("#audio");
-    this.c = $("#waveC");
-    this.g = this.c?.getContext("2d") || null;
-
-    this.coverImg = $("#coverImg");
-    this.title = $("#title");
-    this.meta = $("#meta");
-    this.nowText = $("#nowText");
-
-    this.playBtn = $("#play");
-    this.playLab = $("#playLab");
-    this.prevBtn = $("#prev");
-    this.nextBtn = $("#next");
-
-    this.scrub = $("#scrub");
-    this.tCur = $("#tCur");
-    this.tDur = $("#tDur");
-
-    this.rows = $("#rows");
-
-    this.favBtn = $("#favBtn");
-    this.shareBtn = $("#shareBtn");
-    this.shareline = $("#shareline");
-    this.copyLink = $("#copyLink");
-    this.nativeShare = $("#nativeShare");
-
-    this.lyricsBtn = $("#lyricsBtn");
-    this.lyrics = $("#lyrics");
-    this.lyricsBody = $("#lyricsBody");
-    this.lyricsClose = $("#lyricsClose");
-
-    this.deepBtn = $("#deepBtn");
-    this.shareRoomBtn = $("#shareRoomBtn");
-    this.shareSiteBtn = $("#shareSiteBtn");
-    this.shareRoomBtn2 = $("#shareRoomBtn");
-    this.shareSiteBtn2 = $("#shareSiteBtn");
-
-    this.pre = $("#pre");
-    this.prePct = $("#prePct");
-    this.totem = $("#totem");
-
-    this.favs = Store.get();
-    this.filter = "all";
-    this.idx = -1;
-
-    this.ac = null;
-    this.an = null;
-    this.src = null;
-    this.buf = null;
-
-    this.raf = null;
-    this.phase = 0;
-
-    this._bind();
-    this._renderList();
-    this._preload().then(() => this._bootFromHash());
-    $("#yr").textContent = String(new Date().getFullYear());
-  }
-
-  _bind() {
-    this.playBtn?.addEventListener("click", () => this.toggle());
-    this.prevBtn?.addEventListener("click", () => this.prev());
-    this.nextBtn?.addEventListener("click", () => this.next());
-
-    this.audio?.addEventListener("loadedmetadata", () => this._syncTime());
-    this.audio?.addEventListener("timeupdate", () => this._syncTime());
-    this.audio?.addEventListener("ended", () => this.next());
-
-    this.scrub?.addEventListener("input", () => {
-      if (!this.audio?.duration) return;
-      const v = Number(this.scrub.value) / 1000;
-      this.audio.currentTime = clamp(v * this.audio.duration, 0, this.audio.duration);
-      this._syncTime();
-    });
-
-    $all("[data-filter]").forEach((b) => {
-      b.addEventListener("click", () => {
-        $all("[data-filter]").forEach((x) => x.classList.remove("is"));
-        b.classList.add("is");
-        this.filter = b.dataset.filter || "all";
-        this._renderList();
-      });
-    });
-
-    this.favBtn?.addEventListener("click", () => this.toggleFav());
-    this.shareBtn?.addEventListener("click", () => this.toggleShare());
-    this.copyLink?.addEventListener("click", () => this.copyTrackLink());
-    this.nativeShare?.addEventListener("click", () => this.nativeShare());
-
-    this.lyricsBtn?.addEventListener("click", () => this.toggleLyrics());
-    this.lyricsClose?.addEventListener("click", () => this.closeLyrics());
-
-    this.deepBtn?.addEventListener("click", () => {
-      const on = document.body.classList.toggle("deep");
-      this.deepBtn.setAttribute("aria-pressed", String(on));
-      this._drawIdle();
-    });
-
-    const shareRoom = () => {
-      const u = safeUrl();
-      if (!u) return;
-      u.hash = "#music";
-      this._copy(u.toString(), "Copied room link.");
-    };
-
-    this.shareRoomBtn?.addEventListener("click", shareRoom);
-    this.shareSiteBtn?.addEventListener("click", shareRoom);
-
-    window.addEventListener("hashchange", () => this._bootFromHash());
-  }
-
-  async _preload() {
-    if (!this.pre || !this.prePct) return;
-
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-    const steps = reduce ? 30 : 70;
-
-    for (let i = 0; i <= steps; i++) {
-      await new Promise((r) => setTimeout(r, 16));
-      this.prePct.textContent = `${Math.round((i / steps) * 100)}%`;
-    }
-
-    this.pre.classList.add("is-off");
-    setTimeout(() => (this.pre.style.display = "none"), 560);
-  }
-
-  _bootFromHash() {
-    const u = safeUrl();
-    if (!u) return this._idleUI();
-
-    const raw = u.hash.replace(/^#/, "");
-    const p = new URLSearchParams(raw);
-    const id = p.get("track");
-
-    if (id) {
-      const ok = this.loadById(id, { autoplay: false });
-      if (ok) return;
-    }
-
-    this._idleUI();
-  }
-
-  _idleUI() {
-    if (this.title) this.title.textContent = "—";
-    if (this.meta) this.meta.textContent = "—";
-    if (this.nowText) this.nowText.textContent = "select a track";
-    if (this.playLab) this.playLab.textContent = "PLAY";
-    if (this.tCur) this.tCur.textContent = "0:00";
-    if (this.tDur) this.tDur.textContent = "0:00";
-    if (this.scrub) this.scrub.value = "0";
-    if (this.coverImg) this.coverImg.removeAttribute("src");
-    this._drawIdle();
-  }
-
-  _renderList() {
-    if (!this.rows) return;
-
-    const items = TRACKS.filter((t) => (this.filter === "favorites" ? this.favs.has(t.id) : true));
-
-    this.rows.innerHTML =
-      items
-        .map((t) => {
-          const on = this.idx >= 0 && TRACKS[this.idx]?.id === t.id;
-          const fav = this.favs.has(t.id);
-          return `
-            <div class="row hole ${on ? "on" : ""}" tabindex="0" role="button" data-id="${esc(t.id)}">
-              <div class="thumb" aria-hidden="true">
-                <img src="${esc(t.coverSrc)}" alt="" loading="lazy" />
-              </div>
-              <div>
-                <div class="rname">${esc(t.title)}</div>
-                <div class="rsub mono">${esc(t.subtitle)}</div>
-              </div>
-              <div class="actions">
-                <button class="sbtn hole" type="button" data-fav="${esc(t.id)}" aria-pressed="${fav}">
-                  <span class="mono">${fav ? "FAV✓" : "FAV"}</span>
-                </button>
-                <button class="sbtn hole" type="button" data-link="${esc(t.id)}">
-                  <span class="mono">↗</span>
-                </button>
-              </div>
-            </div>
-          `;
-        })
-        .join("") || `<div class="mono muted" style="padding:0.6rem 0.4rem;">No tracks in this view.</div>`;
-
-    $all(".row", this.rows).forEach((r) => {
-      const id = r.dataset.id;
-      r.addEventListener("click", () => this.loadById(id, { autoplay: true }));
-      r.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          this.loadById(id, { autoplay: true });
-        }
-      });
-    });
-
-    $all("[data-fav]", this.rows).forEach((b) => {
-      b.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const id = b.dataset.fav;
-        this._toggleFavId(id);
-      });
-    });
-
-    $all("[data-link]", this.rows).forEach((b) => {
-      b.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const id = b.dataset.link;
-        this._copyTrackLink(id);
-      });
-    });
-  }
-
-  loadById(id, { autoplay } = { autoplay: true }) {
-    const i = TRACKS.findIndex((t) => t.id === id);
-    if (i < 0) {
-      toast.show("Track not found.");
-      return false;
-    }
-    this.loadIndex(i, { autoplay });
-    return true;
-  }
-
-  loadIndex(i, { autoplay } = { autoplay: true }) {
-    if (!this.audio) return;
-
-    this.idx = clamp(i, 0, TRACKS.length - 1);
-    const t = TRACKS[this.idx];
-
-    this.audio.src = t.audioSrc;
-    this.audio.load();
-
-    if (this.coverImg) {
-      this.coverImg.src = t.coverSrc;
-      this.coverImg.onerror = () => (this.coverImg.style.display = "none");
-      this.coverImg.onload = () => (this.coverImg.style.display = "block");
-    }
-
-    if (this.title) this.title.textContent = t.title;
-    if (this.meta) this.meta.textContent = t.subtitle;
-    if (this.nowText) this.nowText.textContent = t.title;
-
-    this._setLyrics(t);
-    this._setHash(t.id);
-    this._syncFavBtn();
-
-    this._ensureAudioGraph();
-    this._startDraw();
-
-    this._renderList();
-
-    if (autoplay) {
-      this.play().catch(() => toast.show("Tap play to start audio."));
-    } else {
-      this.pause();
-    }
-  }
-
-  _setHash(id) {
-    const u = safeUrl();
-    if (!u) return;
-    const p = new URLSearchParams();
-    p.set("track", id);
-    u.hash = `#${p.toString()}`;
-    history.replaceState(null, "", u.toString());
-  }
-
-  async play() {
-    await this.audio.play();
-    if (this.playLab) this.playLab.textContent = "PAUSE";
-    this._startDraw();
-  }
-
-  pause() {
-    this.audio.pause();
-    if (this.playLab) this.playLab.textContent = "PLAY";
-  }
-
-  toggle() {
-    if (this.idx < 0) return this.loadIndex(0, { autoplay: true });
-    if (this.audio.paused) this.play().catch(() => toast.show("Tap play to start audio."));
-    else this.pause();
-  }
-
-  prev() {
-    if (this.idx < 0) return this.loadIndex(0, { autoplay: true });
-    this.loadIndex((this.idx - 1 + TRACKS.length) % TRACKS.length, { autoplay: true });
-  }
-
-  next() {
-    if (this.idx < 0) return this.loadIndex(0, { autoplay: true });
-    this.loadIndex((this.idx + 1) % TRACKS.length, { autoplay: true });
-  }
-
-  _syncTime() {
-    const dur = this.audio.duration || 0;
-    const cur = this.audio.currentTime || 0;
-    if (this.tCur) this.tCur.textContent = formatTime(cur);
-    if (this.tDur) this.tDur.textContent = formatTime(dur);
-
-    if (dur > 0 && this.scrub) {
-      this.scrub.value = String(Math.round(clamp(cur / dur, 0, 1) * 1000));
-    }
-  }
-
-  _ensureAudioGraph() {
-    if (this.ac || !this.audio) return;
-
-    try {
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-
-      this.ac = new Ctx();
-      this.an = this.ac.createAnalyser();
-      this.an.fftSize = 2048;
-      this.an.smoothingTimeConstant = 0.86;
-
-      this.src = this.ac.createMediaElementSource(this.audio);
-      this.src.connect(this.an);
-      this.an.connect(this.ac.destination);
-
-      this.buf = new Uint8Array(this.an.frequencyBinCount);
-    } catch {
-      this.ac = null;
-      this.an = null;
-      this.src = null;
-      this.buf = null;
-    }
-  }
-
-  _startDraw() {
-    if (!this.c || !this.g) return;
-    if (this.raf) return;
-
-    const loop = () => {
-      this._draw();
-      this._totemPulse();
-      this.raf = requestAnimationFrame(loop);
-    };
-
-    this.raf = requestAnimationFrame(loop);
-  }
-
-  _resizeCanvas() {
-    const ratio = Math.max(1, Math.floor(window.devicePixelRatio || 1));
-    const cssW = this.c.clientWidth || 1;
-    const cssH = Math.round(cssW * (260 / 1400));
-
-    const w = Math.floor(cssW * ratio);
-    const h = Math.floor(cssH * ratio);
-
-    if (this.c.width !== w || this.c.height !== h) {
-      this.c.width = w;
-      this.c.height = h;
-    }
-  }
-
-  _drawIdle() {
-    if (!this.c || !this.g) return;
-    this._resizeCanvas();
-
-    const g = this.g;
-    const w = this.c.width;
-    const h = this.c.height;
-
-    g.clearRect(0, 0, w, h);
-
-    const deep = document.body.classList.contains("deep");
-    const ink = deep ? "rgba(251,251,253,0.78)" : "rgba(10,10,14,0.78)";
-    const vio = deep ? "rgba(123,115,255,0.22)" : "rgba(123,115,255,0.14)";
-
-    const bg = g.createRadialGradient(w * 0.44, h * 0.32, 10, w * 0.44, h * 0.32, w * 0.95);
-    bg.addColorStop(0, vio);
-    bg.addColorStop(1, "rgba(10,10,14,0.00)");
-    g.fillStyle = bg;
-    g.fillRect(0, 0, w, h);
-
-    g.strokeStyle = "rgba(10,10,14,0.10)";
-    g.lineWidth = 1;
-    g.strokeRect(w * 0.02, h * 0.10, w * 0.96, h * 0.80);
-
-    g.strokeStyle = ink;
-    g.lineWidth = 2.2;
-    g.beginPath();
-    g.moveTo(w * 0.08, h * 0.52);
-    g.quadraticCurveTo(w * 0.46, h * 0.38, w * 0.92, h * 0.50);
-    g.stroke();
-  }
-
-  _draw() {
-    if (!this.c || !this.g || !this.audio) return;
-    this._resizeCanvas();
-
-    const g = this.g;
-    const w = this.c.width;
-    const h = this.c.height;
-
-    g.clearRect(0, 0, w, h);
-
-    const deep = document.body.classList.contains("deep");
-    const ink = deep ? "rgba(251,251,253,0.78)" : "rgba(10,10,14,0.82)";
-    const inkSoft = deep ? "rgba(251,251,253,0.12)" : "rgba(10,10,14,0.10)";
-    const vio = deep ? "rgba(123,115,255,0.30)" : "rgba(123,115,255,0.20)";
-
-    const bg = g.createRadialGradient(w * 0.42, h * 0.30, 10, w * 0.42, h * 0.30, w * 0.95);
-    bg.addColorStop(0, vio);
-    bg.addColorStop(1, "rgba(10,10,14,0.00)");
-    g.fillStyle = bg;
-    g.fillRect(0, 0, w, h);
-
-    const dur = this.audio.duration || 0;
-    const cur = this.audio.currentTime || 0;
-    const p = dur > 0 ? clamp(cur / dur, 0, 1) : 0;
-
-    g.fillStyle = deep ? "rgba(251,251,253,0.02)" : "rgba(10,10,14,0.05)";
-    g.fillRect(0, 0, w, h);
-
-    g.fillStyle = deep ? "rgba(251,251,253,0.04)" : "rgba(10,10,14,0.09)";
-    g.fillRect(0, 0, w * p, h);
-
-    g.strokeStyle = inkSoft;
-    g.lineWidth = 1;
-    g.strokeRect(w * 0.02, h * 0.10, w * 0.96, h * 0.80);
-
-    if (this.an && this.buf) this.an.getByteFrequencyData(this.buf);
-
-    const mid = h * 0.48;
-    const amp = h * 0.22;
-
-    g.strokeStyle = ink;
-    g.lineWidth = 2.4;
-    g.beginPath();
-
-    const steps = 260;
-    this.phase += 0.9;
-
-    for (let i = 0; i <= steps; i++) {
-      const x = (i / steps) * w;
-      const idx = this.buf ? Math.floor((i / steps) * (this.buf.length - 1)) : i;
-      const v = this.buf ? this.buf[idx] / 255 : 0.12;
-
-      const shaped = Math.pow(v, 1.12);
-      const y = mid + Math.sin(i * 0.18 + this.phase * 0.02) * (amp * shaped);
-
-      if (i === 0) g.moveTo(x, y);
-      else g.lineTo(x, y);
-    }
-
-    g.stroke();
-
-    // progress line (violet whisper)
-    g.strokeStyle = deep ? "rgba(123,115,255,0.55)" : "rgba(123,115,255,0.52)";
-    g.lineWidth = 2;
-    g.beginPath();
-    g.moveTo(w * p, h * 0.14);
-    g.lineTo(w * p, h * 0.86);
-    g.stroke();
-  }
-
-  _totemPulse() {
-    if (!this.totem) return;
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-    if (reduce) return;
-    const t = Date.now() * 0.001;
-    const a = 0.85 + Math.sin(t * 0.9) * 0.05;
-    this.totem.style.opacity = String(a);
-  }
-
-  toggleShare() {
-    if (!this.shareline) return;
-    this.shareline.hidden = !this.shareline.hidden;
-  }
-
-  copyTrackLink() {
-    const t = TRACKS[this.idx];
-    if (!t) return toast.show("Select a track first.");
-    this._copyTrackLink(t.id);
-  }
-
-  _copyTrackLink(id) {
-    const u = safeUrl();
-    if (!u) return;
-    const p = new URLSearchParams();
-    p.set("track", id);
-    u.hash = `#${p.toString()}`;
-    this._copy(u.toString(), "Copied track link.");
-  }
-
-  async nativeShare() {
-    const t = TRACKS[this.idx];
-    if (!t) return toast.show("Select a track first.");
-
-    const u = safeUrl();
-    if (!u) return;
-
-    const p = new URLSearchParams();
-    p.set("track", t.id);
-    u.hash = `#${p.toString()}`;
-
-    const payload = { title: `Receipts — ${t.title}`, text: `Receipts — ${t.title}`, url: u.toString() };
-
-    if (navigator.share) {
-      try {
-        await navigator.share(payload);
-        toast.show("Shared.");
-      } catch {
-        /* user canceled */
-      }
-      return;
-    }
-
-    this._copy(payload.url, "Share not supported — link copied.");
-  }
-
-  async _copy(text, okMsg) {
-    try {
-      await navigator.clipboard.writeText(text);
-      toast.show(okMsg);
-    } catch {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      ta.remove();
-      toast.show(okMsg);
-    }
-  }
-
-  _toggleFavId(id) {
-    if (!id) return;
-    if (this.favs.has(id)) this.favs.delete(id);
-    else this.favs.add(id);
-    Store.set(this.favs);
-
-    if (TRACKS[this.idx]?.id === id) this._syncFavBtn();
-    this._renderList();
-    toast.show(this.favs.has(id) ? "Favorited." : "Unfavorited.");
-  }
-
-  toggleFav() {
-    const t = TRACKS[this.idx];
-    if (!t) return toast.show("Select a track first.");
-    this._toggleFavId(t.id);
-  }
-
-  _syncFavBtn() {
-    const t = TRACKS[this.idx];
-    const on = t ? this.favs.has(t.id) : false;
-    this.favBtn?.setAttribute("aria-pressed", String(on));
-  }
-
-  toggleLyrics() {
-    const open = this.lyricsBtn?.getAttribute("aria-expanded") === "true";
-    if (open) this.closeLyrics();
-    else this.openLyrics();
-  }
-
-  openLyrics() {
-    if (!this.lyrics) return;
-    this.lyrics.hidden = false;
-    this.lyricsBtn?.setAttribute("aria-expanded", "true");
-  }
-
-  closeLyrics() {
-    if (!this.lyrics) return;
-    this.lyrics.hidden = true;
-    this.lyricsBtn?.setAttribute("aria-expanded", "false");
-  }
-
-  _setLyrics(t) {
-    if (!this.lyricsBody) return;
-    const lines = Array.isArray(t?.lyrics) ? t.lyrics : [];
-    if (!lines.length) {
-      this.lyricsBody.innerHTML = `<p class="muted">No lyrics yet.</p>`;
-      return;
-    }
-    this.lyricsBody.innerHTML = lines.map((l) => `<p>${esc(l)}</p>`).join("");
+const state = {
+  data: FALLBACK_DATA,
+  queue: [],
+  currentIndex: -1,
+  currentFilter: 'all',
+  isSeeking: false,
+  toastTimer: null
+};
+
+const dom = {
+  audio: document.getElementById('audio'),
+  playLatest: document.getElementById('play-latest'),
+  playFeatured: document.getElementById('play-featured'),
+  togglePlayback: document.getElementById('toggle-playback'),
+  nextTrack: document.getElementById('next-track'),
+  prevTrack: document.getElementById('prev-track'),
+  seekbar: document.getElementById('seekbar'),
+  currentTime: document.getElementById('current-time'),
+  totalTime: document.getElementById('total-time'),
+  playerTitle: document.getElementById('player-title'),
+  playerProject: document.getElementById('player-project'),
+  playerCover: document.getElementById('player-cover'),
+  releaseGrid: document.getElementById('release-grid'),
+  featuredCover: document.getElementById('featured-cover'),
+  featuredType: document.getElementById('featured-type'),
+  featuredYear: document.getElementById('featured-year'),
+  featuredTitle: document.getElementById('featured-title'),
+  featuredDescription: document.getElementById('featured-description'),
+  featuredTracklist: document.getElementById('featured-tracklist'),
+  filterRow: document.getElementById('filter-row'),
+  toast: document.getElementById('toast'),
+  heroStage: document.getElementById('hero-stage'),
+  year: document.getElementById('year')
+};
+
+init();
+
+async function init() {
+  dom.year.textContent = new Date().getFullYear();
+  state.data = await loadTrackData();
+  state.queue = flattenTracks(state.data.projects || []);
+
+  renderFeatured(state.data.projects?.[0]);
+  renderReleaseGrid();
+  wireEvents();
+  setupRevealAnimations();
+  setupHeroParallax();
+
+  if (state.queue.length > 0) {
+    loadTrack(0, { autoplay: false });
   }
 }
 
-/* Boot */
-document.addEventListener("DOMContentLoaded", () => {
+async function loadTrackData() {
   try {
-    new Player();
-  } catch (e) {
-    toast.show(e instanceof Error ? e.message : "Failed to initialize.");
+    const response = await fetch('data/tracks.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const json = await response.json();
+    if (!json || !Array.isArray(json.projects)) throw new Error('Invalid track data');
+    return json;
+  } catch (error) {
+    console.warn('Using fallback track data.', error);
+    return FALLBACK_DATA;
   }
-});
+}
+
+function flattenTracks(projects) {
+  return projects.flatMap((project) =>
+    (project.tracks || []).map((track, index) => ({
+      ...track,
+      queueKey: `${project.id}:${track.id}`,
+      releaseId: project.id,
+      releaseTitle: project.title,
+      releaseYear: project.year,
+      releaseType: project.type,
+      releaseDescription: project.description,
+      cover: project.cover,
+      displayIndex: index + 1
+    }))
+  );
+}
+
+function renderFeatured(project) {
+  if (!project) return;
+
+  dom.featuredCover.src = project.cover;
+  dom.featuredCover.alt = `${project.title} artwork`;
+  dom.featuredType.textContent = project.type || 'Release';
+  dom.featuredYear.textContent = project.year || '';
+  dom.featuredTitle.textContent = project.title;
+  dom.featuredDescription.textContent = project.description || '';
+
+  dom.featuredTracklist.innerHTML = (project.tracks || [])
+    .map((track, index) => {
+      const queueIndex = state.queue.findIndex((item) => item.queueKey === `${project.id}:${track.id}`);
+      const mood = Array.isArray(track.mood) ? track.mood.join(' · ') : '';
+
+      return `
+        <button
+          class="featured-track-row"
+          type="button"
+          data-action="play-track"
+          data-queue-index="${queueIndex}"
+        >
+          <span class="track-index-badge">${String(index + 1).padStart(2, '0')}</span>
+          <span class="track-title-wrap">
+            <span class="track-title">${escapeHtml(track.title)}</span>
+            <span class="track-meta">${escapeHtml(mood || 'Receipts')}</span>
+          </span>
+          <span class="release-track-time">${escapeHtml(track.duration || '0:00')}</span>
+        </button>
+      `;
+    })
+    .join('');
+}
+
+function renderReleaseGrid() {
+  const projects = Array.isArray(state.data.projects) ? state.data.projects : [];
+  const activeFilter = state.currentFilter;
+  const visibleProjects = activeFilter === 'all'
+    ? projects
+    : projects.filter((project) => normalizeFilterValue(project.type) === activeFilter);
+
+  if (!visibleProjects.length) {
+    dom.releaseGrid.innerHTML = '<p class="section-copy">No releases match that filter yet.</p>';
+    return;
+  }
+
+  dom.releaseGrid.innerHTML = visibleProjects
+    .map((project) => {
+      const tracksMarkup = (project.tracks || [])
+        .map((track, index) => {
+          const queueIndex = state.queue.findIndex((item) => item.queueKey === `${project.id}:${track.id}`);
+          const mood = Array.isArray(track.mood) ? track.mood.join(' · ') : '';
+          return `
+            <button
+              class="release-track-row"
+              type="button"
+              data-action="play-track"
+              data-queue-index="${queueIndex}"
+            >
+              <span class="track-index-badge">${String(index + 1).padStart(2, '0')}</span>
+              <span class="track-title-wrap">
+                <span class="track-title">${escapeHtml(track.title)}</span>
+                <span class="release-track-mood">${escapeHtml(mood || project.type || 'Release')}</span>
+              </span>
+              <span class="release-track-time">${escapeHtml(track.duration || '0:00')}</span>
+            </button>
+          `;
+        })
+        .join('');
+
+      const projectStartIndex = state.queue.findIndex((item) => item.releaseId === project.id);
+
+      return `
+        <article class="release-card" data-release-id="${escapeHtml(project.id)}">
+          <div class="release-card-top">
+            <div class="release-cover">
+              <img src="${escapeHtml(project.cover)}" alt="${escapeHtml(project.title)} artwork" />
+            </div>
+
+            <div class="release-copy">
+              <div class="release-header">
+                <span class="pill">${escapeHtml(project.type || 'Release')}</span>
+                <span class="release-year">${escapeHtml(project.year || '')}</span>
+              </div>
+              <h3 class="release-title">${escapeHtml(project.title)}</h3>
+              <p class="release-description">${escapeHtml(project.description || '')}</p>
+              <div class="release-button-row">
+                <button class="release-button" type="button" data-action="play-release" data-release-id="${escapeHtml(project.id)}">Play release</button>
+                <button class="release-button" type="button" data-action="play-track" data-queue-index="${projectStartIndex}">Play first track</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="release-tracklist">${tracksMarkup}</div>
+        </article>
+      `;
+    })
+    .join('');
+
+  syncActiveTrackUI();
+}
+
+function wireEvents() {
+  dom.playLatest.addEventListener('click', () => {
+    if (!state.queue.length) {
+      showToast('No tracks found yet. Add songs inside data/tracks.json.');
+      return;
+    }
+    loadTrack(0, { autoplay: true });
+  });
+
+  dom.playFeatured.addEventListener('click', () => {
+    const firstProject = state.data.projects?.[0];
+    if (!firstProject) return;
+    const queueIndex = state.queue.findIndex((item) => item.releaseId === firstProject.id);
+    if (queueIndex >= 0) {
+      loadTrack(queueIndex, { autoplay: true });
+    }
+  });
+
+  dom.releaseGrid.addEventListener('click', handleGridClick);
+  dom.featuredTracklist.addEventListener('click', handleGridClick);
+
+  dom.filterRow.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLButtonElement)) return;
+    const filterValue = target.dataset.filter;
+    if (!filterValue) return;
+
+    state.currentFilter = filterValue;
+    dom.filterRow.querySelectorAll('.filter-chip').forEach((chip) => {
+      chip.classList.toggle('is-active', chip === target);
+    });
+    renderReleaseGrid();
+  });
+
+  dom.togglePlayback.addEventListener('click', () => {
+    if (state.currentIndex < 0 && state.queue.length > 0) {
+      loadTrack(0, { autoplay: true });
+      return;
+    }
+
+    if (dom.audio.paused) {
+      playCurrentTrack();
+    } else {
+      pauseCurrentTrack();
+    }
+  });
+
+  dom.nextTrack.addEventListener('click', () => stepTrack(1));
+  dom.prevTrack.addEventListener('click', () => stepTrack(-1));
+
+  dom.audio.addEventListener('timeupdate', updateProgress);
+  dom.audio.addEventListener('loadedmetadata', updateDuration);
+  dom.audio.addEventListener('ended', () => stepTrack(1));
+  dom.audio.addEventListener('error', () => {
+    pauseCurrentTrack();
+    showToast('Audio file missing. Add the track file to your /audio folder and keep the path matched in data/tracks.json.');
+  });
+
+  dom.seekbar.addEventListener('input', () => {
+    state.isSeeking = true;
+    if (!Number.isFinite(dom.audio.duration)) return;
+    const nextTime = (Number(dom.seekbar.value) / 100) * dom.audio.duration;
+    dom.currentTime.textContent = formatTime(nextTime);
+  });
+
+  dom.seekbar.addEventListener('change', () => {
+    if (!Number.isFinite(dom.audio.duration)) {
+      state.isSeeking = false;
+      return;
+    }
+    dom.audio.currentTime = (Number(dom.seekbar.value) / 100) * dom.audio.duration;
+    state.isSeeking = false;
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.target instanceof HTMLElement) {
+      const tagName = event.target.tagName;
+      if (tagName === 'INPUT' || tagName === 'TEXTAREA') return;
+    }
+
+    if (event.code === 'Space') {
+      event.preventDefault();
+      dom.togglePlayback.click();
+    }
+
+    if (event.code === 'ArrowRight') {
+      event.preventDefault();
+      stepTrack(1);
+    }
+
+    if (event.code === 'ArrowLeft') {
+      event.preventDefault();
+      stepTrack(-1);
+    }
+  });
+}
+
+function handleGridClick(event) {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) return;
+
+  const playTrackButton = target.closest('[data-action="play-track"]');
+  if (playTrackButton instanceof HTMLButtonElement) {
+    const queueIndex = Number(playTrackButton.dataset.queueIndex);
+    if (!Number.isFinite(queueIndex) || queueIndex < 0) return;
+
+    if (queueIndex === state.currentIndex) {
+      dom.audio.paused ? playCurrentTrack() : pauseCurrentTrack();
+    } else {
+      loadTrack(queueIndex, { autoplay: true });
+    }
+    return;
+  }
+
+  const playReleaseButton = target.closest('[data-action="play-release"]');
+  if (playReleaseButton instanceof HTMLButtonElement) {
+    const releaseId = playReleaseButton.dataset.releaseId;
+    const queueIndex = state.queue.findIndex((item) => item.releaseId === releaseId);
+    if (queueIndex >= 0) {
+      loadTrack(queueIndex, { autoplay: true });
+    }
+  }
+}
+
+function loadTrack(queueIndex, options = {}) {
+  const track = state.queue[queueIndex];
+  if (!track) return;
+
+  state.currentIndex = queueIndex;
+  dom.audio.src = track.audioSrc;
+  dom.audio.load();
+
+  dom.playerTitle.textContent = track.title;
+  dom.playerProject.textContent = `${track.releaseTitle} · ${track.releaseType}`;
+  dom.playerCover.src = track.cover;
+  dom.playerCover.alt = `${track.releaseTitle} artwork`;
+  dom.togglePlayback.textContent = options.autoplay ? '❚❚' : '▶';
+  dom.currentTime.textContent = '0:00';
+  dom.totalTime.textContent = track.duration || '0:00';
+  dom.seekbar.value = 0;
+
+  syncActiveTrackUI();
+
+  if (options.autoplay) {
+    playCurrentTrack();
+  }
+}
+
+async function playCurrentTrack() {
+  if (state.currentIndex < 0) return;
+
+  try {
+    await dom.audio.play();
+    dom.togglePlayback.textContent = '❚❚';
+    syncActiveTrackUI();
+  } catch (error) {
+    console.warn('Playback failed.', error);
+    showToast('Playback was blocked by the browser. Try pressing play again.');
+    dom.togglePlayback.textContent = '▶';
+  }
+}
+
+function pauseCurrentTrack() {
+  dom.audio.pause();
+  dom.togglePlayback.textContent = '▶';
+  syncActiveTrackUI();
+}
+
+function stepTrack(direction) {
+  if (!state.queue.length) return;
+  const current = state.currentIndex < 0 ? 0 : state.currentIndex;
+  const nextIndex = (current + direction + state.queue.length) % state.queue.length;
+  loadTrack(nextIndex, { autoplay: true });
+}
+
+function updateProgress() {
+  if (!Number.isFinite(dom.audio.duration)) return;
+
+  if (!state.isSeeking) {
+    dom.seekbar.value = ((dom.audio.currentTime / dom.audio.duration) * 100).toFixed(3);
+    dom.currentTime.textContent = formatTime(dom.audio.currentTime);
+  }
+}
+
+function updateDuration() {
+  dom.totalTime.textContent = Number.isFinite(dom.audio.duration)
+    ? formatTime(dom.audio.duration)
+    : '0:00';
+}
+
+function syncActiveTrackUI() {
+  const allTrackRows = document.querySelectorAll('[data-queue-index]');
+  allTrackRows.forEach((row) => {
+    const queueIndex = Number(row.getAttribute('data-queue-index'));
+    const isActive = queueIndex === state.currentIndex;
+    row.classList.toggle('is-active', isActive);
+  });
+
+  const isPlaying = !dom.audio.paused && state.currentIndex >= 0;
+  dom.togglePlayback.textContent = isPlaying ? '❚❚' : '▶';
+}
+
+function setupRevealAnimations() {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const revealItems = document.querySelectorAll('.reveal');
+
+  if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+    revealItems.forEach((item) => item.classList.add('is-visible'));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.16 }
+  );
+
+  revealItems.forEach((item) => observer.observe(item));
+}
+
+function setupHeroParallax() {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion || !dom.heroStage) return;
+
+  const frame = dom.heroStage.querySelector('.stage-frame');
+  if (!frame) return;
+
+  dom.heroStage.addEventListener('pointermove', (event) => {
+    const rect = dom.heroStage.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+
+    frame.style.transform = `perspective(1200px) rotateX(${(-y * 7).toFixed(2)}deg) rotateY(${(x * 9).toFixed(2)}deg) translateZ(0)`;
+  });
+
+  dom.heroStage.addEventListener('pointerleave', () => {
+    frame.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) translateZ(0)';
+  });
+}
+
+function showToast(message) {
+  dom.toast.textContent = message;
+  dom.toast.classList.add('is-visible');
+  clearTimeout(state.toastTimer);
+  state.toastTimer = setTimeout(() => {
+    dom.toast.classList.remove('is-visible');
+  }, 3400);
+}
+
+function normalizeFilterValue(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds)) return '0:00';
+  const totalSeconds = Math.max(0, Math.floor(seconds));
+  const minutes = Math.floor(totalSeconds / 60);
+  const remainingSeconds = totalSeconds % 60;
+  return `${minutes}:${String(remainingSeconds).padStart(2, '0')}`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
