@@ -1,231 +1,265 @@
-<!-- FILE: /index.html -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="color-scheme" content="light dark" />
-    <title>Receipts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Receipts — Indie / Indie Alternative / Indie Pop / Dream Pop. A minimalist listening room for existential contrast and raw expression."
+      content="Receipts — a minimal luxury listening room for indie pop, indie alternative, and indie dream releases."
     />
-
-    <meta property="og:title" content="Receipts" />
-    <meta property="og:description" content="A listening room that feels like it was waiting on its fans to find it." />
-    <meta property="og:type" content="website" />
-
+    <meta name="theme-color" content="#07070a" />
+    <title>Receipts — Listening Room</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
-
-  <body class="room">
-    <!-- Preloader (quiet) -->
-    <div class="pre" id="pre" aria-hidden="true">
-      <div class="pre-inner">
-        <div class="pre-mark" aria-hidden="true"></div>
-        <div class="pre-text">
-          <span class="mono">RECEIPTS</span>
-          <span class="dot">·</span>
-          <span class="mono">OPENING ROOM</span>
-          <span class="mono pre-pct" id="prePct">0%</span>
-        </div>
-      </div>
+  <body>
+    <div class="background-system" aria-hidden="true">
+      <div class="bg-noise"></div>
+      <div class="bg-vignette"></div>
+      <div class="bg-grid"></div>
+      <div class="bg-aurora bg-aurora-a"></div>
+      <div class="bg-aurora bg-aurora-b"></div>
+      <div class="bg-aurora bg-aurora-c"></div>
     </div>
 
-    <!-- Film grain -->
-    <div class="grain" aria-hidden="true"></div>
-
-    <!-- Minimal header -->
-    <header class="hdr" id="hdr">
-      <div class="hdr-inner">
-        <a class="sig" href="#home" aria-label="Receipts">
-          <span class="sig-dot" aria-hidden="true"></span>
-          <span class="sig-name">Receipts</span>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="#top" aria-label="Receipts home">
+          <img src="assets/brand/receipts-monogram.svg" alt="Receipts monogram" />
+          <span>Receipts</span>
         </a>
 
-        <nav class="nav" aria-label="Primary">
-          <a class="nav-a" href="#music">Music</a>
-          <a class="nav-a" href="#about">About</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="#featured">Featured</a>
+          <a href="#archive">Archive</a>
+          <a href="#manifesto">Manifesto</a>
+          <a href="#contact">Contact</a>
         </nav>
 
-        <div class="hdr-actions">
-          <button class="icon" id="deepBtn" type="button" aria-pressed="false" title="Deep Mode">
-            <span class="mono">◎</span>
-          </button>
-          <button class="icon" id="shareRoomBtn" type="button" title="Share room">
-            <span class="mono">↗</span>
-          </button>
-        </div>
+        <a class="header-link" href="#archive">Enter archive</a>
       </div>
     </header>
 
-    <main>
-      <!-- HOME -->
-      <section id="home" class="s hero">
-        <div class="hero-inner">
-          <div class="hero-left">
-            <p class="k mono">INDIE / DREAM POP</p>
-            <h1 class="t">Receipts</h1>
-            <p class="sub">
-              Existentialism · Contrast · Raw Art · Expression
-              <span class="vio">— the room is here.</span>
-            </p>
+    <main id="top">
+      <section class="hero shell section">
+        <div class="hero-copy reveal">
+          <p class="eyebrow">Indie Pop / Indie Alternative / Indie Dream</p>
+          <h1>
+            A listening room for
+            <span>clean voltage, dream memory, and open sky thinking.</span>
+          </h1>
+          <p class="hero-text">
+            Built like a gallery instead of a feed. High contrast. Minimal luxury. Saturated accents.
+            Songs first, noise last.
+          </p>
 
-            <div class="hero-cta">
-              <a class="btn btn-ink" href="#music">Enter</a>
-              <button class="btn btn-ghost" id="shareSiteBtn" type="button">Share</button>
-            </div>
-
-            <div class="micro mono">
-              <span class="micro-l">NOW</span>
-              <span class="dot">·</span>
-              <span id="nowText">select a track</span>
-            </div>
+          <div class="hero-actions">
+            <button class="button button-primary" id="play-latest" type="button">Play newest</button>
+            <a class="button button-secondary" href="#featured">See featured release</a>
           </div>
 
-          <div class="hero-right" aria-hidden="true">
-            <div class="frame">
-              <div class="roomlines"></div>
-              <div class="totem" id="totem"></div>
-            </div>
-            <div class="caption mono">white room / ink sound / violet breath</div>
+          <ul class="hero-stats" aria-label="Creative direction">
+            <li>
+              <span>Artist</span>
+              <strong>Receipts</strong>
+            </li>
+            <li>
+              <span>Mode</span>
+              <strong>Existential / Purpose driven</strong>
+            </li>
+            <li>
+              <span>Build</span>
+              <strong>GitHub Pages ready</strong>
+            </li>
+          </ul>
+        </div>
+
+        <div class="hero-stage reveal" id="hero-stage" aria-hidden="true">
+          <div class="stage-frame">
+            <div class="stage-line stage-line-a"></div>
+            <div class="stage-line stage-line-b"></div>
+            <div class="stage-line stage-line-c"></div>
+            <div class="stage-orb stage-orb-a"></div>
+            <div class="stage-orb stage-orb-b"></div>
+            <div class="stage-orb stage-orb-c"></div>
+            <div class="stage-disc"></div>
+            <div class="stage-disc stage-disc-small"></div>
+            <div class="stage-monolith"></div>
+            <div class="stage-glow"></div>
+            <div class="stage-grid"></div>
           </div>
         </div>
       </section>
 
-      <!-- MUSIC -->
-      <section id="music" class="s music">
-        <div class="music-grid">
-          <!-- PLAYER (the art) -->
-          <div class="player" role="region" aria-label="Music player">
-            <div class="player-top">
-              <div class="meta">
-                <div class="title" id="title">—</div>
-                <div class="meta2 mono" id="meta">—</div>
-              </div>
+      <section class="statement shell reveal">
+        <p>
+          Symmetry, negative space, coded abstraction, and a player that behaves like part archive,
+          part installation.
+        </p>
+      </section>
 
-              <div class="pills">
-                <button class="pill hole" id="favBtn" type="button" aria-pressed="false">
-                  <span class="mono">FAV</span>
-                </button>
-                <button class="pill hole" id="shareBtn" type="button">
-                  <span class="mono">SHARE</span>
-                </button>
-                <button class="pill hole" id="lyricsBtn" type="button" aria-expanded="false">
-                  <span class="mono">LYRICS</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="art">
-              <div class="cover" id="cover">
-                <img id="coverImg" alt="" loading="lazy" />
-                <div class="cover-glow" aria-hidden="true"></div>
-              </div>
-
-              <div class="wave">
-                <canvas id="waveC" width="1400" height="260" aria-label="Waveform"></canvas>
-
-                <div class="scrub">
-                  <input id="scrub" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" />
-                  <div class="time mono">
-                    <span id="tCur">0:00</span>
-                    <span class="dot">·</span>
-                    <span id="tDur">0:00</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="controls">
-              <button class="ctl hole" id="prev" type="button" aria-label="Previous">
-                <span class="mono">←</span>
-              </button>
-              <button class="ctl play hole" id="play" type="button" aria-label="Play/Pause">
-                <span class="mono" id="playLab">PLAY</span>
-              </button>
-              <button class="ctl hole" id="next" type="button" aria-label="Next">
-                <span class="mono">→</span>
-              </button>
-
-              <div class="shareline" id="shareline" hidden>
-                <button class="chip hole" id="copyLink" type="button"><span class="mono">COPY LINK</span></button>
-                <button class="chip hole" id="nativeShare" type="button"><span class="mono">SHARE…</span></button>
-                <span class="hint mono">share the one that hits.</span>
-              </div>
-            </div>
-
-            <div class="lyrics" id="lyrics" hidden>
-              <div class="lyrics-top">
-                <span class="mono">LYRICS</span>
-                <button class="icon" id="lyricsClose" type="button" aria-label="Close lyrics">
-                  <span class="mono">✕</span>
-                </button>
-              </div>
-              <div class="lyrics-body" id="lyricsBody">
-                <p class="muted">Select a track to view lyrics.</p>
-              </div>
-            </div>
-
-            <audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
+      <section class="featured shell section" id="featured">
+        <div class="section-heading reveal">
+          <div>
+            <p class="eyebrow">Featured</p>
+            <h2>Current signal</h2>
           </div>
+          <p class="section-copy">
+            The lead release gets a larger stage. Swap covers, track titles, and audio whenever you want.
+          </p>
+        </div>
 
-          <!-- LIST (quiet, consumer-forward) -->
-          <aside class="list" aria-label="Track list">
-            <div class="list-top">
-              <div class="list-title mono">TRACKS</div>
-              <div class="filters">
-                <button class="f hole is" type="button" data-filter="all"><span class="mono">ALL</span></button>
-                <button class="f hole" type="button" data-filter="favorites"><span class="mono">FAVS</span></button>
-              </div>
+        <div class="featured-grid">
+          <article class="featured-art reveal">
+            <div class="featured-art-frame">
+              <img id="featured-cover" src="assets/covers/cover-equinox.svg" alt="Featured release artwork" />
+              <div class="featured-orbit featured-orbit-a"></div>
+              <div class="featured-orbit featured-orbit-b"></div>
             </div>
+          </article>
 
-            <div class="rows" id="rows"></div>
-
-            <div class="list-foot mono">
-              Add songs by editing <span class="code">TRACKS</span> in <span class="code">script.js</span>.
+          <article class="featured-copy reveal">
+            <div class="featured-meta">
+              <span id="featured-type" class="pill">Single set</span>
+              <span id="featured-year" class="featured-year">2026</span>
             </div>
-          </aside>
+            <h3 id="featured-title">Midnight Receiver</h3>
+            <p id="featured-description">
+              Bright-edge pop for late hours, city lights, and emotional weather moving under neon.
+            </p>
+            <div id="featured-tracklist" class="featured-tracklist" aria-live="polite"></div>
+            <div class="featured-actions">
+              <button class="button button-primary" id="play-featured" type="button">Play release</button>
+              <a class="button button-secondary" href="#archive">Browse everything</a>
+            </div>
+          </article>
         </div>
       </section>
 
-      <!-- ABOUT (small, not a “site section”) -->
-      <section id="about" class="s about">
-        <div class="about-inner">
-          <div class="card">
-            <h2 class="h">About</h2>
-            <p class="p">
-              Receipts makes indie/dream pop with a high-contrast core—music that feels like a private room you find late,
-              then never quite leave.
-            </p>
-            <p class="p mono subtle">
-              values: existentialism · contrast · raw art · expression
-            </p>
+      <section class="archive shell section" id="archive">
+        <div class="section-heading reveal">
+          <div>
+            <p class="eyebrow">Archive</p>
+            <h2>Discography / sketches / orbitals</h2>
           </div>
+          <p class="section-copy">
+            Minimal browsing, direct playback, and enough atmosphere to feel intentional without getting in the way.
+          </p>
+        </div>
+
+        <div class="filter-row reveal" id="filter-row" role="toolbar" aria-label="Filter releases">
+          <button class="filter-chip is-active" type="button" data-filter="all">All</button>
+          <button class="filter-chip" type="button" data-filter="single set">Single sets</button>
+          <button class="filter-chip" type="button" data-filter="project">Projects</button>
+          <button class="filter-chip" type="button" data-filter="demos">Demos</button>
+        </div>
+
+        <div id="release-grid" class="release-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="manifesto shell section" id="manifesto">
+        <div class="section-heading reveal compact-heading">
+          <div>
+            <p class="eyebrow">Manifesto</p>
+            <h2>Purpose in the dark.</h2>
+          </div>
+        </div>
+
+        <div class="manifesto-grid">
+          <article class="manifesto-card reveal">
+            <span class="card-kicker">Intent</span>
+            <p>
+              This site is not trying to be a social network. It is a focused room for listening, collecting,
+              and returning.
+            </p>
+          </article>
+
+          <article class="manifesto-card reveal">
+            <span class="card-kicker">Visual language</span>
+            <p>
+              Black field, white linework, gold restraint, cyan lift, violet glow, and just enough motion to feel alive.
+            </p>
+          </article>
+
+          <article class="manifesto-card reveal">
+            <span class="card-kicker">Structure</span>
+            <p>
+              All releases are loaded from one JSON file, so updating the archive stays fast and clean.
+            </p>
+          </article>
         </div>
       </section>
 
-      <footer class="ft mono">
-        <span>© <span id="yr"></span> Receipts</span>
-        <span class="dot">·</span>
-        <span class="subtle">built like a room. shared like a secret.</span>
-      </footer>
+      <section class="contact shell section" id="contact">
+        <div class="section-heading reveal compact-heading">
+          <div>
+            <p class="eyebrow">Contact</p>
+            <h2>Keep the signal open.</h2>
+          </div>
+        </div>
+
+        <div class="contact-card reveal">
+          <p>
+            Replace these placeholders with your real links when you are ready to go live.
+          </p>
+          <div class="contact-links">
+            <a href="mailto:hello@receiptsmusic.com">hello@receiptsmusic.com</a>
+            <a href="https://instagram.com/" target="_blank" rel="noreferrer">Instagram</a>
+            <a href="https://youtube.com/" target="_blank" rel="noreferrer">YouTube</a>
+            <a href="https://soundcloud.com/" target="_blank" rel="noreferrer">SoundCloud</a>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <!-- Toast -->
-    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true" hidden>
-      <div class="toast-i">
-        <span class="mono" id="toastMsg">—</span>
-        <button class="icon" id="toastX" type="button" aria-label="Close toast"><span class="mono">✕</span></button>
-      </div>
-    </div>
+    <footer class="site-footer shell">
+      <p>© <span id="year"></span> Receipts. Built for direct hosting on GitHub Pages.</p>
+    </footer>
 
-    <script src="script.js"></script>
+    <section class="player-dock" aria-label="Audio player">
+      <div class="player-cover-wrap">
+        <img id="player-cover" class="player-cover" src="assets/covers/cover-equinox.svg" alt="Current artwork" />
+      </div>
+
+      <div class="player-main">
+        <div class="player-meta">
+          <span class="player-kicker">Now playing</span>
+          <strong id="player-title">Select a track</strong>
+          <span id="player-project">Receipts archive</span>
+        </div>
+
+        <div class="player-progress-row">
+          <span id="current-time">0:00</span>
+          <input
+            id="seekbar"
+            class="seekbar"
+            type="range"
+            min="0"
+            max="100"
+            value="0"
+            step="0.1"
+            aria-label="Seek through track"
+          />
+          <span id="total-time">0:00</span>
+        </div>
+      </div>
+
+      <div class="player-controls">
+        <button class="control-button" id="prev-track" type="button" aria-label="Previous track">◀</button>
+        <button class="control-button control-button-primary" id="toggle-playback" type="button" aria-label="Play or pause">▶</button>
+        <button class="control-button" id="next-track" type="button" aria-label="Next track">▶</button>
+      </div>
+    </section>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <audio id="audio" preload="metadata"></audio>
+    <script src="script.js" defer></script>
   </body>
 </html>
