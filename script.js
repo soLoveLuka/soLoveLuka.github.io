@@ -6,7 +6,7 @@ const FALLBACK_DATA = {
   projects: [
     {
       id: 'like-nobodys-watching',
-      title: 'Midnight Receiver',
+      title: 'Like Nobodys Watching',
       year: '2026',
       type: 'Single set',
       cover: 'assets/covers/cover-equinox.svg',
