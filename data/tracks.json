@@ -14,9 +14,9 @@
       "tracks": [
         {
           "id": "up-up-and-away",
-          "title": "Up Up & Away",
-          "duration": "3:18",
-          "mood": ["awake", "electric"],
+          "title": "Up Up & Away Demo",
+          "duration": "1:04",
+          "mood": ["melodic", "uplifting"],
           "audioSrc": "audio/01-northbound-light.mp3"
         },
         {
