@@ -5,16 +5,16 @@
   },
   "projects": [
     {
-      "id": "what-you-sayin",
-      "title": "What You Sayin",
+      "id": "like-nobodys-watching",
+      "title": "Like Nobody's Watching",
       "year": "2026",
       "type": "Single set",
       "cover": "assets/covers/cover-equinox.svg",
-      "description": "Bright-edge songs for after-hours motion, neon reflection, and wide awake dreaming.",
+      "description": "Something To Kick Off The Party",
       "tracks": [
         {
-          "id": "northbound-light",
-          "title": "Northbound Light",
+          "id": "up-up-and-away",
+          "title": "Up Up & Away",
           "duration": "3:18",
           "mood": ["awake", "electric"],
           "audioSrc": "audio/01-northbound-light.mp3"
