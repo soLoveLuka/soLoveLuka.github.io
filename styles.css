@@ -231,13 +231,17 @@ img {
 }
 
 .hero-wordmark {
+  display: inline-block;
   font-family: "Syne", Manrope, Inter, sans-serif;
   font-weight: 800;
-  font-size: 1em;
+  font-size: clamp(4.2rem, 8vw, 7.6rem);
   line-height: 0.9;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.075em;
   text-transform: uppercase;
-  color: rgba(244, 242, 236, 0.92);
+  color: rgba(244, 242, 236, 0.94);
+  transform: scaleX(0.9);
+  transform-origin: left center;
+  white-space: nowrap;
 }
 
 .hero-text,
