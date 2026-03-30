@@ -20,11 +20,11 @@
           "audioSrc": "audio/Up Up & Away Master Final.mp3"
         },
         {
-          "id": "paper-sky",
-          "title": "Paper Sky",
-          "duration": "2:56",
-          "mood": ["open", "late"],
-          "audioSrc": "audio/02-paper-sky.mp3"
+          "id": "cape-cod",
+          "title": "Cape Cod",
+          "duration": "2:22",
+          "mood": ["hype", "daring"],
+          "audioSrc": "audio/Cape Cod.mp3"
         },
         {
           "id": "receiver-bloom",
