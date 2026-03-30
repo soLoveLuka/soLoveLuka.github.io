@@ -96,25 +96,25 @@
       "description": "Just gonna put these here",
       "tracks": [
         {
-          "id": "haze-index",
-          "title": "Haze Index",
-          "duration": "2:31",
-          "mood": ["restless", "night"],
-          "audioSrc": "audio/06-haze-index.mp3"
+          "id": "what-you-sayin",
+          "title": "What You Sayin",
+          "duration": "1:04",
+          "mood": ["hype", "denial"],
+          "audioSrc": "audio/What You Sayin.mp3"
         },
         {
-          "id": "open-purpose",
-          "title": "Open Purpose",
-          "duration": "3:47",
-          "mood": ["lift", "purpose"],
-          "audioSrc": "audio/07-open-purpose.mp3"
+          "id": "modern-martyrs",
+          "title": "Modern Martyrs",
+          "duration": "1:04",
+          "mood": ["Transcendence", "purpose"],
+          "audioSrc": "audio/Modern Martyrs.mp3"
         },
         {
-          "id": "signal-veil",
-          "title": "Signal Veil",
-          "duration": "4:14",
-          "mood": ["wide", "mist"],
-          "audioSrc": "audio/08-signal-veil.mp3"
+          "id": "hurt",
+          "title": "Hurt",
+          "duration": "0:00",
+          "mood": ["emotional", "wide"],
+          "audioSrc": "audio/hurt.mp3"
         }
       ]
     },
