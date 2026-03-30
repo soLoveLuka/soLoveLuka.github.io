@@ -378,11 +378,7 @@ img {
 
 .stage-frame::before,
 .stage-frame::after {
-  content: "";
-  position: absolute;
-  inset: 22px;
-  border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  display: none;
 }
 
 .stage-frame::after {
