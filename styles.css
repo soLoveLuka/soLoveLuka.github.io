@@ -399,12 +399,7 @@ img {
 }
 
 .stage-grid {
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: radial-gradient(circle at center, black 54%, transparent 96%);
+  display: none;
 }
 
 .stage-line {
