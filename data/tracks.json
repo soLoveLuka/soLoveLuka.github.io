@@ -27,11 +27,11 @@
           "audioSrc": "audio/Cape Cod.mp3"
         },
         {
-          "id": "receiver-bloom",
-          "title": "Receiver Bloom",
-          "duration": "4:02",
-          "mood": ["dream", "glow"],
-          "audioSrc": "audio/03-receiver-bloom.mp3"
+          "id": "rivalry",
+          "title": "Rivalry",
+          "duration": "1:59",
+          "mood": ["dream", "fed up"],
+          "audioSrc": "audio/Rivalry.mp3"
         }
       ]
     },
