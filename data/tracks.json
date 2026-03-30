@@ -36,26 +36,54 @@
       ]
     },
     {
-      "id": "soft-machines",
-      "title": "Soft Machines",
-      "year": "2025",
-      "type": "Project",
-      "cover": "assets/covers/cover-monolith.svg",
-      "description": "A cleaner, colder body of work with distance, symmetry, and low-lit pulse.",
+      "id": "memory-lane",
+      "title": "Memory Lane",
+      "year": "2024",
+      "type": "Album",
+      "cover": "assets/covers/memorylane.png",
+      "description": "An older release under a different name ;)",
       "tracks": [
         {
-          "id": "silver-hall",
-          "title": "Silver Hall",
-          "duration": "3:42",
-          "mood": ["cinematic", "soft"],
-          "audioSrc": "audio/04-silver-hall.mp3"
+          "id": "feel-this-way",
+          "title": "Feel This Way",
+          "duration": "3:09",
+          "mood": ["melodic", "cinematic"],
+          "audioSrc": "audio/Feel This Way.mp3"
         },
         {
-          "id": "clean-fiction",
-          "title": "Clean Fiction",
-          "duration": "3:09",
-          "mood": ["minimal", "glass"],
-          "audioSrc": "audio/05-clean-fiction.mp3"
+          "id": "my-pov",
+          "title": "My POV",
+          "duration": "3:18",
+          "mood": ["conversational", "heartbreak"],
+          "audioSrc": "audio/My POV.mp3"
+        },
+        {
+          "id": "gone",
+          "title": "Gone",
+          "duration": "2:14",
+          "mood": ["melodic", "swing"],
+          "audioSrc": "audio/Gone.mp3"
+        },
+        {
+          "id": "obvious",
+          "title": "Obvious",
+          "duration": "2:04",
+          "mood": ["dream", "cinematic"],
+          "audioSrc": "audio/Obvious.mp3"
+        },
+        {
+          "id": "talk-to-me",
+          "title": "Talk To Me",
+          "duration": "3:05",
+          "mood": ["minimal", "melodic"],
+          "audioSrc": "audio/Talk To Me.mp3"
+        },
+        {
+          "id": "her",
+          "title": "Her",
+          "duration": "2:56",
+          "mood": ["cinematic", "love"],
+          "audioSrc": "audio/Her.mp3"
         }
       ]
     },
