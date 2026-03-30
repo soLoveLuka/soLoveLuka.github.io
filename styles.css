@@ -230,6 +230,16 @@ img {
   color: rgba(244, 242, 236, 0.84);
 }
 
+.hero-wordmark {
+  font-family: "Syne", Manrope, Inter, sans-serif;
+  font-weight: 800;
+  font-size: 1em;
+  line-height: 0.9;
+  letter-spacing: -0.065em;
+  text-transform: uppercase;
+  color: rgba(244, 242, 236, 0.92);
+}
+
 .hero-text,
 .section-copy,
 .featured-copy p,
