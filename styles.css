@@ -337,6 +337,31 @@ img {
   place-items: center;
 }
 
+.stage-frame-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.stage-hero-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(1) contrast(1.08) brightness(0.72);
+  transform: scale(1.02);
+}
+
+.stage-image-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.08), transparent 32%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.34));
+  pointer-events: none;
+}
+
 .stage-frame {
   position: relative;
   width: min(100%, 620px);
