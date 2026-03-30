@@ -13,11 +13,11 @@ const FALLBACK_DATA = {
       description: 'Bright-edge songs for after-hours motion, neon reflection, and wide awake dreaming.',
       tracks: [
         {
-          id: 'northbound',
-          title: 'Northbound Light',
-          duration: '3:18',
-          mood: ['awake', 'electric'],
-          audioSrc: 'audio/01-northbound-light.mp3'
+          id: 'up-up-and-away',
+          title: 'Up Up & Away',
+          duration: '1:04',
+          mood: ['melodic', 'uplifting'],
+          audioSrc: 'audio/Up Up & Away Master Final.mp3'
         },
         {
           id: 'paper-sky',
