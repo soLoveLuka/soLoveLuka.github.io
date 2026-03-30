@@ -60,12 +60,12 @@ const FALLBACK_DATA = {
       ]
     },
     {
-      id: 'after-image',
-      title: 'After Image Geometry',
-      year: '2024',
+      id: 'in-the-works',
+      title: 'In The Works',
+      year: '2026',
       type: 'Demos',
-      cover: 'assets/covers/cover-pulse.svg',
-      description: 'Sketches, fragments, and drafts with enough shape to keep returning to.',
+      cover: 'assets/covers/Demos.png',
+      description: 'Just gonna put these here',
       tracks: [
         {
           id: 'haze-index',
